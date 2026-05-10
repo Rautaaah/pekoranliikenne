@@ -1,0 +1,82 @@
+@page "/auth/account-deletion"
+@model Roblox.Website.Pages.Auth.AccountDeletion
+
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Account Deletion</title>
+    <link rel="icon" type="image/png" href="/img/zekorooooo.png?v=20260409">
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; min-height: 100%; font-family: Arial, sans-serif; color: #f3f7ff; }
+        body { min-height: 100vh; display: flex; flex-direction: column; background-color: #0d2231; background-image: linear-gradient(rgba(5, 18, 30, 0.48), rgba(5, 18, 30, 0.62)), url('/img/landing/signupbackground.png'); background-repeat: no-repeat; background-size: cover; background-position: center center; }
+        .topbar { width: 100%; padding: 18px 24px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .brand { display: inline-flex; align-items: center; }
+        .brand img { width: 42px; height: 42px; object-fit: contain; }
+        .links { display: flex; align-items: center; justify-content: flex-end; gap: 18px; flex-wrap: wrap; font-size: 15px; }
+        .links a { color: #f4f7ff; text-decoration: none; text-shadow: 0 2px 10px rgba(0,0,0,0.45); }
+        .links a:hover { text-decoration: underline; }
+        .shell { flex: 1; width: 100%; max-width: 1380px; margin: 0 auto; padding: 38px 24px 28px; display: flex; align-items: center; justify-content: space-between; gap: 56px; }
+        .hero { flex: 1 1 58%; display: flex; align-items: center; justify-content: center; min-height: 420px; padding: 0 18px; }
+        .hero img { width: 100%; max-width: 680px; object-fit: contain; filter: drop-shadow(0 20px 34px rgba(0,0,0,0.36)); }
+        .card { width: 100%; max-width: 420px; background: rgba(255,255,255,0.97); color: #332723; border-radius: 8px; padding: 28px 26px 22px; border: 1px solid rgba(255,255,255,0.58); box-shadow: 0 30px 72px rgba(6, 15, 24, 0.34), 0 10px 24px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.72); }
+        .card h1 { margin: 0 0 12px; text-align: center; font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: #201814; }
+        .card p { margin: 0 0 14px; font-size: 15px; line-height: 1.55; color: #554540; }
+        .status { margin-bottom: 12px; font-size: 14px; line-height: 1.45; }
+        .status.error { color: #b13d2d; }
+        .status.success { color: #16643a; }
+        .danger { color: #b13d2d; font-weight: 700; }
+        .form-control { width: 100%; height: 42px; border: 1px solid #cfd5de; border-radius: 5px; background: #fff; color: #2e2623; padding: 0 13px; font-size: 15px; outline: none; box-shadow: 0 6px 14px rgba(14, 26, 40, 0.06), inset 0 1px 0 rgba(255,255,255,0.75); margin-bottom: 10px; }
+        .form-control:focus { border-color: #4ea1ff; box-shadow: 0 0 0 3px rgba(78, 161, 255, 0.18); }
+        .submit { width: 100%; height: 44px; border: 0; border-radius: 6px; background: #c83d30; color: #fff; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 16px 30px rgba(160, 45, 32, 0.24), inset 0 1px 0 rgba(255,255,255,0.2); }
+        .submit:hover { background: #d94f43; }
+        .footer { padding: 10px 14px 14px; text-align: center; font-size: 12px; color: #f2f7ff; text-shadow: 0 3px 14px rgba(0,0,0,0.55); }
+        @@media (max-width: 980px) { .topbar { padding: 14px 16px 0; } .shell { padding: 26px 16px 22px; flex-direction: column; justify-content: center; gap: 28px; } .hero { min-height: 0; padding: 0; } .hero img { max-width: 520px; } .card { max-width: 420px; } }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <a class="brand" href="/"><img alt="Zekoro" src="/img/zekorooooo.png"></a>
+    <div class="links">
+        <a href="/auth/home">Home</a>
+        <a href="/">Login</a>
+        <a href="/auth/tos">Terms of Service</a>
+        <a href="/auth/privacy">Privacy</a>
+        <a href="/auth/account-deletion">Account Deletion</a>
+        <a href="/auth/donate">Donate</a>
+    </div>
+</div>
+<main class="shell">
+    <div class="hero">
+        <img alt="Zekoro" src="/img/landing/zekorologo222.png">
+    </div>
+    <div class="card">
+        <h1>Account Deletion</h1>
+        <p><span class="danger">There is no way to undo an account deletion.</span> Your account and all its information, such as items and creations, will be permanently scrubbed from the website.</p>
+        @if (Model.successMessage != null)
+        {
+            <div class="status success">@Model.successMessage</div>
+        }
+        @if (Model.failureMessage != null)
+        {
+            <div class="status error">@Model.failureMessage</div>
+        }
+        <form method="post">
+            <input name="username" type="text" class="form-control" placeholder="Username" />
+            <input name="password" type="password" class="form-control" placeholder="Password" />
+            <input type="text" autocomplete="off" minlength="6" maxlength="6" pattern="\d*" placeholder="2FA Code (leave blank if not set)" name="totpcode" class="form-control" />
+            @Html.AntiForgeryToken()
+            <input type="submit" class="submit" value="Delete Account" />
+        </form>
+        <p>If you do not remember your username or password, you cannot delete your account because there would be no way to verify you are the true owner.</p>
+    </div>
+</main>
+<div class="footer">(c) @DateTime.UtcNow.Year Zekoro. Not affiliated with Roblox Corporation.</div>
+</body>
+</html>

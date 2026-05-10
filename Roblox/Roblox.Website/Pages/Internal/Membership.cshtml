@@ -1,0 +1,435 @@
+@page "/internal/membership"
+@using Roblox.Models.Users
+@model Roblox.Website.Pages.Internal.Membership
+
+@{
+    Layout = "Shared/_Layout";
+
+    var membershipOptions = new[]
+    {
+        new { Type = MembershipType.None, Label = "Free", Asset = "/img/membership/free.webp" },
+        new { Type = MembershipType.BuildersClub, Label = "Classic", Asset = "/img/membership/classic.webp" },
+        new { Type = MembershipType.TurboBuildersClub, Label = "Turbo", Asset = "/img/membership/turbo.webp" },
+        new { Type = MembershipType.OutrageousBuildersClub, Label = "Outrageous", Asset = "/img/membership/outrageous.webp" },
+    };
+}
+
+@section MetaTags {
+    <title>Change Membership</title>
+}
+
+<style>
+    body {
+        background-color: #0d2231 !important;
+        background-image: linear-gradient(rgba(5, 18, 30, 0.48), rgba(5, 18, 30, 0.62)), url('/img/landing/signupbackground.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+
+    .navbar-auth,
+    .navbar-auth.bg-black,
+    main.flex-shrink-0.bg-dark,
+    footer.footer.bg-dark {
+        background: transparent !important;
+    }
+
+    .navbar-auth {
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+
+    .navbar-auth .nav-link {
+        color: #f4f7ff !important;
+    }
+
+    footer.footer {
+        border-top: none !important;
+        box-shadow: none !important;
+    }
+
+    footer.footer .container {
+        border-top: none !important;
+    }
+
+    footer.footer .text-muted {
+        color: rgba(236, 244, 255, 0.68) !important;
+    }
+
+    .membership-shell {
+        max-width: 1120px;
+        margin: 1.75rem auto 0;
+        background: linear-gradient(180deg, #1a2028 0%, #131920 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 1.1rem 1.1rem 1.2rem;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+    }
+
+    .membership-title {
+        color: #fff;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0 0 1rem;
+    }
+
+    .membership-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        color: #d6e0ec;
+    }
+
+    .membership-mobile {
+        display: none;
+    }
+
+    .membership-table th,
+    .membership-table td {
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 0.65rem 0.6rem;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .membership-table th:first-child,
+    .membership-table td:first-child {
+        text-align: left;
+        color: #f4f7fb;
+        font-weight: 700;
+        width: 25%;
+    }
+
+    .membership-head {
+        border-top: none;
+        padding-top: 0.25rem;
+        padding-bottom: 0.8rem;
+    }
+
+    .membership-head .membership-label {
+        margin-bottom: 0.45rem;
+    }
+
+    .membership-value {
+        color: #e7eef8;
+        font-weight: 600;
+    }
+
+    .membership-value.muted {
+        color: #9aa8bb;
+        font-weight: 500;
+    }
+
+    .membership-label {
+        color: #fff;
+        font-size: 1.55rem;
+        font-weight: 600;
+        line-height: 1.15;
+    }
+
+    .membership-icon {
+        width: 96px;
+        height: 96px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .membership-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        filter: drop-shadow(0 6px 12px rgba(0,0,0,0.18));
+    }
+
+    .membership-select {
+        min-width: 138px;
+        border: 1px solid #0a7f00;
+        border-radius: 0;
+        background: linear-gradient(180deg, #14c100 0%, #08a100 100%);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.6rem 1rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.22);
+        transition: background 120ms ease, border-color 120ms ease;
+    }
+
+    .membership-select:hover {
+        background: linear-gradient(180deg, #1ad700 0%, #0ab000 100%);
+    }
+
+    .membership-select.selected,
+    .membership-select.selected:hover {
+        border-color: #5c6168;
+        background: linear-gradient(180deg, #8b9199 0%, #6c727a 100%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.16);
+    }
+
+    .membership-select.locked,
+    .membership-select.locked:hover {
+        cursor: not-allowed;
+        border-color: #4d535b;
+        background: linear-gradient(180deg, #5b626b 0%, #454b54 100%);
+        color: rgba(255,255,255,0.72);
+        box-shadow: none;
+    }
+
+    .membership-message {
+        margin-bottom: 1rem;
+        font-size: 0.98rem;
+    }
+
+    .membership-note {
+        color: rgba(255,255,255,0.76);
+        font-size: 0.95rem;
+        margin: 0.8rem 0 0;
+        text-align: center;
+    }
+
+    @@media (max-width: 900px) {
+        .membership-table {
+            display: none;
+        }
+
+        .membership-mobile {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+        .membership-mobile-card {
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 8px;
+            background: rgba(8, 17, 28, 0.72);
+            padding: 0.8rem 0.7rem;
+        }
+
+        .membership-mobile-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.7rem;
+            margin-bottom: 0.55rem;
+        }
+
+        .membership-mobile-label {
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .membership-mobile-icon {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.22));
+        }
+
+        .membership-mobile-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+            padding: 0.32rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.95rem;
+            color: #dce8f7;
+        }
+
+        .membership-mobile-row:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .membership-mobile-key {
+            color: rgba(236, 246, 255, 0.9);
+            font-weight: 600;
+        }
+
+        .membership-mobile-val {
+            color: #f2f7ff;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .membership-mobile-actions {
+            margin-top: 0.65rem;
+        }
+
+        .membership-mobile-actions .membership-select {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+
+    @@media (max-width: 575px) {
+        .membership-shell {
+            padding: 1rem 0.75rem 1rem;
+        }
+
+        .membership-title {
+            font-size: 1.85rem;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="membership-shell">
+        <h2 class="membership-title">Builders Club Membership</h2>
+        @if (Model.successMessage != null)
+        {
+            <p class="membership-message text-success">@Model.successMessage</p>
+        }
+        @if (Model.errorMessage != null)
+        {
+            <p class="membership-message text-danger">@Model.errorMessage</p>
+        }
+        <form method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <table class="membership-table">
+                <thead>
+                <tr>
+                    <th class="membership-head"></th>
+                    @foreach (var option in membershipOptions)
+                    {
+                        <th class="membership-head">
+                            <div class="membership-label">@option.Label</div>
+                            <div class="membership-icon">
+                                <img src="@option.Asset" alt="@option.Label membership icon"/>
+                            </div>
+                        </th>
+                    }
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Daily ROBUX</td>
+                    <td><span class="membership-value muted">No</span></td>
+                    <td><span class="membership-value">R$100</span></td>
+                    <td><span class="membership-value">R$100</span></td>
+                    <td><span class="membership-value">R$100</span></td>
+                </tr>
+                <tr>
+                    <td>Active Places</td>
+                    <td><span class="membership-value">1</span></td>
+                    <td><span class="membership-value">10</span></td>
+                    <td><span class="membership-value">25</span></td>
+                    <td><span class="membership-value">100</span></td>
+                </tr>
+                <tr>
+                    <td>Join Groups</td>
+                    <td><span class="membership-value">5</span></td>
+                    <td><span class="membership-value">10</span></td>
+                    <td><span class="membership-value">20</span></td>
+                    <td><span class="membership-value">100</span></td>
+                </tr>
+                <tr>
+                    <td>Create Groups</td>
+                    <td><span class="membership-value muted">No</span></td>
+                    <td><span class="membership-value">10</span></td>
+                    <td><span class="membership-value">20</span></td>
+                    <td><span class="membership-value">100</span></td>
+                </tr>
+                <tr>
+                    <td>Paid Access</td>
+                    <td><span class="membership-value">10%</span></td>
+                    <td><span class="membership-value">70%</span></td>
+                    <td><span class="membership-value">70%</span></td>
+                    <td><span class="membership-value">70%</span></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    @foreach (var option in membershipOptions)
+                    {
+                        var isSelected = Model.existingMembershipType == option.Type;
+                        <td>
+                            <button class="membership-select @(isSelected ? "selected" : "")" name="membershipType" type="submit" value="@option.Type">
+                                @(isSelected ? "Current" : $"Get {option.Label}")
+                            </button>
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    <td>Ad Free</td>
+                    <td><span class="membership-value muted">No</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                </tr>
+                <tr>
+                    <td>Sell Stuff</td>
+                    <td><span class="membership-value muted">No</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                </tr>
+                <tr>
+                    <td>Virtual Hat</td>
+                    <td><span class="membership-value muted">No</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                </tr>
+                <tr>
+                    <td>Bonus Gear</td>
+                    <td><span class="membership-value muted">No</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                    <td><span class="membership-value">✓</span></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="membership-mobile">
+                @foreach (var option in membershipOptions)
+                {
+                    var isSelected = Model.existingMembershipType == option.Type;
+                    string dailyRobux = option.Type == MembershipType.None ? "No" : "R$100";
+                    string activePlaces = option.Type switch
+                    {
+                        MembershipType.None => "1",
+                        MembershipType.BuildersClub => "10",
+                        MembershipType.TurboBuildersClub => "25",
+                        _ => "100",
+                    };
+                    string joinGroups = option.Type switch
+                    {
+                        MembershipType.None => "5",
+                        MembershipType.BuildersClub => "10",
+                        MembershipType.TurboBuildersClub => "20",
+                        _ => "100",
+                    };
+                    string createGroups = option.Type switch
+                    {
+                        MembershipType.None => "No",
+                        MembershipType.BuildersClub => "10",
+                        MembershipType.TurboBuildersClub => "20",
+                        _ => "100",
+                    };
+                    string paidAccess = option.Type == MembershipType.None ? "10%" : "70%";
+                    string perks = option.Type == MembershipType.None ? "No" : "Yes";
+                    <div class="membership-mobile-card">
+                        <div class="membership-mobile-head">
+                            <p class="membership-mobile-label">@option.Label</p>
+                            <img class="membership-mobile-icon" src="@option.Asset" alt="@option.Label membership icon" />
+                        </div>
+                        <div class="membership-mobile-row"><span class="membership-mobile-key">Daily ROBUX</span><span class="membership-mobile-val">@dailyRobux</span></div>
+                        <div class="membership-mobile-row"><span class="membership-mobile-key">Active Places</span><span class="membership-mobile-val">@activePlaces</span></div>
+                        <div class="membership-mobile-row"><span class="membership-mobile-key">Join Groups</span><span class="membership-mobile-val">@joinGroups</span></div>
+                        <div class="membership-mobile-row"><span class="membership-mobile-key">Create Groups</span><span class="membership-mobile-val">@createGroups</span></div>
+                        <div class="membership-mobile-row"><span class="membership-mobile-key">Paid Access</span><span class="membership-mobile-val">@paidAccess</span></div>
+                        <div class="membership-mobile-row"><span class="membership-mobile-key">Perks</span><span class="membership-mobile-val">@perks</span></div>
+                        <div class="membership-mobile-actions">
+                            <button class="membership-select @(isSelected ? "selected" : "")" name="membershipType" type="submit" value="@option.Type">
+                                @(isSelected ? "Current" : $"Get {option.Label}")
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </form>
+        <p class="membership-note">Select a membership to switch instantly.</p>
+    </div>
+</div>

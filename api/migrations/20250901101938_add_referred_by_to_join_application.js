@@ -1,0 +1,11 @@
+export async function up(knex) {
+  await knex.schema.alterTable('join_application', (table) => {
+    table.bigInteger('referred_by').unsigned().references('id').inTable('user').nullable();
+  });
+}
+
+export async function down(knex) {
+  await knex.schema.alterTable('join_application', (table) => {
+    table.dropColumn('referred_by');
+  });
+}

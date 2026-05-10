@@ -1,0 +1,147 @@
+@page "/internal/report-center"
+@using Roblox.Models.AbuseReport
+@model Roblox.Website.Pages.Internal.ReportAbuse
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+@section MetaTags {
+    <title>Report User</title>
+}
+
+<style>
+    body {
+        background-color: #0d2231 !important;
+        background-image: linear-gradient(rgba(5, 18, 30, 0.48), rgba(5, 18, 30, 0.62)), url('/img/landing/signupbackground.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+
+    .navbar-auth,
+    .navbar-auth.bg-black,
+    main.flex-shrink-0.bg-dark,
+    footer.footer.bg-dark {
+        background: transparent !important;
+    }
+
+    .navbar-auth {
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+
+    .navbar-auth .nav-link {
+        color: #f4f7ff !important;
+    }
+
+    footer.footer {
+        border-top: none !important;
+        box-shadow: none !important;
+    }
+
+    footer.footer .container {
+        border-top: none !important;
+    }
+
+    footer.footer .text-muted {
+        color: rgba(236, 244, 255, 0.68) !important;
+    }
+
+    .report-shell {
+        min-height: calc(100vh - 160px);
+        padding: 32px 0;
+    }
+
+    .report-card {
+        width: 100%;
+        max-width: 760px;
+        margin: 0 auto;
+        background: linear-gradient(180deg, #1a2028 0%, #131920 100%);
+        color: #e6eef9;
+        border-radius: 8px;
+        padding: 22px 22px 18px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 20px 52px rgba(6, 15, 24, 0.32), 0 8px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    .report-title {
+        margin: 0 0 10px;
+        color: #fff;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .report-copy {
+        color: #dbe6f5;
+        margin-bottom: 18px;
+    }
+
+    .report-label {
+        display: block;
+        color: #f6f9ff;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .report-control {
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid rgba(255,255,255,0.16);
+        background: rgba(9, 17, 27, 0.9);
+        color: #ecf3ff;
+        padding: 10px 12px;
+    }
+
+    .report-control:focus {
+        outline: none;
+        border-color: #2680eb;
+        box-shadow: 0 0 0 3px rgba(38, 128, 235, 0.18);
+    }
+
+    .report-help {
+        color: #d8e6fa;
+        margin: 10px 0 14px;
+        font-style: italic;
+    }
+
+    .report-help a {
+        color: #5aa8ff;
+    }
+
+    .report-btn {
+        min-width: 120px;
+        border-radius: 6px;
+        font-weight: 700;
+    }
+</style>
+
+<div class="report-shell">
+    <div class="container">
+        <div class="report-card">
+            <h2 class="report-title">Report User</h2>
+            @if (Model.successMessage != null)
+            {
+                <p class="text-success">@Model.successMessage</p>
+            }
+            @if (Model.failureMessage != null)
+            {
+                <p class="text-danger">@Model.failureMessage</p>
+            }
+            <p class="report-copy">Fill out the form below to report an abusive player. Make sure all fields are accurate. Invalid reports may be removed.</p>
+            <form method="POST">
+                <label class="report-label">Select a Report Reason</label>
+                <select class="report-control" name="reportReason">
+                    <option value="None">None</option>
+                    <option value="@AbuseReportReason.BadPrivateMessage">Private Message</option>
+                </select>
+                <label class="report-label mt-4">Enter a report message with details, usernames, and links to evidence.</label>
+                <textarea name="reportMessage" class="report-control" placeholder="Roblox Asset ID or Roblox URL" rows="5" maxlength="1000">@(Model.reportMessage ?? "")</textarea>
+                <p class="report-help">If you need to include images, upload them to <a href="https://imgur.com/upload" rel="noopener nofollow noreferrer" target="_blank">imgur</a>, <a href="https://imgbb.com/" rel="noopener nofollow noreferrer" target="_blank">imgbb</a>, or Discord and paste the link.</p>
+                @Html.AntiForgeryToken()
+                <input type="submit" class="btn btn-primary report-btn" value="Submit" />
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,120 @@
+import React, {useEffect, useReducer, useState} from "react";
+import { createUseStyles } from "react-jss";
+import AdBanner from "../ad/adBanner";
+import OldVerticalTabs from "../oldVerticalTabs2";
+import CreationsTab from './components/creationsTab';
+import NotAvailable from "./components/notAvailable";
+import Library from "./components/library"
+import authentication from "../../stores/authentication";
+import {getPermissionsForRoleset, getUserGroups} from "../../services/groups";
+
+const useStyles = createUseStyles({
+  developerContainer: {
+    backgroundColor: 'var(--white-color)',
+    padding: '4px 8px',
+    overflow: 'visible',
+  },
+});
+
+const myGroups = (prev, act) => {
+  let ns = [];
+  if (prev) {
+    ns = [...prev];
+  }
+  if (act.action === 'ADD') {
+    if (!ns.find(v => v.id === act.group.id)) {
+      ns.push(act.group);
+    }
+  }
+  return ns;
+}
+
+const Develop = props => {
+  const s = useStyles();
+  const [options, setOptions] = useState([]);
+  const [tab, setTab] = useState(null);
+
+  const [groupId, setGroupId] = useState(null);
+  const [groups, dispatchGroups] = useReducer(myGroups, null);
+  const auth = authentication.useContainer();
+  useEffect(() => {
+    if (!auth.userId) return;
+
+    getUserGroups({
+      userId: auth.userId,
+    }).then(myGroups => {
+      myGroups.forEach(v => {
+        getPermissionsForRoleset({
+          groupId: v.group.id,
+          rolesetId: v.role.id,
+        }).then(roleData => {
+          const groupEconomyPermissions = roleData?.permissions?.groupEconomyPermissions || {};
+          const canUseGroupCreations =
+            groupEconomyPermissions.manageGroupGames ||
+            groupEconomyPermissions.addGroupPlaces ||
+            groupEconomyPermissions.createItems ||
+            groupEconomyPermissions.manageItems ||
+            groupEconomyPermissions.advertiseGroup;
+          if (canUseGroupCreations) {
+            // @ts-ignore
+            dispatchGroups({
+              action: 'ADD',
+              group: v.group,
+            });
+          }
+        }).catch(e => {
+          // If permissions endpoint fails, still show the group in dropdown.
+          // Upload authorization is still enforced by the backend.
+          dispatchGroups({
+            action: 'ADD',
+            group: v.group,
+          });
+        })
+      })
+    })
+  }, [auth.userId]);
+
+  useEffect(() => {
+    if (groupId === null && groups && groups.length > 0) {
+      setGroupId(groups[0].id);
+    }
+  }, [groupId, groups]);
+
+  useEffect(() => {
+    let defaultOpts = [
+      {
+        name: 'MyCreations',
+        displayName: 'My Creations',
+        element: <CreationsTab id={props.id} />,
+      },
+      {
+        name: 'GroupCreations',
+        displayName: 'Group Creations',
+        element: <CreationsTab id={props.id} group={true} groupId={groupId} groups={groups} setGroupId={setGroupId} />,
+      },
+      {
+        name: 'Library',
+        displayName: 'Library',
+        element: <Library />,
+      },
+      /*{
+        name: 'Developer Exchange',
+        element: <NotAvailable />,
+      },*/
+    ];
+    if (tab === null)
+      setTab(defaultOpts[0].name);
+    setOptions(defaultOpts);
+  }, [props.id, groupId, tab]);
+  if (!options.length)
+    return null;
+
+  return <div className='container'>
+    <AdBanner/>
+    <div className={s.developerContainer}>
+      <OldVerticalTabs options={options} default={tab} onChange={n => setTab(n.name)} />
+    </div>
+  </div>
+}
+
+export default Develop;

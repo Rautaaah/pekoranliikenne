@@ -1,0 +1,19 @@
+{
+  "BaseUrl": "http://zekoro.org/",
+  "SoapBaseUrl": "http://zekoro.org/",
+  "RCCUrl": "http://127.0.0.1",
+  "Debug": true,
+  "Ports": {
+    "Process": 7832,
+    "RCC": {
+      "All": [1621, 2621, 3621, 4621],
+      "Player": [1621, 2621],
+      "Image": [2621, 3621],
+      "Place": [3621, 4621],
+      "Catalog": [4621, 1621]
+    }
+  },
+  "Paths": {
+    "RCCService": "C:/Users/Administrator/Desktop/oldborkenzekoro/RCCServiceOther/RCCService2020"
+  }
+}

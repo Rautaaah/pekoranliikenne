@@ -1,0 +1,1106 @@
+print("[info] gameserver.txt start")
+local serverOk = false;
+local http = game:GetService("HttpService");
+http.HttpEnabled = false;
+
+-- begin dynamiclly edited
+local url = "base_url";
+local port = 123;
+local placeId = 123;
+local creatorType = Enum.CreatorType.User;
+local creatorId = 1;
+local placeVersionId = 0;
+local vipServerOwnerId = 0;
+local isDebugServer = false;
+-- end dyanmically edited
+
+-- Loaded by StartGameSharedScript --
+pcall(function() game:SetCreatorID(creatorId, creatorType) end)
+--[[
+	-- TODO: something is fucking up our strings when we try to use try to call SetUrl()
+pcall(function() game:GetService("SocialService"):SetFriendUrl(url .. "/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d") end)
+pcall(function() game:GetService("SocialService"):SetBestFriendUrl(url .. "/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d") end)
+pcall(function() game:GetService("SocialService"):SetGroupUrl(url .. "/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d") end)
+pcall(function() game:GetService("SocialService"):SetGroupRankUrl(url .. "/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d") end)
+pcall(function() game:GetService("SocialService"):SetGroupRoleUrl(url .. "/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d") end)
+pcall(function() game:GetService("GamePassService"):SetPlayerHasPassUrl(url .. "/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d") end)
+pcall(function() game:GetService("MarketplaceService"):SetProductInfoUrl(url .. "/api/marketplace/productinfo?assetId=%d") end)
+pcall(function() game:GetService("MarketplaceService"):SetDevProductInfoUrl(url .. "/api/marketplace/productDetails?productId=%d") end)
+pcall(function() game:GetService("MarketplaceService"):SetPlayerOwnsAssetUrl(url .. "/api/ownership/hasasset?userId=%d&assetId=%d") end)
+pcall(function() game:SetPlaceVersion(placeVersionId) end)
+pcall(function() game:SetVIPServerOwnerId(vipServerOwnerId) end)
+]]--
+
+print("[info] start",placeId,"on port",port,"wih base",url)
+------------------- UTILITY FUNCTIONS --------------------------
+
+
+function waitForChild(parent, childName)
+	while true do
+		local child = parent:findFirstChild(childName)
+		if child then
+			return child
+		end
+		parent.ChildAdded:wait()
+	end
+end
+
+-----------------------------------END UTILITY FUNCTIONS -------------------------
+	print("wait for run service...");
+    -- Prevent server script from running in Studio when not in run mode
+    local runService = nil
+    while runService == nil do
+        wait(0.1)
+        runService = game:GetService('RunService')
+    end
+	print("run service is running!");
+
+    --[[ Services ]]--
+    local RobloxReplicatedStorage = game:GetService('RobloxReplicatedStorage')
+    local ScriptContext = game:GetService('ScriptContext')
+
+    --[[ Fast Flags ]]--
+    local serverFollowersSuccess, serverFollowersEnabled = pcall(function() return settings():GetFFlag("UserServerFollowers") end)
+    local IsServerFollowers = serverFollowersSuccess and serverFollowersEnabled
+
+    local RemoteEvent_NewFollower = nil
+
+    --[[ Add Server CoreScript ]]--
+    -- TODO: FFlag check
+    if IsServerFollowers then
+        ScriptContext:AddCoreScriptLocal("ServerCoreScripts/ServerSocialScript", script.Parent)
+    else
+        -- above script will create this now
+        RemoteEvent_NewFollower = Instance.new('RemoteEvent')
+        RemoteEvent_NewFollower.Name = "NewFollower"
+        RemoteEvent_NewFollower.Parent = RobloxReplicatedStorage
+    end
+
+    --[[ Remote Events ]]--
+    local RemoteEvent_SetDialogInUse = Instance.new("RemoteEvent")
+    RemoteEvent_SetDialogInUse.Name = "SetDialogInUse"
+    RemoteEvent_SetDialogInUse.Parent = RobloxReplicatedStorage
+
+    --[[ Event Connections ]]--
+    -- Params:
+        -- followerRbxPlayer: player object of the new follower, this is the client who wants to follow another
+        -- followedRbxPlayer: player object of the person being followed
+    local function onNewFollower(followerRbxPlayer, followedRbxPlayer)
+        RemoteEvent_NewFollower:FireClient(followedRbxPlayer, followerRbxPlayer)
+    end
+    if RemoteEvent_NewFollower then
+        RemoteEvent_NewFollower.OnServerEvent:connect(onNewFollower)
+    end
+
+    local function setDialogInUse(player, dialog, value)
+        if dialog ~= nil then
+            dialog.InUse = value
+        end
+    end
+    RemoteEvent_SetDialogInUse.OnServerEvent:connect(setDialogInUse)
+
+-----------------------------------"CUSTOM" SHARED CODE----------------------------------
+
+pcall(function() settings().Network.UseInstancePacketCache = true end)
+pcall(function() settings().Network.UsePhysicsPacketCache = true end)
+--pcall(function() settings()["Task Scheduler"].PriorityMethod = Enum.PriorityMethod.FIFO end)
+pcall(function() settings()["Task Scheduler"].PriorityMethod = Enum.PriorityMethod.AccumulatedError end)
+
+--settings().Network.PhysicsSend = 1 -- 1==RoundRobin
+--settings().Network.PhysicsSend = Enum.PhysicsSendMethod.ErrorComputation2
+settings().Network.PhysicsSend = Enum.PhysicsSendMethod.TopNErrors
+settings().Network.ExperimentalPhysicsEnabled = true
+settings().Network.WaitingForCharacterLogRate = 100
+pcall(function() settings().Diagnostics:LegacyScriptMode() end)
+
+-----------------------------------START GAME SHARED SCRIPT------------------------------
+
+local assetId = placeId -- might be able to remove this now
+
+local scriptContext = game:GetService('ScriptContext')
+pcall(function() scriptContext:AddStarterScript(37801172) end)
+scriptContext.ScriptsDisabled = true
+
+game:SetPlaceID(assetId, false)
+game:GetService("ChangeHistoryService"):SetEnabled(false)
+
+-- establish this peer as the Server
+local ns = game:GetService("NetworkServer")
+
+if url~=nil then
+	pcall(function() game:GetService("Players"):SetAbuseReportUrl(url .. "/AbuseReport/InGameChatHandler.ashx") end)
+	pcall(function() game:GetService("ScriptInformationProvider"):SetAssetUrl(url .. "/Asset/") end)
+	pcall(function() game:GetService("ContentProvider"):SetBaseUrl(url .. "/") end)
+	--pcall(function() game:GetService("Players"):SetChatFilterUrl(url .. "/Game/ChatFilter.ashx") end)
+
+	game:GetService("BadgeService"):SetPlaceId(placeId)
+
+	game:GetService("BadgeService"):SetIsBadgeLegalUrl("")
+	game:GetService("InsertService"):SetBaseSetsUrl(url .. "/Game/Tools/InsertAsset.ashx?nsets=10&type=base")
+	game:GetService("InsertService"):SetUserSetsUrl(url .. "/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d")
+	game:GetService("InsertService"):SetCollectionUrl(url .. "/Game/Tools/InsertAsset.ashx?sid=%d")
+	game:GetService("InsertService"):SetAssetUrl(url .. "/Asset/?id=%d")
+	game:GetService("InsertService"):SetAssetVersionUrl(url .. "/Asset/?assetversionid=%d")
+
+	pcall(function() loadfile(url .. "/Game/LoadPlaceInfo.ashx?PlaceId=" .. placeId)() end)
+
+	-- pcall(function()
+	--			if access then
+	--				loadfile(url .. "/Game/PlaceSpecificScript.ashx?PlaceId=" .. placeId .. "&" .. access)()
+	--			end
+	--		end)
+end
+
+pcall(function() game:GetService("NetworkServer"):SetIsPlayerAuthenticationRequired(true) end)
+settings().Diagnostics.LuaRamLimit = 0
+--settings().Network:SetThroughputSensitivity(0.08, 0.01)
+--settings().Network.SendRate = 35
+--settings().Network.PhysicsSend = 0  -- 1==RoundRobin
+
+local function reportPlayerEvent(userId, t)
+    -- wrapped in pcall to prevent keys spilling in error logs
+	local ok, msg = pcall(function()
+		local msg = http:JSONEncode({
+			["authorization"] = "_AUTHORIZATION_STRING_",
+			["serverId"] = game.JobId,
+			["userId"] = tostring(userId),
+			["eventType"] = t,
+			["placeId"] = tostring(placeId),
+		})
+		-- print("sending",msg)
+		game:HttpPost(url .. "/gs/players/report", msg, false, "application/json");
+	end)
+	-- print("player event",ok,msg)
+end
+print("[info] jobId is", game.JobId);
+
+local function pollToReportActivity()
+	local function sendPing()
+		-- Authoritative player list. The website reconciles
+		-- asset_server_player against this so rows whose Leave event was
+		-- lost (RCC HTTP failure, ungraceful disconnect, abandoned launcher)
+		-- get pruned within one heartbeat instead of sticking around as
+		-- ghost "InGame" presence on the friends list.
+		local players = {}
+		pcall(function()
+			for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+				table.insert(players, p.userId)
+			end
+		end)
+		game:HttpPost(url .. "/gs/ping", http:JSONEncode({
+			["authorization"] = "_AUTHORIZATION_STRING_",
+			["serverId"] = game.JobId,
+			["placeId"] = placeId,
+			["players"] = players,
+		}), false, "application/json");
+	end
+	while serverOk do
+		local ok, data = pcall(function()
+			sendPing();
+		end)
+		print("[info] poll resp", ok, data)
+		wait(5)
+	end
+	print("Server is no longer ok. Activity is not being reported. Will die soon.")
+end
+local playersJoin = 0;
+
+local function shutdown()
+	print("[info] shut down server")
+	if isDebugServer then
+		print("Would shut down, but this is a debug server, so shutdown is disabled")
+		return
+	end
+	pcall(function()
+		game:HttpPost(url .. "/gs/shutdown", http:JSONEncode({
+			["authorization"] = "_AUTHORIZATION_STRING_",
+			["serverId"] = game.JobId,
+			["placeId"] = placeId,
+		}), false, "application/json");
+	end)
+	pcall(function()
+		ns:Stop()
+	end)
+end
+
+local adminsList = nil
+local verifiedListReady = false
+
+------------------------------- VERIFIED BADGE --------------------------------
+-- Renders a small blue checkmark BillboardGui above each verified user's head.
+-- The list of verified userIds (currently the staff list) is fetched on
+-- startup. When a player joins or respawns we attach the badge to their head.
+local function buildVerifiedBadge()
+	-- Standalone BillboardGui (not parented yet). Cloned per character.
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "VerifiedBadge"
+	gui.AlwaysOnTop = true
+	gui.Size = UDim2.new(0, 28, 0, 28)
+	gui.StudsOffset = Vector3.new(0.9, 2.6, 0)
+	gui.SizeOffset = Vector2.new(0, 0)
+
+	-- Blue rounded background. UICorner is unavailable on this engine,
+	-- so we fake a circle with an ImageLabel using the canonical Roblox
+	-- white circle asset, tinted blue.
+	local bg = Instance.new("ImageLabel")
+	bg.Name = "Bg"
+	bg.BackgroundTransparency = 1
+	bg.Size = UDim2.new(1, 0, 1, 0)
+	-- White circle decal (built into client textures for old releases)
+	bg.Image = "rbxasset://textures/whiteCircle.png"
+	bg.ImageColor3 = Color3.new(31/255, 130/255, 224/255) -- Zekoro blue
+	bg.Parent = gui
+
+	local check = Instance.new("TextLabel")
+	check.Name = "Check"
+	check.BackgroundTransparency = 1
+	check.Size = UDim2.new(1, 0, 1, 0)
+	check.Position = UDim2.new(0, 0, 0, -1)
+	check.Text = "\226\156\147" -- UTF-8 for ✓ (U+2713)
+	check.TextColor3 = Color3.new(1, 1, 1)
+	check.Font = Enum.Font.SourceSansBold
+	check.TextScaled = true
+	check.TextStrokeTransparency = 0.7
+	check.Parent = gui
+
+	return gui
+end
+
+local function attachBadgeToCharacter(character)
+	if character == nil then return end
+	local head = character:FindFirstChild("Head")
+	if head == nil then
+		-- Wait for Head to be added (R6/R15 spawn race)
+		local startedAt = tick()
+		while head == nil and (tick() - startedAt) < 5 do
+			wait(0.1)
+			head = character:FindFirstChild("Head")
+		end
+		if head == nil then return end
+	end
+	-- Avoid duplicate badges on respawn races
+	local existing = head:FindFirstChild("VerifiedBadge")
+	if existing ~= nil then return end
+	local badge = buildVerifiedBadge()
+	badge.Parent = head
+end
+
+-- Prepends a checkmark to the player's DisplayName so the native player
+-- list (Tab menu), chat, and overhead nametag all render a verified badge
+-- without any client modifications. The 2020 client renders DisplayName
+-- everywhere a Player.Name would otherwise appear.
+local VERIFIED_PREFIX = "\226\156\147 " -- "✓ " (U+2713 + space)
+local function applyVerifiedDisplayName(player)
+	pcall(function()
+		local current = player.DisplayName
+		-- DisplayName may not exist on very old engines; fall back to Name.
+		if current == nil or current == "" then current = player.Name end
+		if string.sub(current, 1, #VERIFIED_PREFIX) == VERIFIED_PREFIX then
+			return -- already prefixed
+		end
+		player.DisplayName = VERIFIED_PREFIX .. current
+	end)
+end
+
+local function maybeGiveBadge(player)
+	if player == nil then return end
+	-- Wait briefly for the staff list to load before deciding.
+	local startedAt = tick()
+	while adminsList == nil and (tick() - startedAt) < 10 do
+		wait(0.2)
+	end
+	if adminsList == nil then return end
+	if not adminsList[player.userId] then return end
+
+	-- 1. Player-list / chat / overhead badge via DisplayName prefix.
+	applyVerifiedDisplayName(player)
+
+	-- 2. Overhead BillboardGui badge above the head.
+	pcall(function()
+		if player.Character then
+			attachBadgeToCharacter(player.Character)
+		end
+	end)
+	pcall(function()
+		player.CharacterAdded:connect(function(character)
+			attachBadgeToCharacter(character)
+		end)
+	end)
+end
+-------------------------------------------------------------------------------
+
+spawn(function()
+	local ok, newList = pcall(function()
+		local result = game:GetService('HttpRbxApiService'):GetAsync("Users/ListStaff.ashx", true)
+		return game:GetService('HttpService'):JSONDecode(result)
+	end)
+	if not ok then
+		print("GetStaff failed because",newList)
+		return
+	end
+	pcall(function()
+		adminsList = {}
+		adminsList[12] = true -- 12 is hard coded as admin but doesn't show badge
+		for i,v in ipairs(newList) do
+			adminsList[v] = true
+		end
+		verifiedListReady = true
+		-- Back-fill badges for players who joined before the list arrived.
+		for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+			spawn(function() maybeGiveBadge(p) end)
+		end
+	end)
+end)
+
+------------------------------- ADMIN COMMANDS --------------------------------
+-- IY-style chat-prefix admin module. The allowlist is the OwnerUserId array
+-- from the website's appsettings.json, fetched on RCC startup via
+-- GET /gs/admin/owners and refreshed every couple of minutes so editing the
+-- config file is the single source of truth across every game on the
+-- platform. Commands accept ";" or ":" prefix (e.g. ";fly", ";ban 1234 spam").
+-- Server-side actions hit /gs/admin/* with the orchestrator auth and the
+-- actor userId baked into the body; the website re-verifies the actor is an
+-- owner before doing anything privileged.
+print("[admin] module loading; will fetch owner list from /gs/admin/owners")
+local ADMIN_USERIDS = {}
+local ADMIN_OWNERS_FETCHED = false
+
+-- Lazy-fetch the owner list on demand. We deliberately do NOT kick off a
+-- fetch (or any HTTP at all) at script load: this RCC build appears to
+-- behave erratically when game:HttpPost / HttpGet is invoked from a
+-- top-level spawn() before the DataModel is fully ready, and a failure
+-- there manifests as the whole RCC process exiting code 1 right after
+-- "job opened" - taking down the entire game with no useful log line.
+--
+-- Instead the first admin-command attempt triggers the fetch and we
+-- re-fetch lazily after ADMIN_OWNERS_TTL seconds so config changes still
+-- propagate without an orchestrator restart.
+local ADMIN_OWNERS_TTL = 180
+local ADMIN_OWNERS_LAST_FETCH = 0
+
+local function refreshAdminOwners()
+	-- Try POST first (we know game:HttpPost exists on this RCC build), then
+	-- fall back to game:HttpGet for older website deployments where the
+	-- /gs/admin/owners route is GET-only. Whichever returns a body wins.
+	local payload = http:JSONEncode({ ping = "owners" })
+	local response
+	local ok = pcall(function()
+		response = game:HttpPost(url .. "/gs/admin/owners", payload, false, "application/json")
+	end)
+	if not ok or response == nil or response == "" then
+		ok = pcall(function()
+			response = game:HttpGet(url .. "/gs/admin/owners", true)
+		end)
+	end
+	if not ok or response == nil or response == "" then
+		print("[admin] failed to fetch owner list: " .. tostring(response))
+		return false
+	end
+	local decoded
+	pcall(function() decoded = http:JSONDecode(response) end)
+	if decoded == nil or decoded.owners == nil then
+		print("[admin] owner list response had no 'owners' field: " .. tostring(response))
+		return false
+	end
+	local newSet = {}
+	local count = 0
+	for _, id in ipairs(decoded.owners) do
+		local n = tonumber(id)
+		if n then newSet[n] = true; count = count + 1 end
+	end
+	ADMIN_USERIDS = newSet
+	ADMIN_OWNERS_FETCHED = true
+	ADMIN_OWNERS_LAST_FETCH = tick()
+	print("[admin] owner list refreshed; " .. tostring(count) .. " admins")
+	return true
+end
+
+local function ensureAdminOwners()
+	if not ADMIN_OWNERS_FETCHED or (tick() - ADMIN_OWNERS_LAST_FETCH) > ADMIN_OWNERS_TTL then
+		pcall(refreshAdminOwners)
+	end
+end
+
+local function isAdmin(player)
+	return player ~= nil and ADMIN_USERIDS[player.userId] == true
+end
+
+-- IY-style toast: dark rounded card, coloured accent strip, ~4s fade.
+-- Always also prints to the RCC console (visible in `docker logs` /
+-- orchestrator stdout) and posts a chat-bubble above the player's head as
+-- a fallback in case PlayerGui parenting fails on this RCC build.
+local function adminNotify(player, title, message, color)
+	if player == nil then return end
+	print("[admin] notify -> " .. tostring(player.Name) .. " | " .. tostring(title) .. ": " .. tostring(message))
+	pcall(function()
+		if player.Character then
+			local head = player.Character:FindFirstChild("Head") or player.Character:FindFirstChild("HumanoidRootPart") or player.Character:FindFirstChild("Torso")
+			if head then
+				game:GetService("Chat"):Chat(head, "[" .. title .. "] " .. message, Enum.ChatColor.Blue)
+			end
+		end
+	end)
+	color = color or Color3.new(31/255, 130/255, 224/255)
+	pcall(function()
+		local pgui = player:FindFirstChild("PlayerGui")
+		if pgui == nil then return end
+		local screen = Instance.new("ScreenGui")
+		screen.Name = "AdmCmdNotif"
+		screen.Parent = pgui
+		local bg = Instance.new("Frame")
+		bg.Size = UDim2.new(0, 300, 0, 64)
+		bg.Position = UDim2.new(1, -320, 0, 20)
+		bg.BackgroundColor3 = Color3.new(20/255, 20/255, 24/255)
+		bg.BackgroundTransparency = 0.05
+		bg.BorderSizePixel = 0
+		bg.Parent = screen
+		local accent = Instance.new("Frame")
+		accent.Size = UDim2.new(0, 4, 1, 0)
+		accent.BackgroundColor3 = color
+		accent.BorderSizePixel = 0
+		accent.Parent = bg
+		local titleLbl = Instance.new("TextLabel")
+		titleLbl.Size = UDim2.new(1, -16, 0, 22)
+		titleLbl.Position = UDim2.new(0, 12, 0, 6)
+		titleLbl.BackgroundTransparency = 1
+		titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+		titleLbl.Font = Enum.Font.SourceSansBold
+		titleLbl.TextSize = 16
+		titleLbl.TextColor3 = Color3.new(1, 1, 1)
+		titleLbl.Text = title
+		titleLbl.Parent = bg
+		local msgLbl = Instance.new("TextLabel")
+		msgLbl.Size = UDim2.new(1, -16, 0, 32)
+		msgLbl.Position = UDim2.new(0, 12, 0, 28)
+		msgLbl.BackgroundTransparency = 1
+		msgLbl.TextXAlignment = Enum.TextXAlignment.Left
+		msgLbl.TextYAlignment = Enum.TextYAlignment.Top
+		msgLbl.TextWrapped = true
+		msgLbl.Font = Enum.Font.SourceSans
+		msgLbl.TextSize = 13
+		msgLbl.TextColor3 = Color3.new(0.85, 0.85, 0.85)
+		msgLbl.Text = message
+		msgLbl.Parent = bg
+		delay(4.5, function() pcall(function() screen:Destroy() end) end)
+	end)
+end
+
+local function broadcastAnnounce(message)
+	for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+		adminNotify(p, "Announcement", message, Color3.new(1, 0.7, 0.1))
+	end
+end
+
+local function resolveTarget(arg)
+	if arg == nil or arg == "" then return nil end
+	local n = tonumber(arg)
+	local players = game:GetService("Players"):GetPlayers()
+	if n ~= nil then
+		for _, p in ipairs(players) do
+			if p.userId == n then return p end
+		end
+		return nil
+	end
+	local lower = string.lower(arg)
+	for _, p in ipairs(players) do
+		if string.lower(p.Name) == lower then return p end
+	end
+	for _, p in ipairs(players) do
+		if string.sub(string.lower(p.Name), 1, string.len(lower)) == lower then return p end
+	end
+	return nil
+end
+
+local function postAdmin(path, payload)
+	payload.authorization = "_AUTHORIZATION_STRING_"
+	payload.serverId = game.JobId
+	local ok, response = pcall(function()
+		return game:HttpPost(url .. path, http:JSONEncode(payload), false, "application/json")
+	end)
+	if not ok then return false, tostring(response) end
+	local decoded
+	pcall(function() decoded = http:JSONDecode(response) end)
+	return true, decoded
+end
+
+local maintenanceMode = false
+local maintenanceReason = nil
+local flyBodies = {}
+
+-- Server-side fly that works in old RCC builds (no LocalScript injection,
+-- no MoveDirection replication required).
+--
+-- Mechanics: a BodyVelocity is parented to the character's Torso with
+-- MaxForce set on Y only - gravity stops affecting the character but X/Z
+-- movement still comes from the normal Humanoid input pipeline, so WASD
+-- continues to walk you around mid-air. A Heartbeat loop watches
+-- Humanoid.Jump and Humanoid.Sit to convert them into vertical velocity:
+--   * Jump pressed  -> ascend
+--   * Sit pressed   -> descend (some clients bind this to a key, harmless
+--                      otherwise; you can always toggle ;unfly to land)
+-- otherwise hover. We bypass the seat behaviour by clearing Sit on the
+-- next heartbeat so the avatar doesn't visibly sit while you're flying.
+local FLY_VERTICAL_SPEED = 50
+
+local function startFly(player)
+	if player == nil or player.Character == nil then return end
+	local hrp = player.Character:FindFirstChild("Torso") or player.Character:FindFirstChild("HumanoidRootPart")
+	local hum = player.Character:FindFirstChild("Humanoid")
+	if hrp == nil or hum == nil then return end
+	if flyBodies[player.userId] then
+		pcall(function() flyBodies[player.userId].bv:Destroy() end)
+		pcall(function() flyBodies[player.userId].conn:disconnect() end)
+	end
+	local bv = Instance.new("BodyVelocity")
+	-- MaxForce on Y only: gravity is countered but normal humanoid X/Z
+	-- input still pushes the character around in the air.
+	bv.MaxForce = Vector3.new(0, math.huge, 0)
+	bv.Velocity = Vector3.new(0, 0, 0)
+	bv.Parent = hrp
+	local conn = game:GetService("RunService").Heartbeat:connect(function()
+		if player == nil or player.Character == nil or hrp.Parent == nil then return end
+		local up = false
+		local down = false
+		pcall(function() up = hum.Jump end)
+		pcall(function() down = hum.Sit end)
+		local vy = 0
+		if up then vy = FLY_VERTICAL_SPEED end
+		if down then vy = vy - FLY_VERTICAL_SPEED end
+		bv.Velocity = Vector3.new(0, vy, 0)
+		-- Don't actually let them sit; we're hijacking the flag for descent.
+		if down then pcall(function() hum.Sit = false end) end
+	end)
+	flyBodies[player.userId] = { bv = bv, conn = conn }
+end
+
+local function stopFly(player)
+	if player == nil then return end
+	local entry = flyBodies[player.userId]
+	if entry == nil then return end
+	pcall(function() entry.bv:Destroy() end)
+	pcall(function() entry.conn:disconnect() end)
+	flyBodies[player.userId] = nil
+end
+
+local cmds = {}
+
+cmds.fly = function(s, a)
+	local t = (a[1] and resolveTarget(a[1])) or s
+	if t == nil then adminNotify(s, "fly", "Target not found"); return end
+	if flyBodies[t.userId] then stopFly(t); adminNotify(s, "fly", "Disabled fly for " .. t.Name)
+	else startFly(t); adminNotify(s, "fly", "Enabled fly for " .. t.Name) end
+end
+
+cmds.unfly = function(s, a)
+	local t = (a[1] and resolveTarget(a[1])) or s
+	if t == nil then adminNotify(s, "unfly", "Target not found"); return end
+	stopFly(t)
+	adminNotify(s, "unfly", "Disabled fly for " .. t.Name)
+end
+
+cmds.kick = function(s, a)
+	local t = resolveTarget(a[1])
+	if t == nil then adminNotify(s, "kick", "Target not found"); return end
+	local r = table.concat(a, " ", 2)
+	if r == "" then r = "Kicked by admin" end
+	pcall(function() t:Kick(r) end)
+	adminNotify(s, "kick", "Kicked " .. t.Name .. ": " .. r, Color3.new(1, 0.4, 0.4))
+end
+
+cmds.ban = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "ban", "Usage: ;ban <userid> <reason>"); return end
+	local r = table.concat(a, " ", 2); if r == "" then r = "Banned by admin" end
+	local ok, resp = postAdmin("/gs/admin/ban", {actorUserId = s.userId, targetUserId = id, reason = r})
+	if ok and resp and resp.ok then
+		adminNotify(s, "ban", "Banned " .. id, Color3.new(1, 0.4, 0.4))
+		local p = resolveTarget(tostring(id))
+		if p then pcall(function() p:Kick("Banned: " .. r) end) end
+	else
+		adminNotify(s, "ban", "Failed: " .. tostring(resp and resp.reason or resp))
+	end
+end
+
+cmds.unban = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "unban", "Usage: ;unban <userid>"); return end
+	local ok, resp = postAdmin("/gs/admin/unban", {actorUserId = s.userId, targetUserId = id})
+	if ok and resp and resp.ok then adminNotify(s, "unban", "Unbanned " .. id)
+	else adminNotify(s, "unban", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.giveitem = function(s, a)
+	local id = tonumber(a[1]); local aid = tonumber(a[2])
+	if id == nil or aid == nil then adminNotify(s, "giveitem", "Usage: ;giveitem <userid> <itemid>"); return end
+	local ok, resp = postAdmin("/gs/admin/giveitem", {actorUserId = s.userId, targetUserId = id, assetId = aid})
+	if ok and resp and resp.ok then adminNotify(s, "giveitem", "Gave " .. aid .. " to " .. id)
+	else adminNotify(s, "giveitem", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.removeitem = function(s, a)
+	local id = tonumber(a[1]); local aid = tonumber(a[2])
+	if id == nil or aid == nil then adminNotify(s, "removeitem", "Usage: ;removeitem <userid> <itemid>"); return end
+	local ok, resp = postAdmin("/gs/admin/removeitem", {actorUserId = s.userId, targetUserId = id, assetId = aid})
+	if ok and resp and resp.ok then adminNotify(s, "removeitem", "Removed " .. aid .. " from " .. id)
+	else adminNotify(s, "removeitem", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.givecurrency = function(s, a)
+	local id = tonumber(a[1]); local amt = tonumber(a[2]); local cur = a[3] or "robux"
+	if id == nil or amt == nil then adminNotify(s, "givecurrency", "Usage: ;givecurrency <userid> <amt> [robux|tickets]"); return end
+	local ok, resp = postAdmin("/gs/admin/givecurrency", {actorUserId = s.userId, targetUserId = id, amount = amt, currency = cur})
+	if ok and resp and resp.ok then adminNotify(s, "givecurrency", "+" .. amt .. " " .. cur .. " to " .. id)
+	else adminNotify(s, "givecurrency", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.announce = function(s, a)
+	local msg = table.concat(a, " ")
+	if msg == "" then adminNotify(s, "announce", "Usage: ;announce <message>"); return end
+	broadcastAnnounce(msg)
+end
+
+cmds.shutdown = function(s, a)
+	local r = table.concat(a, " "); if r == "" then r = "Server shutting down by admin" end
+	for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+		pcall(function() p:Kick(r) end)
+	end
+	delay(2, function() shutdown() end)
+end
+
+cmds.setrank = function(s, a)
+	local id = tonumber(a[1]); local rank = a[2]
+	if id == nil or rank == nil then adminNotify(s, "setrank", "Usage: ;setrank <userid> <rank>"); return end
+	local ok, resp = postAdmin("/gs/admin/setrank", {actorUserId = s.userId, targetUserId = id, rank = rank})
+	if ok and resp and resp.ok then adminNotify(s, "setrank", "Rank " .. rank .. " for " .. id)
+	else adminNotify(s, "setrank", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.logs = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "logs", "Usage: ;logs <userid>"); return end
+	local ok, resp = postAdmin("/gs/admin/logs", {actorUserId = s.userId, targetUserId = id})
+	if ok and resp and resp.ok and resp.entries then
+		local lines = {}
+		for i, e in ipairs(resp.entries) do
+			table.insert(lines, (e.kind or "?") .. ": " .. (e.reason or "(no reason)"))
+			if i >= 5 then break end
+		end
+		if #lines == 0 then table.insert(lines, "No logs.") end
+		adminNotify(s, "logs " .. id, table.concat(lines, "\n"))
+	else adminNotify(s, "logs", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.maintenance = function(s, a)
+	local mode = a[1]
+	if mode == "on" then
+		maintenanceMode = true
+		local r = table.concat(a, " ", 2); if r == "" then r = "Server in maintenance mode" end
+		maintenanceReason = r
+		adminNotify(s, "maintenance", "ON: " .. r, Color3.new(1, 0.7, 0.1))
+	elseif mode == "off" then
+		maintenanceMode = false; maintenanceReason = nil
+		adminNotify(s, "maintenance", "OFF")
+	else adminNotify(s, "maintenance", "Usage: ;maintenance <on|off> [reason]") end
+end
+
+----------------------- LOCAL (server-only) admin tools -----------------------
+-- These don't hit the website - they only affect the live game session.
+
+local mutedUserIds = {}
+local serverLocked = false
+
+cmds.mute = function(s, a)
+	local id = tonumber(a[1])
+	if id == nil then
+		local t = a[1] and resolveTarget(a[1]); if t then id = t.userId end
+	end
+	if id == nil then adminNotify(s, "mute", "Usage: ;mute <userid|name>"); return end
+	mutedUserIds[id] = true
+	adminNotify(s, "mute", "Muted " .. id .. " in this server")
+end
+
+cmds.unmute = function(s, a)
+	local id = tonumber(a[1])
+	if id == nil then
+		local t = a[1] and resolveTarget(a[1]); if t then id = t.userId end
+	end
+	if id == nil then adminNotify(s, "unmute", "Usage: ;unmute <userid|name>"); return end
+	mutedUserIds[id] = nil
+	adminNotify(s, "unmute", "Unmuted " .. id)
+end
+
+cmds.lockserver = function(s, a)
+	serverLocked = true
+	adminNotify(s, "lockserver", "Server locked - new players blocked", Color3.new(1, 0.7, 0.1))
+end
+
+cmds.unlockserver = function(s, a)
+	serverLocked = false
+	adminNotify(s, "unlockserver", "Server unlocked")
+end
+
+local function teleportTo(target, dest)
+	if target == nil or target.Character == nil then return false end
+	local hrp = target.Character:FindFirstChild("Torso") or target.Character:FindFirstChild("HumanoidRootPart")
+	local destHrp = dest and dest.Character and (dest.Character:FindFirstChild("Torso") or dest.Character:FindFirstChild("HumanoidRootPart"))
+	if hrp == nil or destHrp == nil then return false end
+	pcall(function() hrp.CFrame = destHrp.CFrame + Vector3.new(0, 4, 0) end)
+	return true
+end
+
+cmds.bring = function(s, a)
+	local t = resolveTarget(a[1])
+	if t == nil then adminNotify(s, "bring", "Usage: ;bring <userid|name>"); return end
+	if teleportTo(t, s) then adminNotify(s, "bring", "Brought " .. t.Name)
+	else adminNotify(s, "bring", "Failed (target/character missing)") end
+end
+
+cmds["goto"] = function(s, a)
+	local t = resolveTarget(a[1])
+	if t == nil then adminNotify(s, "goto", "Usage: ;goto <userid|name>"); return end
+	if teleportTo(s, t) then adminNotify(s, "goto", "Teleported to " .. t.Name)
+	else adminNotify(s, "goto", "Failed (target/character missing)") end
+end
+
+cmds.teleport = function(s, a)
+	-- ;teleport <who> <toUserOrName>
+	local who = resolveTarget(a[1])
+	local to = resolveTarget(a[2])
+	if who == nil or to == nil then adminNotify(s, "teleport", "Usage: ;teleport <who> <to>"); return end
+	if teleportTo(who, to) then adminNotify(s, "teleport", who.Name .. " -> " .. to.Name)
+	else adminNotify(s, "teleport", "Failed (character missing)") end
+end
+
+local function reloadCharacter(target)
+	if target == nil then return false end
+	local ok = pcall(function() target:LoadCharacter() end)
+	return ok
+end
+
+cmds.refresh = function(s, a)
+	local t = (a[1] and resolveTarget(a[1])) or s
+	if t == nil then adminNotify(s, "refresh", "Target not found"); return end
+	if reloadCharacter(t) then adminNotify(s, "refresh", "Reloaded " .. t.Name)
+	else adminNotify(s, "refresh", "Failed") end
+end
+
+cmds.resetcharacter = cmds.refresh
+cmds.forceavatarreload = cmds.refresh
+
+----------------------- BACKEND-BACKED admin commands -----------------------
+
+cmds.warn = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "warn", "Usage: ;warn <userid> <reason>"); return end
+	local r = table.concat(a, " ", 2); if r == "" then r = "Warned by admin" end
+	local ok, resp = postAdmin("/gs/admin/warn", {actorUserId = s.userId, targetUserId = id, reason = r})
+	if ok and resp and resp.ok then
+		adminNotify(s, "warn", "Warned " .. id .. ": " .. r, Color3.new(1, 0.7, 0.1))
+		local p = resolveTarget(tostring(id))
+		if p then adminNotify(p, "Warning", r, Color3.new(1, 0.4, 0.4)) end
+	else adminNotify(s, "warn", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.removecurrency = function(s, a)
+	local id = tonumber(a[1]); local amt = tonumber(a[2]); local cur = a[3] or "robux"
+	if id == nil or amt == nil then adminNotify(s, "removecurrency", "Usage: ;removecurrency <userid> <amt> [robux|tickets]"); return end
+	local ok, resp = postAdmin("/gs/admin/removecurrency", {actorUserId = s.userId, targetUserId = id, amount = amt, currency = cur})
+	if ok and resp and resp.ok then adminNotify(s, "removecurrency", "-" .. tostring(resp.amount or amt) .. " " .. cur .. " from " .. id)
+	else adminNotify(s, "removecurrency", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.resetinventory = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "resetinventory", "Usage: ;resetinventory <userid>"); return end
+	local ok, resp = postAdmin("/gs/admin/resetinventory", {actorUserId = s.userId, targetUserId = id})
+	if ok and resp and resp.ok then adminNotify(s, "resetinventory", "Cleared inventory for " .. id .. " (" .. tostring(resp.removed or "?") .. " items)")
+	else adminNotify(s, "resetinventory", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.removerank = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "removerank", "Usage: ;removerank <userid>"); return end
+	local ok, resp = postAdmin("/gs/admin/removerank", {actorUserId = s.userId, targetUserId = id})
+	if ok and resp and resp.ok then adminNotify(s, "removerank", "Removed rank for " .. id)
+	else adminNotify(s, "removerank", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.whitelist = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "whitelist", "Usage: ;whitelist <userid>"); return end
+	local ok, resp = postAdmin("/gs/admin/whitelist", {actorUserId = s.userId, targetUserId = id})
+	if ok and resp and resp.ok then adminNotify(s, "whitelist", "Whitelisted " .. id)
+	else adminNotify(s, "whitelist", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.unwhitelist = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "unwhitelist", "Usage: ;unwhitelist <userid>"); return end
+	local ok, resp = postAdmin("/gs/admin/unwhitelist", {actorUserId = s.userId, targetUserId = id})
+	if ok and resp and resp.ok then adminNotify(s, "unwhitelist", "Unwhitelisted " .. id)
+	else adminNotify(s, "unwhitelist", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.viewprofile = function(s, a)
+	local id = tonumber(a[1]); if id == nil then adminNotify(s, "viewprofile", "Usage: ;viewprofile <userid>"); return end
+	local ok, resp = postAdmin("/gs/admin/viewprofile", {actorUserId = s.userId, targetUserId = id})
+	if ok and resp and resp.ok then
+		local lines = {
+			tostring(resp.username or "?") .. " (" .. tostring(resp.userId or id) .. ")",
+			"Status: " .. tostring(resp.status or "?"),
+			"R$ " .. tostring(resp.robux or 0) .. "  T$ " .. tostring(resp.tickets or 0),
+			(resp.isOwner and "OWNER" or (resp.isStaff and "STAFF" or "user")),
+		}
+		adminNotify(s, "profile " .. id, table.concat(lines, "\n"))
+	else adminNotify(s, "viewprofile", "Failed: " .. tostring(resp and resp.reason or resp)) end
+end
+
+cmds.cmds = function(s, a)
+	adminNotify(s, "Commands", "ban unban kick mute unmute warn logs\ngiveitem removeitem givecurrency removecurrency resetinventory\nteleport bring goto refresh resetcharacter forceavatarreload\nshutdown announce setrank removerank whitelist unwhitelist\nviewprofile maintenance lockserver unlockserver fly unfly")
+end
+
+local function processAdminCommand(player, message)
+	-- Accept either ";" (IY default) or ":" (matches the legacy staff
+	-- mod-command prefix users have muscle-memory for). The first char is
+	-- consumed and the remainder is parsed identically. ";cmds" / ":cmds"
+	-- both work; ":ban <userid>" reaches the admin handler when the actor
+	-- is in the {180, 4} allowlist (staff still gets ":ban <name>" via
+	-- processModCommand because that branch parses partial names, not ids).
+	local first = string.sub(message, 1, 1)
+	if first ~= ";" and first ~= ":" then return end
+	print("[admin] chat " .. tostring(player.userId) .. " (" .. tostring(player.Name) .. ") -> " .. tostring(message))
+	-- Lazy-fetch the owner list on the first admin-prefix message we see.
+	-- Doing it here (rather than at script load) keeps the script chunk
+	-- crash-free during DataModel boot.
+	ensureAdminOwners()
+	if not isAdmin(player) then
+		print("[admin] reject: userId " .. tostring(player.userId) .. " is not in allowlist")
+		return
+	end
+	local body = string.sub(message, 2)
+	local parts = {}
+	for w in string.gmatch(body, "%S+") do table.insert(parts, w) end
+	if #parts == 0 then return end
+	local cmd = string.lower(parts[1]); local args = {}
+	for i = 2, #parts do args[#args + 1] = parts[i] end
+	local handler = cmds[cmd]
+	if handler == nil then adminNotify(player, cmd, "Unknown. Try ;cmds"); return end
+	local ok, err = pcall(function() handler(player, args) end)
+	if not ok then
+		print("[admin] handler error: " .. tostring(err))
+		adminNotify(player, cmd, "Error: " .. tostring(err), Color3.new(1, 0.3, 0.3))
+	end
+end
+
+local function isMaintenanceBlocking(player)
+	return maintenanceMode and not isAdmin(player)
+end
+-------------------------------------------------------------------------------
+
+local bannedIds = {}
+
+local function processModCommand(sender, message)
+	if string.sub(message, 1, 5) == ":ban " then
+		local userToBan = string.sub(string.lower(message), 6)
+		local player = nil
+		for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+			local name = string.sub(string.lower(p.Name), 1, string.len(userToBan))
+			if name == userToBan and p ~= sender then
+				player = p
+				break
+			else
+				print("Not a match!",name,"vs",userToBan)
+			end
+		end
+		print("ban", player, userToBan)
+		if player ~= nil then
+			player:Kick("Banned from this server by an administrator")
+			bannedIds[player.userId] = {
+				["Name"] = player.Name, -- for unban
+			}
+		end
+	end
+	if string.sub(message, 1, 7) == ":unban " then
+		local userToBan = string.sub(string.lower(message), 8)
+		local userId = nil
+		for id, data in pairs(bannedIds) do
+			local name = string.sub(string.lower(data.Name), 1, string.len(userToBan))
+			if name == userToBan then
+				userId = id
+				break
+			end
+		end
+		print("ban", userId)
+		if userId ~= nil then
+			table.remove(bannedIds, userId)
+		end
+	end
+end
+
+local function getBannedUsersAsync(playersTable)
+	local csv = ""
+	for _, p in ipairs(playersTable) do
+		csv = csv .. "," .. tostring(p.userId)
+	end
+	if csv == "" then return end
+	csv = string.sub(csv, 2)
+
+	local url = "Users/GetBanStatus.ashx?userIds=" .. csv
+	local ok, newList = pcall(function()
+		local result = game:GetService('HttpRbxApiService'):GetAsync(url, true)
+		return game:GetService('HttpService'):JSONDecode(result)
+	end)
+
+	if not ok then
+		print("getBannedUsersAsync failed because",newList)
+		return
+	end
+
+	local ok, banProcErr = pcall(function()
+		for _, entry in ipairs(newList) do
+			if entry.isBanned then
+				local inGame = game:GetService("Players"):GetPlayerByUserId(entry.userId)
+				if inGame ~= nil then
+					inGame:Kick("Account restriction. Visit our website for more information.")
+				end
+			end
+		end
+	end)
+	if not ok then
+		print("[error] could not process ban result",banProcErr)
+	end
+end
+local hasNoPlayerCount = 0
+spawn(function()
+	while true do
+		wait(30)
+		print("Checking banned players...")
+		if #game:GetService("Players"):GetPlayers() == 0 then
+			print("[warn] no players. m=",hasNoPlayerCount)
+			serverOk = false
+			hasNoPlayerCount = hasNoPlayerCount + 1
+		else
+			print("game has players, reset mod")
+			hasNoPlayerCount = 0
+		end
+		if hasNoPlayerCount >= 3 then
+			print("Server has had no players for over 1.5m, attempt shutdown")
+			pcall(function()
+				shutdown()
+			end)
+		end
+		getBannedUsersAsync(game:GetService("Players"):GetPlayers())
+	end
+end)
+
+game:GetService("Players").PlayerAdded:connect(function(player)
+	playersJoin = playersJoin + 1;
+	print("Player " .. player.userId .. " added")
+    reportPlayerEvent(player.userId, "Join")
+
+	if bannedIds[player.userId] ~= nil then
+		player:Kick("Banned from this server by an administrator")
+		return
+	end
+
+	-- Maintenance mode: only admins can join while it's on. Everyone else
+	-- gets the configured reason and is bounced. ;lockserver gives the same
+	-- behaviour with a fixed reason.
+	if isMaintenanceBlocking(player) then
+		delay(0.1, function()
+			pcall(function() player:Kick(maintenanceReason or "Server is under maintenance") end)
+		end)
+		return
+	end
+	if serverLocked and not isAdmin(player) then
+		delay(0.1, function()
+			pcall(function() player:Kick("Server is locked") end)
+		end)
+		return
+	end
+
+	-- LOUD DIAGNOSTIC: log every Chatted event unconditionally so we can
+	-- verify (a) the new gameserver.lua is the one running in RCC and
+	-- (b) Player.Chatted is actually firing at all on this build.
+	print("[admin] subscribing Chatted for " .. tostring(player.Name) .. " (userId " .. tostring(player.userId) .. ", isAdmin=" .. tostring(isAdmin(player)) .. ")")
+	player.Chatted:connect(function(message)
+		print("[admin] Chatted from " .. tostring(player.Name) .. " (" .. tostring(player.userId) .. "): " .. tostring(message))
+		-- ;mute keeps the player here but silences anything they say (other
+		-- than admin commands they're allowed to run).
+		if mutedUserIds[player.userId] and not isAdmin(player) then
+			pcall(function()
+				if player.Character then
+					local head = player.Character:FindFirstChild("Head")
+					if head then
+						game:GetService("Chat"):Chat(head, "[muted]", Enum.ChatColor.Red)
+					end
+				end
+			end)
+			return
+		end
+		-- Legacy staff commands (":ban <name>", ":unban <name>") for the
+		-- staff list pulled from ListStaff.ashx.
+		if adminsList ~= nil and adminsList[player.userId] ~= nil then
+			processModCommand(player, message)
+		end
+		-- New IY-style admin commands (";cmd args" or ":cmd args"); the
+		-- allowlist is OwnerUserId from appsettings.json (refreshed every
+		-- few minutes via /gs/admin/owners).
+		processAdminCommand(player, message)
+	end)
+
+	-- Attach the blue verified-badge BillboardGui above the head if the
+	-- joining user is on the staff/verified list. Fires asynchronously so
+	-- it doesn't block the rest of the join handler.
+	spawn(function() maybeGiveBadge(player) end)
+end)
+
+game:GetService("Players").PlayerRemoving:connect(function(player)
+	print("Player " .. player.userId .. " leaving")
+    reportPlayerEvent(player.userId, "Leave")
+	-- IMPORTANT: PlayerRemoving fires *before* the player is removed from
+	-- :GetPlayers(), so a naive `#GetPlayers() == 0` check is always false
+	-- when the last player leaves. Count everyone except the leaving
+	-- player ourselves, otherwise the RCC stays alive forever and the
+	-- website keeps reporting the place as "InGame".
+	local remaining = 0
+	for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+		if p ~= player then
+			remaining = remaining + 1
+		end
+	end
+	if remaining == 0 then
+		shutdown();
+	end
+end)
+
+if placeId~=nil and url~=nil then
+	-- yield so that file load happens in the heartbeat thread
+	wait()
+
+	-- load the game
+	game:Load(url .. "/asset/?id=" .. placeId)
+end
+
+-- initCharPositionHack()
+
+-- Now start the connection
+ns:Start(port)
+
+scriptContext:SetTimeout(10)
+scriptContext.ScriptsDisabled = false
+
+
+
+------------------------------END START GAME SHARED SCRIPT--------------------------
+
+
+
+-- StartGame --
+game:GetService("RunService"):Run()
+
+serverOk = true;
+coroutine.wrap(function()
+	pollToReportActivity()
+end)()
+-- kill server if nobody joins within 2m of creation
+delay(120, function()
+	if playersJoin == 0 then
+		serverOk = false
+		shutdown();
+	end
+end)
+
+print("[info] gameserver.txt end");

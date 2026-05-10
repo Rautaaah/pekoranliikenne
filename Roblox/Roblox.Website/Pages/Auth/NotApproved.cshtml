@@ -1,0 +1,280 @@
+@page "/auth/notapproved"
+@model Roblox.Website.Pages.NotApproved
+
+@{
+    Layout = Model.isWarning ? null : "Shared/_Layout";
+}
+
+@if (Model.isWarning)
+{
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Account Warning</title>
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                color: #f2f2f2;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            body {
+                position: relative;
+                background: #0e2432 url('/img/landing/signupbackground.png') no-repeat center top fixed;
+                background-size: cover;
+            }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: rgba(7, 16, 24, 0.42);
+                pointer-events: none;
+            }
+
+            .warning-screen {
+                position: relative;
+                z-index: 1;
+                min-height: 100vh;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                padding: 32px 20px;
+                box-sizing: border-box;
+            }
+
+            .warning-panel {
+                width: min(780px, 100%);
+                min-height: calc(100vh - 64px);
+                display: flex;
+                flex-direction: column;
+                background: rgba(36, 39, 42, 0.94);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 0;
+                box-shadow: none;
+                padding: 28px 32px 26px;
+                box-sizing: border-box;
+            }
+
+            .warning-panel h1 {
+                margin: 0 0 18px;
+                color: #fff;
+                font-size: 31px;
+                font-weight: 700;
+            }
+
+            .warning-panel p {
+                margin: 0 0 14px;
+                color: #e0e0e0;
+                font-size: 15px;
+                line-height: 1.5;
+            }
+
+            .warning-panel a {
+                color: #19a7ff;
+                text-decoration: none;
+            }
+
+            .warning-box {
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                border-radius: 0;
+                margin: 16px 0;
+                padding: 12px 14px 10px;
+                color: #f1f1f1;
+                background: rgba(0, 0, 0, 0.12);
+            }
+
+            .warning-box p {
+                color: #f1f1f1;
+                margin-bottom: 10px;
+            }
+
+            .warning-box p:last-child {
+                margin-bottom: 0;
+            }
+
+            .warning-label {
+                font-weight: 700;
+            }
+
+            .warning-actions {
+                margin-top: auto;
+                padding-top: 34px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 18px;
+            }
+
+            .agreement-label {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: #fff;
+                font-size: 15px;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            .agreement-label input {
+                width: 18px;
+                height: 18px;
+                accent-color: #2fbf63;
+                cursor: pointer;
+            }
+
+            .reactivate-button {
+                appearance: none;
+                border: 1px solid #1e6d3a;
+                border-radius: 0;
+                background: #29a14c;
+                color: #fff;
+                min-width: 180px;
+                padding: 10px 18px;
+                font-size: 15px;
+                font-weight: 700;
+                cursor: pointer;
+                box-shadow: none;
+            }
+
+            .reactivate-button:hover {
+                background: #31b457;
+            }
+
+            .reactivate-button:active {
+                background: #248f44;
+            }
+
+            @@media (max-width: 700px) {
+                .warning-screen {
+                    padding: 16px;
+                }
+
+                .warning-panel {
+                    min-height: calc(100vh - 32px);
+                    padding: 22px 20px;
+                }
+
+                .warning-panel h1 {
+                    font-size: 26px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+    <main class="warning-screen">
+        <section class="warning-panel" role="alert" aria-labelledby="warning-title">
+            <h1 id="warning-title">Warning</h1>
+            <p>Our content monitors have determined that your behavior on Zekoro has been in violation of our <a href="/auth/tos">Terms of Use</a>.</p>
+            <p>Reviewed: @Model.ban!.createdAt.ToString("M/d/yyyy h:mm:ss tt") UTC</p>
+            <p><span class="warning-label">Moderator Note:</span> Please follow the rules so Zekoro can be fun for users of all ages.</p>
+            <div class="warning-box">
+                <p><span class="warning-label">Reason:</span> @Model.ban.reason</p>
+            </div>
+            <p>Your account has been warned. To reactivate your account, review the warning and agree to follow the rules.</p>
+            <p>If you wish to appeal, please contact us via the <a href="/auth/contact">Contact Form</a>.</p>
+            <form method="POST" class="warning-actions">
+                <label class="agreement-label">
+                    <input type="checkbox" name="agreedToWarning" value="true" required />
+                    <span>Agree to reactivate your account</span>
+                </label>
+                <input type="submit" name="unlockAccount" value="Reactivate Account" class="reactivate-button" />
+                @Html.AntiForgeryToken()
+            </form>
+        </section>
+    </main>
+    </body>
+    </html>
+}
+else
+{
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12 col-lg-6 offset-lg-3">
+                <div class="card card-body bg-dark text-light">
+                    @{
+                        if (Model.ban!.expiredAt != null)
+                        {
+                            var banDuration = Model.ban.expiredAt.Value - DateTime.UtcNow;
+                            string banText;
+                            if (banDuration.TotalDays <= 1)
+                            {
+                                banText = "Banned for 1 day";
+                            }
+                            else if (banDuration.TotalDays <= 3)
+                            {
+                                banText = "Banned for 3 days";
+                            }
+                            else if (banDuration.TotalDays <= 7)
+                            {
+                                banText = "Banned for 1 week";
+                            }
+                            else if (banDuration.TotalDays <= 14)
+                            {
+                                banText = "Banned for 2 weeks";
+                            }
+                            else if (banDuration.TotalDays <= 30)
+                            {
+                                banText = "Banned for 1 month";
+                            }
+                            else if (banDuration.TotalDays <= 365)
+                            {
+                                banText = "Banned for 1 year";
+                            }
+                            else
+                            {
+                                banText = $"Banned for {(int)banDuration.TotalDays} days";
+                            }
+
+                            <h3>@banText</h3>
+                        }
+                        else
+                        {
+                            <h3>Account Deleted</h3>
+                        }
+                    }
+
+                    <p class="mb-0">
+                        @if (Model.ban.expiredAt != null)
+                        {
+                            <span>Your account has been temporarily banned from this website for the following reason:</span>
+                        }
+                        else
+                        {
+                            <span>Your account has been permanently banned from this website for the following reason:</span>
+                        }
+                    </p>
+                    @if (Model.ninjaLowTaperFade)
+                    {
+                        <img src="https://zekoro.org/img/LowTaperFade.jpeg" alt="Massive!">
+                    }
+                    <div class="alert alert-secondary mt-2 mb-2">
+                        <p class="mb-0">@Model.ban.reason</p>
+                        <p class="mb-0 fst-italic mt-4">Ban created: @Model.ban.createdAt.ToString("f") UTC</p>
+                        @if (Model.ban.expiredAt != null)
+                        {
+                            <p class="mb-0 fst-italic mt-1">Ban expiration: @Model.ban.expiredAt.Value.ToString("f") UTC</p>
+                        }
+                    </div>
+                    @if (Model.ban.canUnlock)
+                    {
+                        <p>You can unlock your account by clicking the button below. Further violations of our rules may lead to account deletion.</p>
+                        <form method="POST">
+                            <input type="submit" name="unlockAccount" value="Unlock Account" class="btn btn-success" />
+                            @Html.AntiForgeryToken()
+                        </form>
+                    }
+                    else
+                    {
+                        <p>If you attempt to create accounts to bypass a ban, we may ban your new accounts at any time.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,116 @@
+name: Deploy VPS
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    env:
+      DEPLOY_PATH: C:\Users\Administrator\Desktop\oldborkenzekoro
+      FRONTEND_SERVICE: ZekoroFrontend
+      WEBSITE_SERVICE: ZekoroWebsite
+      GAMESERVER_SERVICE: ZekoroGameServer
+      GAMERENDERER_SERVICE: ZekoroGameRenderer
+      RCC_CATALOG_GAME_SERVICE: ZekoroRccCatalogGame
+      RCC_IMAGE_PLAYER_SERVICE: ZekoroRccImagePlayer
+      ASSET_VALIDATION_SERVICE: ZekoroAssetValidation
+      FRONTEND_PATH: frontend
+      WEBSITE_PROJECT: Roblox\Roblox.Website\Roblox.Website.csproj
+
+    steps:
+      - name: Verify deploy path exists
+        shell: powershell
+        run: |
+          if (!(Test-Path $env:DEPLOY_PATH)) {
+            throw "DEPLOY_PATH not found: $env:DEPLOY_PATH"
+          }
+
+      - name: Update repository to latest main
+        shell: powershell
+        run: |
+          Set-Location $env:DEPLOY_PATH
+          git fetch origin main
+          git reset --hard origin/main
+          git clean -fd
+          git submodule update --init --recursive
+
+      - name: Stop services
+        shell: powershell
+        run: |
+          $services = @(
+            $env:FRONTEND_SERVICE,
+            $env:WEBSITE_SERVICE,
+            $env:GAMESERVER_SERVICE,
+            $env:GAMERENDERER_SERVICE,
+            $env:RCC_CATALOG_GAME_SERVICE,
+            $env:RCC_IMAGE_PLAYER_SERVICE,
+            $env:ASSET_VALIDATION_SERVICE
+          )
+          foreach ($svc in $services) {
+            if (Get-Service -Name $svc -ErrorAction SilentlyContinue) {
+              Stop-Service -Name $svc -Force -ErrorAction Stop
+              Write-Host "Stopped service: $svc"
+            } else {
+              Write-Host "Service not found (skipping): $svc"
+            }
+          }
+
+      - name: Build frontend
+        shell: powershell
+        run: |
+          Set-Location (Join-Path $env:DEPLOY_PATH $env:FRONTEND_PATH)
+          npm install
+          npm run build
+
+      - name: Build website
+        shell: powershell
+        run: |
+          Set-Location $env:DEPLOY_PATH
+          dotnet restore $env:WEBSITE_PROJECT
+          dotnet build $env:WEBSITE_PROJECT -c Release --no-restore
+
+      - name: Start services
+        shell: powershell
+        run: |
+          $services = @(
+            $env:FRONTEND_SERVICE,
+            $env:WEBSITE_SERVICE,
+            $env:GAMESERVER_SERVICE,
+            $env:GAMERENDERER_SERVICE,
+            $env:RCC_CATALOG_GAME_SERVICE,
+            $env:RCC_IMAGE_PLAYER_SERVICE,
+            $env:ASSET_VALIDATION_SERVICE
+          )
+          foreach ($svc in $services) {
+            if (Get-Service -Name $svc -ErrorAction SilentlyContinue) {
+              Start-Service -Name $svc -ErrorAction Stop
+              Write-Host "Started service: $svc"
+            }
+          }
+
+      - name: Verify services running
+        shell: powershell
+        run: |
+          $services = @(
+            $env:FRONTEND_SERVICE,
+            $env:WEBSITE_SERVICE,
+            $env:GAMESERVER_SERVICE,
+            $env:GAMERENDERER_SERVICE,
+            $env:RCC_CATALOG_GAME_SERVICE,
+            $env:RCC_IMAGE_PLAYER_SERVICE,
+            $env:ASSET_VALIDATION_SERVICE
+          )
+          foreach ($svc in $services) {
+            $found = Get-Service -Name $svc -ErrorAction SilentlyContinue
+            if ($found -and $found.Status -ne 'Running') {
+              throw "Service failed to start: $svc (status: $($found.Status))"
+            }
+          }

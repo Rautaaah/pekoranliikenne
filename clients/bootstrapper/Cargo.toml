@@ -1,0 +1,48 @@
+[package]
+name = "zekoro-bootstrapper"
+version = "0.1.0"
+edition = "2021"
+description = "Zekoro 2020 client bootstrapper (Roblox-style)"
+
+[lib]
+name = "zekoro_bootstrapper"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ZekoroPlayerLauncher"
+path = "src/main.rs"
+
+[[bin]]
+name = "ZekoroInstaller"
+path = "src/bin/installer.rs"
+
+[dependencies]
+eframe        = { version = "0.27", default-features = false, features = ["glow", "default_fonts", "wayland", "x11"] }
+egui          = "0.27"
+egui_extras   = { version = "0.27", features = ["image"] }
+image         = { version = "0.25", default-features = false, features = ["png"] }
+anyhow        = "1"
+log           = "0.4"
+env_logger    = "0.11"
+percent-encoding = "2"
+serde         = { version = "1", features = ["derive"] }
+reqwest       = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls", "stream"] }
+zip           = { version = "2", default-features = false, features = ["deflate"] }
+directories   = "5"
+sha1          = "0.10"
+hex           = "0.4"
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.52"
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
+image  = { version = "0.25", default-features = false, features = ["png"] }
+ico    = "0.3"
+
+[profile.release]
+opt-level     = "z"
+lto           = true
+codegen-units = 1
+strip         = true
+panic         = "abort"

@@ -1,0 +1,55 @@
+# Auto Deploy Setup (VPS)
+
+This repo now includes:
+
+- `.github/workflows/deploy-vps.yml`
+
+It deploys automatically on every push to `main` using a **self-hosted GitHub Actions runner** on your VPS.
+
+## 1) Install GitHub self-hosted runner on VPS
+
+In GitHub:
+
+1. Open repo settings:  
+   `https://github.com/elijahmalikbrown2025-netizen/oldborkenzekoro/settings/actions/runners`
+2. Click **New self-hosted runner**
+3. Choose **Windows**
+4. Run the commands GitHub gives you on the VPS
+5. Install and start as a service:
+   - `.\svc install`
+   - `.\svc start`
+
+## 2) Create/verify Windows services
+
+The workflow restarts these service names:
+
+- `ZekoroWebsite`
+- `ZekoroGameServer`
+
+If your actual names differ, edit the workflow env values:
+
+- `WEBSITE_SERVICE`
+- `GAMESERVER_SERVICE`
+
+## 3) Deploy path
+
+Workflow uses:
+
+- `~`
+
+If your live repo path is different, update `DEPLOY_PATH` in `.github/workflows/deploy-vps.yml`.
+
+## 4) Test deploy
+
+Push any commit to `main`:
+
+```bat
+quick-push.bat "test auto deploy"
+```
+
+Then check:
+
+- GitHub repo **Actions** tab
+- job **Deploy VPS** is green
+- services restarted
+- site shows latest changes

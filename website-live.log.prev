@@ -1,0 +1,999 @@
+[info] owner = System.Collections.Generic.List`1[System.Int64]
+[FixAssetImageMetadata] 2026-04-29T06:24:53.4167726Z fixing thumbnails
+[FixAssetImageMetadata] 2026-04-29T06:24:53.4628680Z took 42ms to get all asset versions to fix. length is 0
+[FixAssetImageMetadata] 2026-04-29T06:24:53.4658879Z done fixing images
+[info] add to bypass /game/visit.ashx
+[info] add to bypass /ide/welcome
+[info] add to bypass /ide/upload.aspx
+[info] add to bypass /ide/login
+[info] add to bypass /ide/clienttoolbox.aspx
+[info] add to bypass /bot/removetwofactor
+[info] add to bypass /bot/removetwofactor
+[info] add to bypass /bot/giveboosteritems
+[info] add to bypass /bot/giveboosteritems
+[info] add to bypass /bot/resetpassword
+[info] add to bypass /bot/resetpassword
+[info] add to bypass /bot/generatecode
+[info] add to bypass /bot/generatecode
+[info] add to bypass /bot/unlink
+[info] add to bypass /bot/unlink
+[info] add to bypass /bot/verify
+[info] add to bypass /bot/verify
+[info] add to bypass /bot/coinflip
+[info] add to bypass /bot/coinflip
+[info] add to bypass /bot/kickuser
+[info] add to bypass /bot/kickuser
+[info] add to bypass /bot/balance
+[info] add to bypass /bot/balance
+[info] add to bypass /bot/status
+[info] add to bypass /bot/status
+[info] add to bypass /internal/release-metadata
+[info] add to bypass /internal/release-metadata
+[info] add to bypass /api/maintenance/status
+[info] add to bypass /api/maintenance/status
+[info] add to bypass /game/gamepass/gamepasshandler.ashx
+[info] add to bypass /game/gamepass/gamepasshandler.ashx
+[info] add to bypass /game/luawebservice/handlesocialrequest.ashx
+[info] add to bypass /game/luawebservice/handlesocialrequest.ashx
+[info] add to bypass /v2/users/
+[info] add to bypass /v2/users/
+[info] add to bypass /auth/submit
+[info] add to bypass /v1/join-game
+[info] add to bypass /game/placelauncher.ashx
+[info] add to bypass /game/placelauncher.ashx
+[info] add to bypass /game/placelauncher.ashx
+[info] add to bypass /game/placelauncher.ashx
+[info] add to bypass /asset/status
+[info] add to bypass /login/requestauth.ashx
+[info] add to bypass /login/requestauth.ashx
+[info] add to bypass /login/requestauth.ashx
+[info] add to bypass /login/requestauth.ashx
+[info] add to bypass /getserverinfo
+[info] add to bypass /getserverinfo
+[info] add to bypass /joinserver
+[info] add to bypass /joinserver
+[info] add to bypass /getrichpresence
+[info] add to bypass /getrichpresence
+[info] add to bypass /my/places.aspx
+[info] add to bypass /my/places.aspx
+[info] add to bypass /game/getcurrentuser.ashx
+[info] add to bypass /game/getcurrentuser.ashx
+[info] add to bypass /mobileapi/check-app-version
+[info] add to bypass /set-year
+[info] add to bypass /set-year
+[info] add to bypass /login/negotiate.ashx
+[info] add to bypass /login/negotiateasync.ashx
+[info] add to bypass /login/negotiate.ashx
+[info] add to bypass /login/negotiateasync.ashx
+[info] add to bypass /login/negotiate.ashx
+[info] add to bypass /login/negotiateasync.ashx
+[info] add to bypass /login/negotiate.ashx
+[info] add to bypass /login/negotiateasync.ashx
+[info] add to bypass /game/join.ashx
+[info] add to bypass /game/join.ashx
+[info] add to bypass /game/join.ashx
+[info] add to bypass /game/join.ashx
+[info] add to bypass /generateversion
+[info] add to bypass /generateversion
+[info] add to bypass /generateauthstring
+[info] add to bypass /generateauthstring
+[info] add to bypass /asset/characterfetch.ashx
+[info] add to bypass /asset/characterfetch.ashx
+[info] add to bypass /my/settings/json
+[info] add to bypass /my/settings/json
+[info] add to bypass /v2/stream-notifications/unread-count
+[info] add to bypass /v2/stream-notifications/unread-count
+[info] add to bypass /sponsoredpage/list-json
+[info] add to bypass /mobile-ads/v1/get-ad-details
+[info] add to bypass /incoming-items/counts
+[info] add to bypass /sponsoredpage/list-json
+[info] add to bypass /mobile-ads/v1/get-ad-details
+[info] add to bypass /incoming-items/counts
+[info] add to bypass /v1.1/game-start-info
+[info] add to bypass /v1.1/game-start-info
+[info] add to bypass /hor
+[info] add to bypass /hor
+[info] add to bypass /presence/register-game-presence
+[info] add to bypass /presence/register-game-presence
+[info] add to bypass /presence/register-absence
+[info] add to bypass /presence/register-absence
+[info] add to bypass /device/initialize
+[info] add to bypass /game/clientpresence.ashx
+[info] add to bypass /game/clientpresence.ashx
+[info] add to bypass /v1/user/currency
+[info] add to bypass /my/balance
+[info] add to bypass /users/liststaff.ashx
+[info] add to bypass /users/liststaff.ashx
+[info] add to bypass /generateotpsecret
+[info] add to bypass /generateotpsecret
+[info] add to bypass /genereateotpqrcode
+[info] add to bypass /genereateotpqrcode
+[info] add to bypass /asset/bodycolors.ashx
+[info] add to bypass /asset/bodycolors.ashx
+[info] add to bypass /game/placevisit.ashx
+[info] add to bypass /game/placevisit.ashx
+[info] add to bypass /game/placevisit.ashx
+[info] add to bypass /game/placevisit.ashx
+[info] add to bypass /rcc/killserver
+[info] add to bypass /rcc/killserver
+[info] add to bypass /rcc/killallservers
+[info] add to bypass /rcc/killallservers
+[info] add to bypass /rcc/kickplayer
+[info] add to bypass /rcc/kickplayer
+[info] add to bypass /game/chatfilter.ashx
+[info] add to bypass /game/chatfilter.ashx
+[info] add to bypass /moderation/v2/filtertext/
+[info] add to bypass /moderation/filtertext/
+[info] add to bypass /moderation/v2/filtertext/
+[info] add to bypass /moderation/filtertext/
+[info] add to bypass /botapi/migrate-alltypes
+[info] add to bypass /botapi/migrate-alltypes
+[info] add to bypass /botapi/migrate-clothing
+[info] add to bypass /botapi/migrate-clothing
+[info] add to bypass /buildersclub/upgrade.ashx
+[info] add to bypass /buildersclub/upgrade.ashx
+[info] add to bypass /game/players/
+[info] add to bypass /game/players/
+[info] add to bypass /getallowedmd5hashes
+[info] add to bypass /getallowedmd5hashes
+[info] add to bypass /getallowedsecuritykeys
+[info] add to bypass /getallowedsecuritykeys
+[info] add to bypass /versioncompatibility
+[info] add to bypass /versioncompatibility
+[info] add to bypass /getallowedexperimentalfeatures
+[info] add to bypass /getallowedexperimentalfeatures
+[info] add to bypass /getallowedsecurityversions
+[info] add to bypass /getallowedsecurityversions
+[info] add to bypass /ide/publish/uploadfromcloudedit
+[info] add to bypass /data/upload.ashx
+[info] add to bypass /ide/publish/uploadfromcloudedit
+[info] add to bypass /data/upload.ashx
+[info] add to bypass /universes/
+[info] add to bypass /universes/
+[info] add to bypass /universes/
+[info] add to bypass /universes/
+[info] add to bypass /v1/user/
+[info] add to bypass /v1/user/
+[info] add to bypass /game/validate-place-join
+[info] add to bypass /universes/validate-place-join
+[info] add to bypass /universes/validate-place-join
+[info] add to bypass /game/validate-place-join
+[info] add to bypass /universes/validate-place-join
+[info] add to bypass /universes/validate-place-join
+[info] add to bypass /v2/get-rollout-settings
+[info] add to bypass /v2/get-rollout-settings
+[info] add to bypass /abusereport/userprofile
+[info] add to bypass /abusereport/asset
+[info] add to bypass /abusereport/user
+[info] add to bypass /abusereport/users
+[info] add to bypass /abusereport/userprofile
+[info] add to bypass /abusereport/asset
+[info] add to bypass /abusereport/user
+[info] add to bypass /abusereport/users
+[info] add to bypass /info/blog
+[info] add to bypass /my/economy-status
+[info] add to bypass /currency/balance
+[info] add to bypass /ownership/hasasset
+[info] add to bypass /v1/logout
+[info] add to bypass /sign-out/v1
+[info] add to bypass /sign-out/v1
+[info] add to bypass /game/logout.aspx
+[info] add to bypass /v1/logout
+[info] add to bypass /sign-out/v1
+[info] add to bypass /sign-out/v1
+[info] add to bypass /game/logout.aspx
+[info] add to bypass /users/get-by-username
+[info] add to bypass /users/get-by-username
+[info] add to bypass /users/account-info
+[info] add to bypass /users/account-info
+[info] add to bypass /users/account-info
+[info] add to bypass /users/account-info
+[info] add to bypass /asset/getyear
+[info] add to bypass /game/load-place-info
+[info] add to bypass /game/load-place-info
+[info] add to bypass /studio/e.png
+[info] add to bypass /studio/e.png
+[info] add to bypass /getcurrentclientversionupload
+[info] add to bypass /getcurrentclientversionupload
+[info] add to bypass /v1/close
+[info] add to bypass /v1/close
+[info] add to bypass /v1/close
+[info] add to bypass /v1/close
+[info] add to bypass /v2/createorupdate
+[info] add to bypass /v2/createorupdate
+[info] add to bypass /v1/createorupdate
+[info] add to bypass /v1/createorupdate
+[info] add to bypass /v2/createorupdate
+[info] add to bypass /v2/createorupdate
+[info] add to bypass /v1/createorupdate
+[info] add to bypass /v1/createorupdate
+[info] add to bypass /v1.0/refresh
+[info] add to bypass /v2.0/refresh
+[info] add to bypass /v1.0/refresh
+[info] add to bypass /v2.0/refresh
+[info] add to bypass /v1.0/refresh
+[info] add to bypass /v2.0/refresh
+[info] add to bypass /v1.0/refresh
+[info] add to bypass /v2.0/refresh
+[info] add to bypass /gs/activity
+[info] add to bypass /gs/activity
+[info] add to bypass /gs/delete
+[info] add to bypass /gs/delete
+[info] add to bypass /gs/players/report
+[info] add to bypass /gs/players/report
+[info] add to bypass /gs/ping
+[info] add to bypass /gs/ping
+[info] add to bypass /gs/shutdown
+[info] add to bypass /gs/shutdown
+[info] add to bypass /gs/admin/owners
+[info] add to bypass /gs/admin/owners
+[info] add to bypass /gs/admin/owners
+[info] add to bypass /gs/admin/owners
+[info] add to bypass /gs/admin/ban
+[info] add to bypass /gs/admin/ban
+[info] add to bypass /gs/admin/unban
+[info] add to bypass /gs/admin/unban
+[info] add to bypass /gs/admin/giveitem
+[info] add to bypass /gs/admin/giveitem
+[info] add to bypass /gs/admin/removeitem
+[info] add to bypass /gs/admin/removeitem
+[info] add to bypass /gs/admin/givecurrency
+[info] add to bypass /gs/admin/givecurrency
+[info] add to bypass /gs/admin/logs
+[info] add to bypass /gs/admin/logs
+[info] add to bypass /gs/admin/setrank
+[info] add to bypass /gs/admin/setrank
+[info] add to bypass /gs/admin/removerank
+[info] add to bypass /gs/admin/removerank
+[info] add to bypass /gs/admin/warn
+[info] add to bypass /gs/admin/warn
+[info] add to bypass /gs/admin/removecurrency
+[info] add to bypass /gs/admin/removecurrency
+[info] add to bypass /gs/admin/resetinventory
+[info] add to bypass /gs/admin/resetinventory
+[info] add to bypass /gs/admin/whitelist
+[info] add to bypass /gs/admin/whitelist
+[info] add to bypass /gs/admin/unwhitelist
+[info] add to bypass /gs/admin/unwhitelist
+[info] add to bypass /gs/admin/viewprofile
+[info] add to bypass /gs/admin/viewprofile
+[info] add to bypass /v1.0/sequencestatistics/addtosequence
+[info] add to bypass /v1.1/counters/increment
+[info] add to bypass /v1.0/sequencestatistics/batchaddtosequencesv2
+[info] add to bypass /v1.0/multiincrement
+[info] add to bypass /game/report-stats
+[info] add to bypass /usercheck/show-tos
+[info] add to bypass /v1.1/counters/increment
+[info] add to bypass /notifications/signalr/negotiate
+[info] add to bypass /notifications/negotiate
+[info] add to bypass /v1.1/counters/batchincrement
+[info] add to bypass /v1.1/counters/batchincrement
+[info] add to bypass /v1.0/sequencestatistics/addtosequence
+[info] add to bypass /v1.1/counters/increment
+[info] add to bypass /v1.0/sequencestatistics/batchaddtosequencesv2
+[info] add to bypass /v1.0/multiincrement
+[info] add to bypass /usercheck/show-tos
+[info] add to bypass /v1.1/counters/increment
+[info] add to bypass /notifications/signalr/negotiate
+[info] add to bypass /notifications/negotiate
+[info] add to bypass /v1.1/counters/batchincrement
+[info] add to bypass /v1.1/counters/batchincrement
+[info] add to bypass /robots.txt
+[info] add to bypass /robots.txt
+[info] add to bypass /auth/discord-login
+[info] add to bypass /auth/discord-login
+[info] add to bypass /auth/discord-signup
+[info] add to bypass /auth/discord-signup
+[info] add to bypass /api/logincallback
+[info] add to bypass /api/logincallback
+[info] add to bypass /api/applicationcallback
+[info] add to bypass /api/applicationcallback
+[info] add to bypass /ide/places/createv2
+[info] add to bypass /ide/places/createv2
+[info] add to bypass /v1/asset
+[info] add to bypass /v1/asset
+[info] add to bypass /asset
+[info] add to bypass /asset
+[info] add to bypass /v1/asset
+[info] add to bypass /v1/asset
+[info] add to bypass /asset
+[info] add to bypass /asset
+[info] add to bypass /v2/asset
+[info] add to bypass /v2/asset
+[info] add to bypass /v2/asset
+[info] add to bypass /v2/asset
+[info] add to bypass /asset/batch
+[info] add to bypass /v1/assets/batch
+[info] add to bypass /asset/batch
+[info] add to bypass /v1/assets/batch
+[info] add to bypass /v1/avatar-fetch
+[info] add to bypass /v1.1/avatar-fetch
+[info] add to bypass /v1/avatar/redraw-thumbnail
+[info] add to bypass /v1/avatar/redraw-thumbnail
+[info] add to bypass /v1/avatar/set-wearing-assets
+[info] add to bypass /v1/avatar/set-wearing-assets
+[info] add to bypass /v1/avatar/set-body-colors
+[info] add to bypass /v1/avatar/set-body-colors
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/outfits/
+[info] add to bypass /v1/outfits/
+[info] add to bypass /v1/outfits/create
+[info] add to bypass /v1/outfits/create
+[info] add to bypass /v1/outfits/
+[info] add to bypass /v1/outfits/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/avatar
+[info] add to bypass /v1/avatar
+[info] add to bypass /v1/avatar/metadata
+[info] add to bypass /v1/avatar/metadata
+[info] add to bypass /v1/avatar-rules
+[info] add to bypass /v1/avatar-rules
+[info] add to bypass /v1/categories
+[info] add to bypass /v1/categories
+[info] add to bypass /v1/subcategories
+[info] add to bypass /v1/subcategories
+[info] add to bypass /v1/bundles/
+[info] add to bypass /v1/bundles/
+[info] add to bypass /v1/search/navigation-menu-items
+[info] add to bypass /v1/search/navigation-menu-items
+[info] add to bypass /v1/catalog/metadata
+[info] add to bypass /v1/catalog/metadata
+[info] add to bypass /v1/catalog/items/details
+[info] add to bypass /v1/catalog/items/details
+[info] add to bypass /v1/search/items
+[info] add to bypass /v1/search/items
+[info] add to bypass /v1/favorites/assets/
+[info] add to bypass /v1/favorites/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/recommendations/metadata
+[info] add to bypass /v1/recommendations/metadata
+[info] add to bypass /v1/favorites/users/
+[info] add to bypass /v1/favorites/users/
+[info] add to bypass /v1/favorites/users/
+[info] add to bypass /v1/favorites/users/
+[info] add to bypass /v1/asset-to-category
+[info] add to bypass /v1/asset-to-category
+[info] add to bypass /v1/asset-to-subcategory
+[info] add to bypass /v1/asset-to-subcategory
+[info] add to bypass /v2/metadata
+[info] add to bypass /v2/metadata
+[info] add to bypass /v2/get-unread-conversation-count
+[info] add to bypass /v2/get-unread-conversation-count
+[info] add to bypass /v2/chat-settings
+[info] add to bypass /v1/chat-settings
+[info] add to bypass /v2/chat-settings
+[info] add to bypass /v1/chat-settings
+[info] add to bypass /v2/get-user-conversations
+[info] add to bypass /v2/get-user-conversations
+[info] add to bypass /v2/mark-as-read
+[info] add to bypass /v2/mark-as-read
+[info] add to bypass /v2/add-to-conversation
+[info] add to bypass /v2/add-to-conversation
+[info] add to bypass /v2/start-cloud-edit-conversation
+[info] add to bypass /v2/start-cloud-edit-conversation
+[info] add to bypass /v2/start-one-to-one-conversation
+[info] add to bypass /v2/start-one-to-one-conversation
+[info] add to bypass /v2/update-user-typing-status
+[info] add to bypass /v2/update-user-typing-status
+[info] add to bypass /v2/send-message
+[info] add to bypass /v2/send-message
+[info] add to bypass /v2/multi-get-latest-messages
+[info] add to bypass /v2/multi-get-latest-messages
+[info] add to bypass /v2/get-messages
+[info] add to bypass /v2/get-messages
+[info] add to bypass /persistence/increment
+[info] add to bypass /persistence/increment
+[info] add to bypass /persistence/set
+[info] add to bypass /persistence/set
+[info] add to bypass /persistence/getsortedvalues
+[info] add to bypass /persistence/getsortedvalues
+[info] add to bypass /persistence/getv2
+[info] add to bypass /persistence/getv2
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v2/developer-products/
+[info] add to bypass /v2/developer-products/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/products/
+[info] add to bypass /v1/products/
+[info] add to bypass /v1/purchases/products/
+[info] add to bypass /v1/purchases/products/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/groups/
+[info] add to bypass /v1/groups/
+[info] add to bypass /v1/groups/
+[info] add to bypass /v1/groups/
+[info] add to bypass /v1/groups/
+[info] add to bypass /v1/groups/
+[info] add to bypass /v1/groups/
+[info] add to bypass /v1/groups/
+[info] add to bypass /setting/get/
+[info] add to bypass /setting/quietget/
+[info] add to bypass /setting/get/
+[info] add to bypass /setting/quietget/
+[info] add to bypass /setting/get/
+[info] add to bypass /setting/quietget/
+[info] add to bypass /setting/get/
+[info] add to bypass /setting/quietget/
+[info] add to bypass /v2/settings/application
+[info] add to bypass /v2/settings/application
+[info] add to bypass /v1/settings/application
+[info] add to bypass /v1/settings/application
+[info] add to bypass /v2/settings/application
+[info] add to bypass /v2/settings/application
+[info] add to bypass /v1/settings/application
+[info] add to bypass /v1/settings/application
+[info] add to bypass /v2/settings/application/
+[info] add to bypass /v2/settings/application/
+[info] add to bypass /v2/settings/application/
+[info] add to bypass /v2/settings/application/
+[info] add to bypass /setting/24
+[info] add to bypass /setting/24
+[info] add to bypass /user/follow
+[info] add to bypass /user/follow
+[info] add to bypass /user/unfollow
+[info] add to bypass /user/unfollow
+[info] add to bypass /user/following-exists
+[info] add to bypass /user/following-exists
+[info] add to bypass /user/following-exists
+[info] add to bypass /user/following-exists
+[info] add to bypass /user/multi-following-exists
+[info] add to bypass /user/multi-following-exists
+[info] add to bypass /my/friendsonline
+[info] add to bypass /my/friendsonline
+[info] add to bypass /my/friendsonline
+[info] add to bypass /my/friendsonline
+[info] add to bypass /friends/filter
+[info] add to bypass /friends/filter
+[info] add to bypass /friends/filter
+[info] add to bypass /friends/filter
+[info] add to bypass /user/unfriend
+[info] add to bypass /user/unfriend
+[info] add to bypass /user/request-friendship
+[info] add to bypass /user/request-friendship
+[info] add to bypass /user/decline-friend-request
+[info] add to bypass /user/decline-friend-request
+[info] add to bypass /user/accept-friend-request
+[info] add to bypass /user/accept-friend-request
+[info] add to bypass /user/get-friendship-count
+[info] add to bypass /user/get-friendship-count
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/user/friend-requests/count
+[info] add to bypass /v1/user/friend-requests/count
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/metadata
+[info] add to bypass /v1/metadata
+[info] add to bypass /v1/my/friends/requests
+[info] add to bypass /v1/my/friends/requests
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/user/following-exists
+[info] add to bypass /v1/user/following-exists
+[info] add to bypass /v1/games/multiget-playability-status
+[info] add to bypass /v1/games/multiget-playability-status
+[info] add to bypass /v1/games
+[info] add to bypass /v1/games
+[info] add to bypass /v1/games/sorts
+[info] add to bypass /v1/games/sorts
+[info] add to bypass /v1/name-description/games/
+[info] add to bypass /v1/name-description/games/
+[info] add to bypass /v1/games/
+[info] add to bypass /v1/games/
+[info] add to bypass /v1/games/
+[info] add to bypass /v1/games/
+[info] add to bypass /v1/games/recommendations/game/
+[info] add to bypass /v1/games/recommendations/game/
+[info] add to bypass /v1/games/multiget-place-details
+[info] add to bypass /v1/games/multiget-place-details
+[info] add to bypass /v1/games/votes
+[info] add to bypass /v1/games/votes
+[info] add to bypass /v1/games/list
+[info] add to bypass /v1/games/list
+[info] add to bypass /v2/users/
+[info] add to bypass /v2/users/
+[info] add to bypass /v2/groups/
+[info] add to bypass /v2/groups/
+[info] add to bypass /v1/games/
+[info] add to bypass /v2/games/
+[info] add to bypass /v1/games/
+[info] add to bypass /v2/games/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/locales
+[info] add to bypass /v1/locales
+[info] add to bypass /v1/locales/user-localization-locus-supported-locales
+[info] add to bypass /v1/locales/user-localization-locus-supported-locales
+[info] add to bypass /v1/login
+[info] add to bypass /v1/login
+[info] add to bypass /v2/login
+[info] add to bypass /v2/login
+[info] add to bypass /v3/users/
+[info] add to bypass /v3/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/twostepverification/verify
+[info] add to bypass /v2/twostepverification/verify
+[info] add to bypass /v1/twostepverification/verify
+[info] add to bypass /v2/twostepverification/verify
+[info] add to bypass /v2/twostepverification/login/verify
+[info] add to bypass /v2/twostepverification/login/verify
+[info] add to bypass /mobileapi/login
+[info] add to bypass /mobileapi/login
+[info] add to bypass /v2/passwords/current-status
+[info] add to bypass /v2/passwords/current-status
+[info] add to bypass /marketplace/productinfo
+[info] add to bypass /marketplace/productinfo
+[info] add to bypass /v2/assets/
+[info] add to bypass /v2/assets/
+[info] add to bypass /marketplace/submitpurchase
+[info] add to bypass /marketplace/submitpurchase
+[info] add to bypass /marketplace/purchase
+[info] add to bypass /marketplace/purchase
+[info] add to bypass /marketplace/productdetails
+[info] add to bypass /marketplace/productdetails
+[info] add to bypass /marketplace/game-pass-product-info
+[info] add to bypass /marketplace/game-pass-product-info
+[info] add to bypass /marketplace/validatepurchase
+[info] add to bypass /marketplace/validatepurchase
+[info] add to bypass /gametransactions/getpendingtransactions
+[info] add to bypass /gametransactions/getpendingtransactions
+[info] add to bypass /gametransactions/settransactionstatuscomplete
+[info] add to bypass /gametransactions/settransactionstatuscomplete
+[info] add to bypass /game/tools/insertasset.ashx
+[info] add to bypass /game/tools/insertasset.ashx
+[info] add to bypass /alerts/alert-info
+[info] add to bypass /alerts/alert-info
+[info] add to bypass /game/visit.ashx
+[info] add to bypass /game/visit.ashx
+[info] add to bypass /client/pbe
+[info] add to bypass /client/pbe
+[info] add to bypass /mobile/pbe
+[info] add to bypass /client/pbe
+[info] add to bypass /client/pbe
+[info] add to bypass /mobile/pbe
+[info] add to bypass /v1/enrollments
+[info] add to bypass /v1/enrollments
+[info] add to bypass /v1/enrollments
+[info] add to bypass /v1/enrollments
+[info] add to bypass /v1/get-enrollments
+[info] add to bypass /v1/get-enrollments
+[info] add to bypass /v1/get-enrollments
+[info] add to bypass /v1/get-enrollments
+[info] add to bypass /pe
+[info] add to bypass /pe
+[info] add to bypass /pe
+[info] add to bypass /pe
+[info] add to bypass /avatar-thumbnail/image
+[info] add to bypass /thumbs/avatar.ashx
+[info] add to bypass /avatar-thumbnail/image
+[info] add to bypass /thumbs/avatar.ashx
+[info] add to bypass /thumbs/head.ashx
+[info] add to bypass /headshot-thumbnail/image
+[info] add to bypass /thumbs/avatar-headshot.ashx
+[info] add to bypass /thumbs/head.ashx
+[info] add to bypass /headshot-thumbnail/image
+[info] add to bypass /thumbs/avatar-headshot.ashx
+[info] add to bypass /thumbs/placeicon.ashx
+[info] add to bypass /thumbs/gameicon.ashx
+[info] add to bypass /thumbs/placeicon.ashx
+[info] add to bypass /thumbs/gameicon.ashx
+[info] add to bypass /icons/asset.ashx
+[info] add to bypass /game/tools/thumbnailasset.ashx
+[info] add to bypass /thumbs/asset.ashx
+[info] add to bypass /icons/asset.ashx
+[info] add to bypass /game/tools/thumbnailasset.ashx
+[info] add to bypass /thumbs/asset.ashx
+[info] add to bypass /avatar-thumbnail/json
+[info] add to bypass /avatar-thumbnail/json
+[info] add to bypass /avatar-thumbnail-3d/json
+[info] add to bypass /avatar-thumbnail-3d/json
+[info] add to bypass /thumbnail/avatar-headshot
+[info] add to bypass /thumbnail/avatar-headshot
+[info] add to bypass /asset-thumbnail/json
+[info] add to bypass /asset-thumbnail/json
+[info] add to bypass /asset-gameicon/multiget
+[info] add to bypass /asset-gameicon/multiget
+[info] add to bypass /v1/games/icons
+[info] add to bypass /v1/games/icons
+[info] add to bypass /v1/batch
+[info] add to bypass /v1/batch
+[info] add to bypass /universal-app-configuration/v1/behaviors/app-patch/content
+[info] add to bypass /universal-app-configuration/v1/behaviors/app-patch/content
+[info] add to bypass /universal-app-configuration/v1/behaviors/app-policy/content
+[info] add to bypass /universal-app-configuration/v1/behaviors/app-policy/content
+[info] add to bypass /toolbox-service/v1/
+[info] add to bypass /toolbox-service/v1/
+[info] add to bypass /toolbox-service/v1/items/details
+[info] add to bypass /toolbox-service/v1/items/details
+[info] add to bypass /universes/get-universe-containing-place
+[info] add to bypass /universes/get-universe-containing-place
+[info] add to bypass /universes/get-info
+[info] add to bypass /universes/get-info
+[info] add to bypass /universes/get-universe-places
+[info] add to bypass /universes/get-universe-places
+[info] add to bypass /badges/list-badges-for-place/json
+[info] add to bypass /badges/list-badges-for-place/json
+[info] add to bypass /developerproducts/list
+[info] add to bypass /developerproducts/list
+[info] add to bypass /universes/get-aliases
+[info] add to bypass /universes/get-aliases
+[info] add to bypass /v1/universes/multiget
+[info] add to bypass /v1/universes/multiget
+[info] add to bypass /v1/user/teamcreate/memberships
+[info] add to bypass /v1/user/teamcreate/memberships
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /universes/
+[info] add to bypass /universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /universal-app-configuration/v1/behaviors/studio/content
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/game-localization-roles/games/
+[info] add to bypass /v1/game-localization-roles/games/
+[info] add to bypass /v1/autolocalization/games/
+[info] add to bypass /v1/autolocalization/games/
+[info] add to bypass /universes/create
+[info] add to bypass /v1/users
+[info] add to bypass /v1/users
+[info] add to bypass /v1/settings
+[info] add to bypass /v1/settings
+[info] add to bypass /v1/settings/universe/
+[info] add to bypass /v1/settings/universe/
+[info] add to bypass /v1/promotion-channels
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/avatar/assets/
+[info] add to bypass /v1/avatar/assets/
+[info] add to bypass /v1/avatar/assets/
+[info] add to bypass /v1/avatar/assets/
+[info] add to bypass /v1/avatar/set-scales
+[info] add to bypass /v1/avatar/set-player-avatar-type
+[info] add to bypass /v1/recent-items/
+[info] add to bypass /v1/recent-items/
+[info] add to bypass /v1/badges/
+[info] add to bypass /v1/badges/
+[info] add to bypass /v1/badges/
+[info] add to bypass /v1/badges/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /assets/award-badge
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/recommendations/asset/
+[info] add to bypass /v1/recommendations/asset/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/user/studiodata
+[info] add to bypass /v1/universes/
+[info] add to bypass /v1/universes/
+[info] add to bypass /groups/search/lookup
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/users/
+[info] add to bypass /v1/creations/get-asset-details
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/
+[info] add to bypass /v1/assets/restrictions
+[info] add to bypass /v1/creations/get-assets
+[info] add to bypass /v1/item-tags/metadata
+[info] add to bypass /v1/item-tags
+[info] add to bypass /v1/presence/register-app-presence
+[info] add to bypass /v1/presence/register-absence
+[info] add to bypass /v1/presence/users
+[info] add to bypass /v1/users/authenticated
+[info] add to bypass /v2/assets/
+[info] add to bypass /v2/assets/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v2/universes/
+[info] add to bypass /v2/assets/
+[info] add to bypass /v2/assets/
+[info] add to bypass /v2/inventory/asset/
+[info] add to bypass /v2/inventory/asset/
+[info] add to bypass /v2/users/
+[info] add to bypass /v2/users/
+[info] add to bypass /v2/users/
+[info] add to bypass /v2/users/
+[info] add to bypass /.well-known/discord
+[info] add to bypass /.well-known/discord
+[info] add to bypass /oauth/.well-known/openid-configuration
+[info] add to bypass /oauth/.well-known/openid-configuration
+[info] add to bypass /setup/
+[info] add to bypass /setup/
+[info] add to bypass /setup/
+[info] add to bypass /setup/
+[info] add to bypass /setup/studio/
+[info] add to bypass /setup/studio/
+[info] add to bypass /setup/studio/
+[info] add to bypass /setup/studio/
+[info] add to bypass /setup/launcher.exe
+[info] add to bypass /clients/launcher.exe
+[info] add to bypass /setup/launcher.exe
+[info] add to bypass /clients/launcher.exe
+[info] add to bypass /setup/studio-launcher.exe
+[info] add to bypass /setup/studio-launcher.exe
+[info] add to bypass /download
+[info] add to bypass /setup/installer.exe
+[info] add to bypass /download
+[info] add to bypass /setup/installer.exe
+[info] add to bypass /version
+[info] add to bypass /version
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.4070922Z Clearing 3D thumbnails that are older than 5 days...
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.5421340Z Deleting 3D thumbnail 28d59aba3bc3d31bb61462fe9caaf036f450bc132485dd2d23505717600eaf77_tex_Player11Tex, last modified is more than 5 days ago. Last modified: 4/24/2026 7:46:41 AM
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.5471463Z Deleting 3D thumbnail 29f640476732025df1251d0dadbe68e42697599d9ba127500404efa1f1c681f7_tex_Player11Tex, last modified is more than 5 days ago. Last modified: 4/24/2026 8:13:58 AM
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.5667043Z Deleting 3D thumbnail 33cbb4bb53b03a62183a61854e7453778df8dcad7fb5dc18ab714ac6669b3a00_tex_Player11Tex, last modified is more than 5 days ago. Last modified: 4/24/2026 8:15:58 AM
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.6533943Z Deleting 3D thumbnail 6fb4bc547706402424ad50b67ffbfbcbffeb83bd5c3f7ae33a5ce57774bb0aef_tex_Player11Tex, last modified is more than 5 days ago. Last modified: 4/24/2026 8:15:47 AM
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.7147408Z Deleting 3D thumbnail 9eacbe7b7cd3ca464296a7ca6a5c43596b1593f3094bea7e7c7367e54df39fac_tex_Player11Tex, last modified is more than 5 days ago. Last modified: 4/24/2026 8:14:08 AM
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.7866637Z Deleting 3D thumbnail d0bbba522853ecb8c53da385d47b8ccdd54512c39bd485470c8a1763dc81a58d_tex_Player11Tex, last modified is more than 5 days ago. Last modified: 4/24/2026 7:46:58 AM
+[ClearThumbnail3DFolder] 2026-04-29T06:24:56.8493548Z Successfully cleared 3D thumbnails that were older than 5 days.
+[GameServer] starting jobId=254e9e34-c0c9-427d-8129-69a6b74c5060 placeId=2901 netPort=52423 rccPort=39062
+[info] Roblox.Cache.DistributedCache: Removing 2 expired items
+[SLOW] [POST] http://www.zekoro.org/Game/PlaceLauncher.ashx?request=RequestGame&placeId=2901&isPartyLeader=false&gender=&isTeleport=true - 5290ms
+[info] Roblox.Cache.DistributedCache: Removing 3 expired items
+[gs/shutdown] auth mismatch but serverId=254e9e34-c0c9-427d-8129-69a6b74c5060 exists; accepting (last-player-leaves shutdown).
+Gameserver 254e9e34-c0c9-427d-8129-69a6b74c5060 was successfully closed in 303ms!
+[info] Roblox.Cache.DistributedCache: Removing 1 expired items
+[info] Roblox.Cache.DistributedCache: Removing 1 expired items
+[info] Roblox.Cache.DistributedCache: Removing 0 expired items
+Start multi render
+[RenderingHandler] Request took 1587ms
+End multi render
+[info] Roblox.Cache.DistributedCache: Removing 0 expired items
+[info] Roblox.Cache.DistributedCache: Removing 0 expired items
+[info] Roblox.Cache.DistributedCache: Removing 0 expired items
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      Roblox.Libraries.InvalidImageException: Exception of type 'Roblox.Libraries.InvalidImageException' was thrown.
+         at Roblox.Libraries.Imager.InitializeAsync() in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 54
+         at Roblox.Libraries.Imager.ReadAsync(Stream content) in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 74
+         at Roblox.Services.AssetsService.ValidateImage(Stream content) in ~\Roblox\Roblox.Services\Assets\AssetsService.cs:line 471
+         at Roblox.Website.Controllers.AdminApiController.CreateAsset(CreateAssetRequest request) in ~\Roblox\Roblox.Website\Controllers\Internal\AdminApi.cs:line 3620
+         at lambda_method1044(Closure, Object)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextExceptionFilterAsync>g__Awaited|26_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ExceptionContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Roblox.Website.Middleware.TimerMiddleware.InvokeAsync(HttpContext ctx) in ~\Roblox\Roblox.Website\Middleware\TimerMiddleware.cs:line 32
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+[error] Unknown exception caught by ErrorController.
+Exception of type 'Roblox.Libraries.InvalidImageException' was thrown.
+   at Roblox.Libraries.Imager.InitializeAsync() in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 54
+   at Roblox.Libraries.Imager.ReadAsync(Stream content) in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 74
+   at Roblox.Services.AssetsService.ValidateImage(Stream content) in ~\Roblox\Roblox.Services\Assets\AssetsService.cs:line 471
+   at Roblox.Website.Controllers.AdminApiController.CreateAsset(CreateAssetRequest request) in ~\Roblox\Roblox.Website\Controllers\Internal\AdminApi.cs:line 3620
+   at lambda_method1044(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextExceptionFilterAsync>g__Awaited|26_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ExceptionContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Roblox.Website.Middleware.TimerMiddleware.InvokeAsync(HttpContext ctx) in ~\Roblox\Roblox.Website\Middleware\TimerMiddleware.cs:line 32
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+[info] Roblox.Cache.DistributedCache: Removing 3 expired items
+[GameServer] starting jobId=b57bd891-2fc0-4931-89f3-3de5c4528687 placeId=2553 netPort=52520 rccPort=31939
+[SLOW] [POST] http://www.zekoro.org/Game/PlaceLauncher.ashx?request=RequestGame&placeId=2553&isPartyLeader=false&gender=&isTeleport=true - 6591ms
+[info] Roblox.Cache.DistributedCache: Removing 2 expired items
+[gs/shutdown] auth mismatch but serverId=b57bd891-2fc0-4931-89f3-3de5c4528687 exists; accepting (last-player-leaves shutdown).
+Gameserver b57bd891-2fc0-4931-89f3-3de5c4528687 was successfully closed in 531ms!
+[info] Roblox.Cache.DistributedCache: Removing 3 expired items
+[info] admin authorized user 96 for GetPendingModerationItems
+[info] admin authorized user 96 for GetPendingGroupIcons
+[info] admin authorized user 96 for GetPendingModerationGameIcons
+user agent:Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36 (compatible; Google-Read-Aloud; +https://support.google.com/webmasters/answer/1061943)
+[AbuseDetection] 2026-04-29T06:36:50.3702907Z took 1ms to parse ua bypass cookie
+user agent:Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36 (compatible; Google-Read-Aloud; +https://support.google.com/webmasters/answer/1061943)
+[AbuseDetection] 2026-04-29T06:36:50.8197706Z took 1ms to parse ua bypass cookie
+user agent:Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36 (compatible; Google-Read-Aloud; +https://support.google.com/webmasters/answer/1061943)
+[AbuseDetection] 2026-04-29T06:36:50.9813780Z took 7ms to parse ua bypass cookie
+[info] Roblox.Cache.DistributedCache: Removing 4 expired items
+[DiscordApi] 2026-04-29T06:36:58.7885172Z Signup metadata requested. Has Discord cookie: False
+[DiscordApi] 2026-04-29T06:36:58.7932603Z Signup metadata returning unverified.
+[TradeSend] 2026-04-29T06:37:02.5449856Z 682beece-719f-4eae-9efa-9bdb51ff5e9c CounterTrade starting. senderId = 96 sendMessage = True
+[TradeSend] 2026-04-29T06:37:02.5485399Z 682beece-719f-4eae-9efa-9bdb51ff5e9c Request userId = 11
+[TradeSend] 2026-04-29T06:37:02.5543125Z 682beece-719f-4eae-9efa-9bdb51ff5e9c Offer len = 1 request len = 2
+[TradeSend] 2026-04-29T06:37:02.5774293Z 682beece-719f-4eae-9efa-9bdb51ff5e9c recipient filter = None
+[TradeSend] 2026-04-29T06:37:02.6105276Z 682beece-719f-4eae-9efa-9bdb51ff5e9c can counter 11 trade with requester 96: True
+[TradeSend] 2026-04-29T06:37:02.6358802Z 682beece-719f-4eae-9efa-9bdb51ff5e9c update trade. id = 13 expiration = 5/4/2026 6:37:02 AM
+[TradeSend] 2026-04-29T06:37:02.6447638Z 682beece-719f-4eae-9efa-9bdb51ff5e9c deleted trade items. id = 13
+[TradeSend] 2026-04-29T06:37:02.6465656Z 682beece-719f-4eae-9efa-9bdb51ff5e9c offering userAssetId 3120
+[TradeSend] 2026-04-29T06:37:02.6523502Z 682beece-719f-4eae-9efa-9bdb51ff5e9c requesting userAssetId = 3211
+[TradeSend] 2026-04-29T06:37:02.6548066Z 682beece-719f-4eae-9efa-9bdb51ff5e9c requesting userAssetId = 2875
+[TradeSend] 2026-04-29T06:37:02.6572380Z 682beece-719f-4eae-9efa-9bdb51ff5e9c sending message to recipient
+[TradeSend] 2026-04-29T06:37:02.6694641Z 682beece-719f-4eae-9efa-9bdb51ff5e9c trade sent successfully
+[info] admin authorized user 96 for GetPendingModerationItems
+[info] admin authorized user 96 for GetPendingModerationGameIcons
+[info] admin authorized user 96 for GetPendingGroupIcons
+[info] admin authorized user 96 for GetPendingGroupIcons
+[info] admin authorized user 96 for GetPendingModerationGameIcons
+[info] admin authorized user 96 for GetPendingModerationItems
+[info] Roblox.Cache.DistributedCache: Removing 3 expired items
+[info] admin authorized user 96 for GetPendingModerationGameIcons
+[info] admin authorized user 96 for GetPendingModerationItems
+[info] admin authorized user 96 for GetPendingGroupIcons
+[info] admin authorized user 96 for GetPendingModerationItems
+[info] admin authorized user 96 for GetPendingGroupIcons
+[info] admin authorized user 96 for GetPendingModerationGameIcons
+[info] admin authorized user 96 for GetGroupStatus
+[info] admin authorized user 96 for GetGroupWall
+[info] admin authorized user 96 for GetAllAssetComments
+[info] admin authorized user 96 for GetAllUserStatuses
+[info] admin authorized user 96 for GetPendingModerationItems
+[info] admin authorized user 96 for GetPendingModerationGameIcons
+[info] admin authorized user 96 for GetPendingGroupIcons
+[info] admin authorized user 96 for GetAllAssetComments
+[info] admin authorized user 96 for GetAllUserStatuses
+[info] admin authorized user 96 for GetGroupWall
+[info] admin authorized user 96 for GetGroupStatus
+[info] admin authorized user 96 for GetPendingModerationGameIcons
+[info] admin authorized user 96 for GetPendingModerationItems
+[info] admin authorized user 96 for GetPendingGroupIcons
+[RenderingHandler] Request took 5014ms
+[info] admin authorized user 96 for GetAllAssetComments
+[info] admin authorized user 96 for GetGroupWall
+[info] admin authorized user 96 for GetAllUserStatuses
+[info] admin authorized user 96 for GetGroupStatus
+[RenderingHandler] Request took 5807ms
+[RenderingHandler] Request took 5525ms
+[RenderingHandler] Request took 6111ms
+[RenderingHandler] Request took 2028ms
+[RenderingHandler] Request took 1742ms
+[RenderingHandler] Request took 482ms
+[RenderingHandler] Request took 1025ms
+[RenderingHandler] Request took 916ms
+[info] Roblox.Cache.DistributedCache: Removing 0 expired items
+[info] Roblox.Cache.DistributedCache: Removing 0 expired items
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      Roblox.Libraries.InvalidImageException: Exception of type 'Roblox.Libraries.InvalidImageException' was thrown.
+         at Roblox.Libraries.Imager.InitializeAsync() in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 54
+         at Roblox.Libraries.Imager.ReadAsync(Stream content) in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 74
+         at Roblox.Services.AssetsService.ValidateImage(Stream content) in ~\Roblox\Roblox.Services\Assets\AssetsService.cs:line 471
+         at Roblox.Website.Controllers.AdminApiController.CreateAsset(CreateAssetRequest request) in ~\Roblox\Roblox.Website\Controllers\Internal\AdminApi.cs:line 3620
+         at lambda_method1044(Closure, Object)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextExceptionFilterAsync>g__Awaited|26_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ExceptionContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Roblox.Website.Middleware.TimerMiddleware.InvokeAsync(HttpContext ctx) in ~\Roblox\Roblox.Website\Middleware\TimerMiddleware.cs:line 32
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+[error] Unknown exception caught by ErrorController.
+Exception of type 'Roblox.Libraries.InvalidImageException' was thrown.
+   at Roblox.Libraries.Imager.InitializeAsync() in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 54
+   at Roblox.Libraries.Imager.ReadAsync(Stream content) in ~\Roblox\Roblox.Libraries\Assets\Imager.cs:line 74
+   at Roblox.Services.AssetsService.ValidateImage(Stream content) in ~\Roblox\Roblox.Services\Assets\AssetsService.cs:line 471
+   at Roblox.Website.Controllers.AdminApiController.CreateAsset(CreateAssetRequest request) in ~\Roblox\Roblox.Website\Controllers\Internal\AdminApi.cs:line 3620
+   at lambda_method1044(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextExceptionFilterAsync>g__Awaited|26_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ExceptionContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Roblox.Website.Middleware.TimerMiddleware.InvokeAsync(HttpContext ctx) in ~\Roblox\Roblox.Website\Middleware\TimerMiddleware.cs:line 32
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+[GameServer] starting jobId=f18ed69d-d845-4885-9805-0bae233d5b60 placeId=9 netPort=58194 rccPort=32711
+[SLOW] [POST] http://www.zekoro.org/Game/PlaceLauncher.ashx?request=RequestGame&placeId=9&isPartyLeader=false&gender=&isTeleport=true - 5082ms
+[info] Roblox.Cache.DistributedCache: Removing 1 expired items
+[gs/shutdown] auth mismatch but serverId=f18ed69d-d845-4885-9805-0bae233d5b60 exists; accepting (last-player-leaves shutdown).
+Gameserver f18ed69d-d845-4885-9805-0bae233d5b60 was successfully closed in 269ms!
+[info] Roblox.Cache.DistributedCache: Removing 1 expired items
+[info] Roblox.Cache.DistributedCache: Removing 1 expired items
+[info] Roblox.Cache.DistributedCache: Removing 0 expired items

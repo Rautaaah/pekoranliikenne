@@ -1,0 +1,1 @@
+~\clients\bootstrapper\target\release\ZekoroInstaller.exe: ~\clients\bootstrapper\build.rs ~\clients\bootstrapper\icon.png ~\clients\bootstrapper\src\bin\installer.rs ~\clients\bootstrapper\src\config.rs ~\clients\bootstrapper\src\installer.rs ~\clients\bootstrapper\src\launcher.rs ~\clients\bootstrapper\src\lib.rs ~\clients\bootstrapper\src\ui.rs

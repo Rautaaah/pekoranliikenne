@@ -1,0 +1,5 @@
+# RIP Zekoro, 202something-2025 ðŸ«¡
+
+last commit of the repo WOOO!!!!
+
+no we back from the ded -skyler

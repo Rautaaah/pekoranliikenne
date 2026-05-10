@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zekoro Download</title>
+  <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico" />
+  <style>
+    :root {
+      --bg0: #0f1115;
+      --bg1: #171b22;
+      --card: #f4f4f6;
+      --card-border: #d8d8dc;
+      --text: #f4f7fb;
+      --muted: #9ea8b8;
+      --dark-text: #12151a;
+      --accent: #2f8cff;
+      --studio: #1bbf7a;
+      --disabled: #9aa3af;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Source Sans Pro", Arial, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.03) 25%, transparent 25%) -16px 0/32px 32px,
+        linear-gradient(225deg, rgba(255,255,255,0.03) 25%, transparent 25%) -16px 0/32px 32px,
+        linear-gradient(315deg, rgba(255,255,255,0.03) 25%, transparent 25%) 0 0/32px 32px,
+        linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%) 0 0/32px 32px,
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 44px 20px 56px;
+      text-align: center;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 42px;
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .grid {
+      margin-top: 34px;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      display: block;
+      text-decoration: none;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 30px 24px 26px;
+      color: var(--dark-text);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+      min-height: 276px;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #bfc5cf;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    .card.disabled,
+    .card.disabled:hover {
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+      border-color: #d7d9de;
+    }
+
+    .icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 18px;
+      margin: 0 auto 20px;
+      display: grid;
+      place-items: center;
+      font-size: 36px;
+      font-weight: 900;
+      color: #fff;
+      user-select: none;
+    }
+
+    .icon.zekoro { background: var(--accent); }
+    .icon.studio { background: var(--studio); }
+    .icon.android { background: var(--disabled); }
+
+    .z-logo {
+      width: 42px;
+      height: 42px;
+      transform: rotate(12deg);
+      background: linear-gradient(180deg, #ffffff, #dce7ff);
+      clip-path: polygon(8% 0%, 100% 0%, 100% 20%, 39% 20%, 100% 80%, 100% 100%, 0% 100%, 0% 80%, 61% 80%, 0% 20%, 0% 0%);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      font-weight: 800;
+    }
+
+    .meta {
+      margin-top: 12px;
+      font-size: 25px;
+      font-weight: 700;
+      color: #1c2735;
+    }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 15px;
+      color: #6e7581;
+    }
+
+    .cta {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(180deg, #3b97ff 0%, #1d75de 100%);
+      box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .cta.studio {
+      background: linear-gradient(180deg, #28c786 0%, #16995f 100%);
+    }
+
+    .coming {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #5f6875;
+      background: #e4e8ef;
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
+      .title { font-size: 36px; }
+      .subtitle { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1 class="title">Zekoro Download</h1>
+    <p class="subtitle">Get the client you need to play, build, and edit on Zekoro.</p>
+
+    <section class="grid">
+      <a class="card" href="/setup/installer.exe">
+        <div class="icon zekoro" aria-hidden="true">
+          <div class="z-logo"></div>
+        </div>
+        <h2>Zekoro</h2>
+        <div class="meta">Windows</div>
+        <div class="hint">Windows installer</div>
+        <span class="cta">Zekoro Download</span>
+      </a>
+
+      <a class="card" href="/setup/launcher.exe">
+        <div class="icon studio" aria-hidden="true">S</div>
+        <h3>Studio</h3>
+        <div class="meta">Windows</div>
+        <div class="hint">Studio bootstrapper</div>
+        <span class="cta studio">Studio Download</span>
+      </a>
+
+      <div class="card disabled" aria-disabled="true">
+        <div class="icon android" aria-hidden="true">A</div>
+        <h3>Android</h3>
+        <div class="meta">Download</div>
+        <div class="hint">Android client</div>
+        <span class="coming">Not out yet</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
