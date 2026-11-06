@@ -810,7 +810,7 @@ const PublicLanding = () => {
                         </form>
                         <div className={s.loginLinks}>
                             <a href={getBaseUrl2("/auth/password-reset")}>Forgot Password?</a>
-                            <a href={getBaseUrl2("/auth/discord-login")}>Login with Discord</a>
+                            <a href="/auth/discord-login">Login with Discord</a>
                         </div>
                         {loginFeedback ? <div className={s.loginFeedback}>{loginFeedback}</div> : null}
                     </div>
@@ -829,7 +829,7 @@ const PublicLanding = () => {
                         disabled={verifyButtonLocked || signupMetadataLoading}
                         onClick={() => {
                             if (verifyButtonLocked || signupMetadataLoading) return;
-                            window.location.href = getBaseUrl2("/auth/discord-signup");
+                            window.location.href = "/auth/discord-signup";
                         }}
                         type="button"
                     >
@@ -885,4 +885,3 @@ const PublicLanding = () => {
 };
 
 export default PublicLanding;
-

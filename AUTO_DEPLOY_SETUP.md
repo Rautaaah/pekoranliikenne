@@ -11,7 +11,7 @@ It deploys automatically on every push to `main` using a **self-hosted GitHub Ac
 In GitHub:
 
 1. Open repo settings:  
-   `https://github.com/elijahmalikbrown2025-netizen/oldborkenzekoro/settings/actions/runners`
+   `https://github.com/Rautaaah/pekoranliikenne/settings/actions/runners`
 2. Click **New self-hosted runner**
 3. Choose **Windows**
 4. Run the commands GitHub gives you on the VPS
@@ -19,25 +19,20 @@ In GitHub:
    - `.\svc install`
    - `.\svc start`
 
-## 2) Create/verify Windows services
+## 2) Site process lifecycle
 
-The workflow restarts these service names:
-
-- `ZekoroWebsite`
-- `ZekoroGameServer`
-
-If your actual names differ, edit the workflow env values:
-
-- `WEBSITE_SERVICE`
-- `GAMESERVER_SERVICE`
+The workflow stops only the site processes listening on ports `3000` and `5000`,
+builds the frontend, then runs `start.bat site`. It does not stop the GitHub
+Actions runner or restart the game server.
 
 ## 3) Deploy path
 
-Workflow uses:
+The workflow deploys to:
 
-- `~`
+- `C:\Sansy`
 
-If your live repo path is different, update `DEPLOY_PATH` in `.github/workflows/deploy-vps.yml`.
+If your live repo path is different, update `DEPLOY_DIR` in
+`.github/workflows/deploy-vps.yml`.
 
 ## 4) Test deploy
 
@@ -50,6 +45,6 @@ quick-push.bat "test auto deploy"
 Then check:
 
 - GitHub repo **Actions** tab
-- job **Deploy VPS** is green
-- services restarted
+- job **Deploy** is green
+- site listeners on ports `3000` and `5000` are healthy
 - site shows latest changes

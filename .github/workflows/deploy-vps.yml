@@ -5,9 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  WEBSITE_SERVICE: SansyWebsite
-  GAMESERVER_SERVICE: SansyGameServer
-  DEPLOY_DIR: C:\BB\zokoro\sansy
+  DEPLOY_DIR: C:\Sansy
 
 jobs:
   deploy:
@@ -15,12 +13,54 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Stop services
-        shell: cmd
+      - name: Stop site processes
+        shell: powershell
         run: |
-          net stop "%WEBSITE_SERVICE%"
-          net stop "%GAMESERVER_SERVICE%"
-          exit /b 0
+          $deployRoot = [System.IO.Path]::GetFullPath($env:DEPLOY_DIR).TrimEnd('\')
+          $processesById = @{}
+          Get-CimInstance Win32_Process | ForEach-Object {
+            $processesById[[int]$_.ProcessId] = $_
+          }
+
+          $listenerProcessIds = [System.Collections.Generic.HashSet[int]]::new()
+          $deploymentProcessIds = [System.Collections.Generic.HashSet[int]]::new()
+          foreach ($port in @(3000, 5000)) {
+            $componentRoot = if ($port -eq 3000) {
+              Join-Path $deployRoot 'frontend'
+            } else {
+              Join-Path $deployRoot 'Roblox\Roblox.Website'
+            }
+            $listeners = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue
+            foreach ($listener in $listeners) {
+              $processId = [int]$listener.OwningProcess
+              [void]$listenerProcessIds.Add($processId)
+              [void]$deploymentProcessIds.Add($processId)
+
+              $process = $processesById[$processId]
+              $depth = 0
+              while ($process -and $process.ParentProcessId -gt 0 -and $depth -lt 16) {
+                $parent = $processesById[[int]$process.ParentProcessId]
+                if (-not $parent) {
+                  break
+                }
+
+                if ($parent.Name -in @('cmd.exe', 'node.exe', 'dotnet.exe', 'npm.exe') -and
+                    $parent.CommandLine -and
+                    $parent.CommandLine.IndexOf($componentRoot, [StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                  [void]$deploymentProcessIds.Add([int]$parent.ProcessId)
+                }
+
+                $process = $parent
+                $depth++
+              }
+            }
+          }
+
+          $processIds = @($deploymentProcessIds)
+          $processIds = @($processIds | Sort-Object { if ($listenerProcessIds.Contains($_)) { 1 } else { 0 } })
+          foreach ($processId in $processIds) {
+            Stop-Process -Id $processId -Force -ErrorAction Stop
+          }
 
       - name: Copy files
         shell: cmd
@@ -29,8 +69,33 @@ jobs:
           if %ERRORLEVEL% GEQ 8 exit /b 1
           exit /b 0
 
-      - name: Start services
+      - name: Build frontend
         shell: cmd
         run: |
-          net start "%WEBSITE_SERVICE%"
-          net start "%GAMESERVER_SERVICE%"
+          cd /d "%DEPLOY_DIR%\frontend"
+          call npm run build
+
+      - name: Start site
+        shell: cmd
+        run: |
+          call "%DEPLOY_DIR%\start.bat" site
+
+      - name: Verify site listeners
+        shell: powershell
+        run: |
+          foreach ($port in @(3000, 5000)) {
+            $deadline = (Get-Date).AddSeconds(120)
+            do {
+              $listener = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+              if ($listener) {
+                break
+              }
+
+              Start-Sleep -Seconds 2
+            } while ((Get-Date) -lt $deadline)
+
+            if (-not $listener) {
+              throw "Site did not start listening on port $port."
+            }
+          }
