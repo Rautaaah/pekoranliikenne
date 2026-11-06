@@ -47,13 +47,15 @@ public class TwitterApi
     {
         if (!string.IsNullOrWhiteSpace(authorization))
             throw new Exception("Already configured");
-        if (string.IsNullOrWhiteSpace(newAuth))
-            throw new Exception("Bad token");
-        authorization = newAuth;
+
+        // X/Twitter is optional. The website can start without an API token.
+        authorization = string.IsNullOrWhiteSpace(newAuth) ? null : newAuth.Trim();
     }
 
     public async Task<TwitterUserObject> GetUserByScreenName(string screenName)
     {
+        if (string.IsNullOrWhiteSpace(authorization))
+            throw new InvalidOperationException("X/Twitter integration is not configured. Configure Twitter:Bearer to enable X profile lookups.");
         var encodedName = System.Web.HttpUtility.UrlEncode(screenName);
         var request = new HttpRequestMessage(HttpMethod.Get,
             "https://api.twitter.com/2/users/by?usernames="+encodedName+"&user.fields=created_at,public_metrics,description&tweet.fields=author_id,created_at");

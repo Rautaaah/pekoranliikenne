@@ -21,12 +21,15 @@ IConfiguration configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
-static string ResolveConfiguredUrl(string baseUrl, string configuredUrl)
+static string ResolveDiscordCallbackUrl(string baseUrl, string callbackPath)
 {
-    if (Uri.TryCreate(configuredUrl, UriKind.Absolute, out var absoluteUri))
-        return absoluteUri.ToString();
-
-    return new Uri(new Uri(baseUrl.TrimEnd('/') + "/"), configuredUrl.TrimStart('/')).ToString();
+    var builder = new UriBuilder(baseUrl)
+    {
+        Path = callbackPath,
+        Query = string.Empty,
+        Fragment = string.Empty,
+    };
+    return builder.Uri.ToString();
 }
 
 static bool IsZekomonsHost(string? host)
@@ -69,9 +72,9 @@ Roblox.Configuration.DiscordClientSecret = configuration.GetSection("Discord:Cli
 Roblox.Configuration.DiscordGuildId = configuration.GetSection("Discord:GuildId").Value!;
 Roblox.Configuration.DiscordBotToken = configuration.GetSection("Discord:BotToken").Value!;
 Roblox.Configuration.DiscordLogChannelId = configuration.GetSection("Discord:LogChannelId").Value!;
-Roblox.Configuration.DiscordApplicationCallback = ResolveConfiguredUrl(Roblox.Configuration.BaseUrl, configuration.GetSection("Discord:ApplicationCallback").Value!);
-Roblox.Configuration.DiscordLoginCallback = ResolveConfiguredUrl(Roblox.Configuration.BaseUrl, configuration.GetSection("Discord:LoginCallback").Value!);
-Roblox.Configuration.DiscordLinkCallback = ResolveConfiguredUrl(Roblox.Configuration.BaseUrl, configuration.GetSection("Discord:LinkCallback").Value!);
+Roblox.Configuration.DiscordApplicationCallback = ResolveDiscordCallbackUrl(Roblox.Configuration.BaseUrl, "/api/applicationcallback");
+Roblox.Configuration.DiscordLoginCallback = ResolveDiscordCallbackUrl(Roblox.Configuration.BaseUrl, "/api/logincallback");
+Roblox.Configuration.DiscordLinkCallback = ResolveDiscordCallbackUrl(Roblox.Configuration.BaseUrl, "/bot/verify");
 Roblox.Configuration.DiscordInviteUrl = configuration.GetSection("Discord:InviteUrl").Value ?? "https://discord.gg/7yUx9C3hCc";
 Roblox.Configuration.DiscordSignupWebhookUrl = configuration.GetSection("Discord:SignupWebhookUrl").Value!;
 Roblox.Configuration.DiscordLinkWebhookUrl = configuration.GetSection("Discord:LinkWebhookUrl").Value ?? Roblox.Configuration.DiscordSignupWebhookUrl;

@@ -33,7 +33,7 @@ const main = () => {
           avatarPageOutfitCreatedAtAvailable: false,
           catalogDetailsPageOwnersTabEnabled: false,
         },
-        "baseUrl": "https://www.roblox.com",
+        "baseUrl": "https://sansy.shop",
         "apiFormat": "https://{0}.roblox.com{1}"
       }
     },
