@@ -22,8 +22,10 @@ In GitHub:
 ## 2) Site process lifecycle
 
 The workflow stops only the site processes listening on ports `3000` and `5000`,
-builds the frontend, then runs `start.bat site`. It does not stop the GitHub
-Actions runner or restart the game server.
+builds the frontend, and starts `start.bat site` in a detached Windows process
+so the GitHub Actions job cleanup does not terminate the site. It does not stop
+the GitHub Actions runner or restart the game server. Startup output is written
+to `C:\Sansy\logs\site-startup.log`.
 
 ## 3) Deploy path
 

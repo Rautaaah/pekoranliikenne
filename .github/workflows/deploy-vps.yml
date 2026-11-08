@@ -76,9 +76,19 @@ jobs:
           call npm run build
 
       - name: Start site
-        shell: cmd
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command "& '{0}'"
         run: |
-          call "%DEPLOY_DIR%\start.bat" site
+          $logDirectory = Join-Path $env:DEPLOY_DIR 'logs'
+          New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null
+          $startupLog = Join-Path $logDirectory 'site-startup.log'
+          $commandLine = 'cmd.exe /c ""{0}\start.bat" site > "{1}" 2>&1"' -f $env:DEPLOY_DIR, $startupLog
+          $result = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
+            CommandLine = $commandLine
+            CurrentDirectory = $env:DEPLOY_DIR
+          }
+          if ($result.ReturnValue -ne 0) {
+            throw "Could not launch site startup process (Win32_Process.Create returned $($result.ReturnValue))."
+          }
 
       - name: Verify site listeners
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command "& '{0}'"
@@ -96,7 +106,13 @@ jobs:
             } while ((Get-Date) -lt $deadline)
 
             if (-not $listener) {
-              throw "Site did not start listening on port $port."
+              $startupLog = Join-Path $env:DEPLOY_DIR 'logs\site-startup.log'
+              $startupOutput = if (Test-Path $startupLog) {
+                (Get-Content $startupLog -Tail 60) -join "`n"
+              } else {
+                'Startup log was not created.'
+              }
+              throw "Site did not start listening on port $port.`n$startupOutput"
             }
           }
 
