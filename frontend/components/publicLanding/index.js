@@ -544,6 +544,7 @@ const PublicLanding = () => {
     const [signupMetadata, setSignupMetadata] = useState(defaultSignupMetadata);
     const [signupMetadataLoading, setSignupMetadataLoading] = useState(true);
     const [signupMetadataError, setSignupMetadataError] = useState("");
+    const [discordCallbackCompleted, setDiscordCallbackCompleted] = useState(false);
     const [loginLoading, setLoginLoading] = useState(false);
     const [signupLoading, setSignupLoading] = useState(false);
     const [loginFeedback, setLoginFeedback] = useState("");
@@ -587,6 +588,7 @@ const PublicLanding = () => {
             const url = new URL(window.location.href);
             afterVerification = url.searchParams.get("discordVerified") === "1";
             if (afterVerification) {
+                setDiscordCallbackCompleted(true);
                 url.searchParams.delete("discordVerified");
                 window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
             }
@@ -720,7 +722,7 @@ const PublicLanding = () => {
         event.preventDefault();
         setSignupFeedback("");
 
-        if (!signupMetadata.isDiscordVerified) {
+        if (!signupMetadata.isDiscordVerified && !discordCallbackCompleted) {
             setSignupFeedback("Discord verification is required before you can sign up.");
             return;
         }
@@ -754,6 +756,17 @@ const PublicLanding = () => {
         setCaptchaWidgetRendered(false);
         setCaptchaModalOpen(true);
     };
+
+    const isDiscordVerified = signupMetadata.isDiscordVerified || discordCallbackCompleted;
+    const signupMetadataStatus = signupMetadataError && discordCallbackCompleted
+        ? "Discord callback completed, but we couldn't refresh account status. You can enter your details; the server will verify Discord again when you sign up."
+        : signupMetadataError || (signupMetadata.isDiscordVerified
+            ? signupMetadata.hasExistingAccount
+                ? `This Discord account is already linked to ${signupMetadata.existingUsername || "an existing account"}.`
+                : `Verified as ${signupMetadata.discordDisplay || signupMetadata.discordUsername || "Discord user"}`
+            : discordCallbackCompleted
+                ? "Discord callback completed. You can enter your details; your verification will be checked again when you sign up."
+                : "Discord verification is required before you can sign up.");
 
     return (
         <div className={s.page}>
@@ -836,9 +849,9 @@ const PublicLanding = () => {
                     <h2 className={s.signupHeading}>Sign Up Now!</h2>
                     <button
                         className={s.discordButton}
-                        disabled={signupMetadata.isDiscordVerified || signupMetadataLoading}
+                        disabled={isDiscordVerified || signupMetadataLoading}
                         onClick={() => {
-                            if (signupMetadata.isDiscordVerified || signupMetadataLoading) return;
+                            if (isDiscordVerified || signupMetadataLoading) return;
                             window.location.href = "/api/discord/signup";
                         }}
                         type="button"
@@ -848,21 +861,17 @@ const PublicLanding = () => {
                         </svg>
                         {signupMetadataLoading
                             ? "Checking Discord..."
-                            : signupMetadata.isDiscordVerified
+                            : isDiscordVerified
                                 ? "Discord Verified"
                                 : "Verify with Discord"}
                     </button>
-                    <div className={`${s.signupStatus} ${signupMetadata.isDiscordVerified ? s.signupStatusOk : s.signupStatusWarn}`}>
-                        {signupMetadataError || (signupMetadata.isDiscordVerified
-                            ? signupMetadata.hasExistingAccount
-                                ? (
-                                    <>
-                                        This Discord account is already linked to {signupMetadata.existingUsername || "an existing account"}.
-                                        <a className={s.signupStatusLink} href="/api/discord/login">Log in with Discord</a>
-                                    </>
-                                )
-                                : `Verified as ${signupMetadata.discordDisplay || signupMetadata.discordUsername || "Discord user"}`
-                            : "Discord verification is required before you can sign up.")}
+                    <div className={`${s.signupStatus} ${isDiscordVerified ? s.signupStatusOk : s.signupStatusWarn}`}>
+                        {signupMetadata.hasExistingAccount ? (
+                            <>
+                                This Discord account is already linked to {signupMetadata.existingUsername || "an existing account"}.
+                                <a className={s.signupStatusLink} href="/api/discord/login">Log in with Discord</a>
+                            </>
+                        ) : signupMetadataStatus}
                     </div>
                     {signupMetadataError ? (
                         <button
@@ -876,7 +885,7 @@ const PublicLanding = () => {
                     <form onSubmit={onSignupSubmit}>
                         <input
                             className={s.signupInput}
-                            disabled={!signupMetadata.isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
                             onChange={event => onSignupChange("username", event.target.value)}
                             placeholder="Username"
                             type="text"
@@ -884,7 +893,7 @@ const PublicLanding = () => {
                         />
                         <input
                             className={s.signupInput}
-                            disabled={!signupMetadata.isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
                             onChange={event => onSignupChange("password", event.target.value)}
                             placeholder="Password"
                             type="password"
@@ -892,7 +901,7 @@ const PublicLanding = () => {
                         />
                         <input
                             className={s.signupInput}
-                            disabled={!signupMetadata.isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
                             onChange={event => onSignupChange("confirmPassword", event.target.value)}
                             placeholder="Confirm Password"
                             type="password"
@@ -900,7 +909,7 @@ const PublicLanding = () => {
                         />
                         <button
                             className={s.signupButton}
-                            disabled={!signupMetadata.isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
                             type="submit"
                         >
                             {signupLoading ? "Creating Account..." : "Sign Up"}
