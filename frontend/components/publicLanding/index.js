@@ -1,12 +1,322 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import AuthenticationStore from "../../stores/authentication";
 import { getBaseUrl2 } from "../../lib/request";
 import { getSignupMetadata, login, signup } from "../../services/auth";
+import kornetLogo from "./img/kornet_logo_full.png";
 
 const turnstileSiteKey = "0x4AAAAAAC2dQD0M8-hT9n_I";
 
 const useStyles = createUseStyles({
+    "@keyframes authCardIn": {
+        "0%": { opacity: 0, transform: "translateY(14px)" },
+        "100%": { opacity: 1, transform: "translateY(0)" },
+    },
+    authPage: {
+        width: "100%",
+        minHeight: "100vh",
+        margin: 0,
+        padding: "44px 20px 70px",
+        boxSizing: "border-box",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 64,
+        position: "relative",
+        overflow: "hidden",
+        backgroundColor: "#2b1611",
+        backgroundImage: "repeating-linear-gradient(45deg, rgba(245, 236, 214, .028) 0 2px, transparent 2px 22px), repeating-linear-gradient(-45deg, rgba(245, 236, 214, .028) 0 2px, transparent 2px 22px)",
+        color: "#fbf3e3",
+        fontFamily: '"Space Grotesk", "Trebuchet MS", Arial, sans-serif',
+        "@media (max-width: 860px)": {
+            flexDirection: "column",
+            gap: 22,
+        },
+    },
+    authBackgroundCanvas: {
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: 0,
+        pointerEvents: "none",
+    },
+    authShell: {
+        width: "100%",
+        maxWidth: 390,
+        position: "relative",
+        zIndex: 2,
+        animation: "$authCardIn 0.4s ease both",
+    },
+    authCard: {
+        padding: "24px 24px 22px",
+        boxSizing: "border-box",
+        borderRadius: 16,
+        border: "1px solid rgba(245, 236, 214, .08)",
+        background: "#3a1f18",
+        boxShadow: "0 20px 50px rgba(0, 0, 0, .45)",
+    },
+    authToggle: {
+        display: "flex",
+        padding: 4,
+        marginBottom: 20,
+        position: "relative",
+        borderRadius: 11,
+        background: "#24110d",
+    },
+    authToggleThumb: {
+        position: "absolute",
+        top: 4,
+        bottom: 4,
+        left: 4,
+        width: "calc(50% - 4px)",
+        borderRadius: 8,
+        background: "#a8573a",
+        transition: "transform 0.25s",
+    },
+    authToggleThumbRight: {
+        transform: "translateX(100%)",
+    },
+    authToggleLink: {
+        flex: "1 1 0%",
+        height: 36,
+        zIndex: 1,
+        position: "relative",
+        display: "block",
+        color: "#c9ad97",
+        fontSize: 14,
+        fontWeight: 700,
+        lineHeight: "36px",
+        textAlign: "center",
+        textDecoration: "none",
+        "&:hover": { color: "#fff8ea" },
+    },
+    authToggleActive: {
+        color: "#fff8ea",
+    },
+    authHeading: {
+        margin: "0 0 18px",
+        color: "#fbf3e3",
+        fontSize: 23,
+        fontWeight: 700,
+        letterSpacing: "-0.02em",
+        textAlign: "center",
+    },
+    authField: {
+        marginBottom: 11,
+    },
+    authInput: {
+        width: "100%",
+        padding: "12px 15px",
+        boxSizing: "border-box",
+        border: "2px dashed #6e3a2b",
+        borderRadius: 10,
+        outline: "none",
+        background: "#2a1510",
+        color: "#fbf3e3",
+        fontFamily: "inherit",
+        fontSize: 15,
+        transition: "border-color 0.16s",
+        "&::placeholder": { color: "#9a7a68" },
+        "&:focus": { borderColor: "#d07a52" },
+        "&:disabled": { opacity: 0.55 },
+    },
+    authDiscordButton: {
+        width: "100%",
+        height: 46,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+        border: 0,
+        borderRadius: 10,
+        background: "#5865f2",
+        color: "#fff",
+        fontFamily: "inherit",
+        fontSize: 15,
+        fontWeight: 700,
+        textDecoration: "none",
+        cursor: "pointer",
+        transition: "background 0.14s",
+        "&:hover": { background: "#4752c4" },
+        "&:disabled": {
+            background: "#2f6b3a",
+            cursor: "default",
+        },
+    },
+    authDiscordIcon: {
+        width: 22,
+        height: 22,
+        display: "block",
+        fill: "currentColor",
+    },
+    authDivider: {
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        margin: "16px 0",
+        color: "#b0907c",
+        fontSize: 11,
+        fontWeight: 600,
+        letterSpacing: "0.16em",
+        textTransform: "uppercase",
+        "& span": {
+            flex: "1 1 0%",
+            height: 1,
+            background: "rgba(245, 236, 214, .14)",
+        },
+    },
+    authSubmit: {
+        width: "100%",
+        minHeight: 46,
+        marginTop: 8,
+        padding: "0 16px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        border: 0,
+        borderRadius: 10,
+        background: "#a8573a",
+        color: "#fff8ea",
+        fontFamily: "inherit",
+        fontSize: 15,
+        fontWeight: 700,
+        textDecoration: "none",
+        cursor: "pointer",
+        transition: "background 0.14s",
+        "&:hover": { background: "#924a30" },
+        "&:active": { background: "#7d3f29" },
+        "&:disabled": { opacity: 0.6, cursor: "default" },
+    },
+    authStatus: {
+        margin: "0 0 12px",
+        color: "#c9ad97",
+        fontSize: 12.5,
+        lineHeight: 1.5,
+        textAlign: "center",
+        "& a": {
+            color: "#f0c9a8",
+            fontWeight: 600,
+            textDecoration: "none",
+        },
+        "& a:hover": { color: "#fff", textDecoration: "underline" },
+    },
+    authInlineButton: {
+        padding: 0,
+        border: 0,
+        background: "transparent",
+        color: "#f0c9a8",
+        font: "inherit",
+        fontWeight: 700,
+        textDecoration: "underline",
+        cursor: "pointer",
+    },
+    authFeedback: {
+        minHeight: 18,
+        marginTop: 10,
+        color: "#ff9b8a",
+        fontSize: 13,
+        lineHeight: 1.45,
+        textAlign: "center",
+    },
+    authFoot: {
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        gap: 8,
+        marginTop: 16,
+        color: "#e0bfa6",
+        fontSize: 12.5,
+        "& a": {
+            color: "#f0c9a8",
+            fontWeight: 600,
+            textDecoration: "none",
+        },
+        "& span": { color: "#e0bfa6" },
+        "& a:hover": { color: "#fff" },
+    },
+    authMark: {
+        position: "relative",
+        zIndex: 2,
+        userSelect: "none",
+        animation: "$authCardIn 0.5s ease 0.05s both",
+        "& img": {
+            width: "clamp(280px, 36vw, 520px)",
+            height: "auto",
+            display: "block",
+            filter: "drop-shadow(0 12px 28px rgba(0, 0, 0, .5))",
+        },
+        "@media (max-width: 860px)": {
+            order: -1,
+            "& img": { width: "min(74vw, 320px)" },
+        },
+    },
+    authLegal: {
+        position: "absolute",
+        right: 0,
+        bottom: 10,
+        left: 0,
+        zIndex: 2,
+        color: "rgba(245, 225, 205, .45)",
+        fontSize: 10.5,
+        textAlign: "center",
+    },
+    authCaptchaWidget: {
+        minHeight: 70,
+        marginBottom: 14,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        "& iframe": { maxWidth: "100%" },
+    },
+    authCaptchaOverlay: {
+        position: "fixed",
+        inset: 0,
+        zIndex: 1000,
+        padding: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(10, 5, 3, .72)",
+    },
+    authCaptchaModal: {
+        width: "min(100%, 420px)",
+        padding: "22px 20px 18px",
+        boxSizing: "border-box",
+        borderRadius: 16,
+        background: "#3a1f18",
+        color: "#fbf3e3",
+        boxShadow: "0 20px 60px rgba(0,0,0,.4)",
+    },
+    authCaptchaTitle: { margin: "0 0 8px", fontSize: 21 },
+    authCaptchaText: { margin: "0 0 16px", color: "#c9ad97", lineHeight: 1.5 },
+    authCaptchaError: { minHeight: 22, marginBottom: 12, color: "#ff9b8a", fontSize: 14 },
+    authCaptchaActions: { display: "flex", justifyContent: "flex-end", gap: 10 },
+    authCaptchaSecondary: {
+        height: 40,
+        padding: "0 16px",
+        border: "1px solid #6e3a2b",
+        borderRadius: 8,
+        background: "#2a1510",
+        color: "#fbf3e3",
+        fontFamily: "inherit",
+        fontWeight: 700,
+        cursor: "pointer",
+        "&:disabled": { opacity: 0.6, cursor: "default" },
+    },
+    authCaptchaPrimary: {
+        height: 40,
+        padding: "0 18px",
+        border: 0,
+        borderRadius: 8,
+        background: "#a8573a",
+        color: "#fff8ea",
+        fontFamily: "inherit",
+        fontWeight: 700,
+        cursor: "pointer",
+        "&:disabled": { opacity: 0.6, cursor: "default" },
+    },
     "@keyframes heroGlowPulse": {
         "0%": {
             opacity: 0.52,
@@ -528,9 +838,11 @@ const getErrorMessage = (error, fallbackMessage) => {
     return error?.response?.data?.errors?.[0]?.message || error?.message || fallbackMessage;
 };
 
-const PublicLanding = () => {
+const PublicLanding = ({ mode = "signup" }) => {
     const s = useStyles();
     const auth = AuthenticationStore.useContainer();
+    const isLoginPage = mode === "login";
+    const backgroundCanvasRef = useRef(null);
     const [loginState, setLoginState] = useState({
         username: "",
         password: "",
@@ -561,6 +873,84 @@ const PublicLanding = () => {
         }
     }, [auth.isAuthenticated, auth.isPending]);
 
+    useEffect(() => {
+        const canvas = backgroundCanvasRef.current;
+        const context = canvas?.getContext("2d");
+        if (!canvas || !context) return undefined;
+
+        let animationFrame = 0;
+        let width = 0;
+        let height = 0;
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const colors = ["168,87,58", "245,236,214", "110,58,43", "208,122,82"];
+        const glows = Array.from({ length: 7 }, (_, index) => ({
+            x: Math.random(),
+            y: Math.random(),
+            radius: 180 + Math.random() * 260,
+            dx: (Math.random() - 0.5) * 0.00025,
+            dy: (Math.random() - 0.5) * 0.00025,
+            color: colors[index % colors.length],
+            opacity: index % 4 === 1 ? 0.05 : 0.16,
+        }));
+        const specks = Array.from({ length: 90 }, () => ({
+            x: Math.random(),
+            y: Math.random(),
+            size: 0.6 + Math.random() * 1.8,
+            velocity: 0.00005 + Math.random() * 0.00018,
+            opacity: 0.08 + Math.random() * 0.25,
+        }));
+
+        const resize = () => {
+            const ratio = window.devicePixelRatio || 1;
+            width = canvas.clientWidth;
+            height = canvas.clientHeight;
+            canvas.width = width * ratio;
+            canvas.height = height * ratio;
+            context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        };
+        const draw = () => {
+            context.clearRect(0, 0, width, height);
+            glows.forEach(glow => {
+                glow.x += glow.dx;
+                glow.y += glow.dy;
+                if (glow.x < -0.2 || glow.x > 1.2) glow.dx *= -1;
+                if (glow.y < -0.2 || glow.y > 1.2) glow.dy *= -1;
+                const gradient = context.createRadialGradient(
+                    glow.x * width,
+                    glow.y * height,
+                    0,
+                    glow.x * width,
+                    glow.y * height,
+                    glow.radius,
+                );
+                gradient.addColorStop(0, `rgba(${glow.color},${glow.opacity})`);
+                gradient.addColorStop(1, `rgba(${glow.color},0)`);
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, width, height);
+            });
+            specks.forEach(speck => {
+                speck.y -= speck.velocity;
+                if (speck.y < -0.02) {
+                    speck.y = 1.02;
+                    speck.x = Math.random();
+                }
+                context.fillStyle = `rgba(245,236,214,${speck.opacity})`;
+                context.beginPath();
+                context.arc(speck.x * width, speck.y * height, speck.size, 0, Math.PI * 2);
+                context.fill();
+            });
+            if (!reducedMotion) animationFrame = window.requestAnimationFrame(draw);
+        };
+
+        resize();
+        window.addEventListener("resize", resize);
+        draw();
+        return () => {
+            window.cancelAnimationFrame(animationFrame);
+            window.removeEventListener("resize", resize);
+        };
+    }, []);
+
     const refreshSignupMetadata = async (afterVerification = false) => {
         setSignupMetadataLoading(true);
         setSignupMetadataError("");
@@ -583,6 +973,7 @@ const PublicLanding = () => {
     };
 
     useEffect(() => {
+        if (isLoginPage) return;
         let afterVerification = false;
         if (typeof window !== "undefined") {
             const url = new URL(window.location.href);
@@ -594,7 +985,7 @@ const PublicLanding = () => {
             }
         }
         refreshSignupMetadata(afterVerification);
-    }, []);
+    }, [isLoginPage]);
 
     useEffect(() => {
         if (typeof window === "undefined") return undefined;
@@ -769,17 +1160,18 @@ const PublicLanding = () => {
                 : "Discord verification is required before you can sign up.");
 
     return (
-        <div className={s.page}>
+        <main className={s.authPage}>
+            <canvas aria-hidden="true" className={s.authBackgroundCanvas} ref={backgroundCanvasRef} />
             {captchaModalOpen ? (
-                <div className={s.captchaOverlay}>
-                    <div className={s.captchaModal}>
-                        <h3 className={s.captchaTitle}>Please verify you are not a robot</h3>
-                        <p className={s.captchaText}>Complete the captcha to finish creating your account.</p>
-                        <div className={s.captchaWidget} id="signup-turnstile" />
-                        <div className={s.captchaError}>{captchaError}</div>
-                        <div className={s.captchaActions}>
+                <div className={s.authCaptchaOverlay}>
+                    <div aria-labelledby="signup-captcha-title" aria-modal="true" className={s.authCaptchaModal} role="dialog">
+                        <h3 className={s.authCaptchaTitle} id="signup-captcha-title">Please verify you are not a robot</h3>
+                        <p className={s.authCaptchaText}>Complete the captcha to finish creating your account.</p>
+                        <div className={s.authCaptchaWidget} id="signup-turnstile" />
+                        <div aria-live="polite" className={s.authCaptchaError}>{captchaError}</div>
+                        <div className={s.authCaptchaActions}>
                             <button
-                                className={s.captchaSecondary}
+                                className={s.authCaptchaSecondary}
                                 disabled={captchaSubmitting}
                                 onClick={closeCaptchaModal}
                                 type="button"
@@ -787,139 +1179,197 @@ const PublicLanding = () => {
                                 Cancel
                             </button>
                             <button
-                                className={s.captchaPrimary}
+                                className={s.authCaptchaPrimary}
                                 disabled={!captchaToken || captchaSubmitting}
                                 onClick={() => submitSignupWithCaptcha(captchaToken)}
                                 type="button"
                             >
-                                {captchaSubmitting ? "Verifying..." : "Continue"}
+                                {captchaSubmitting ? "Creating account..." : "Continue"}
                             </button>
                         </div>
                     </div>
                 </div>
             ) : null}
-            <div className={s.topBar}>
-                <div className={s.topBarInner}>
-                    <img alt="Zekoro icon" className={s.cornerIcon} src="/img/landing/zekorooooo.png" />
-                    <div className={s.loginCluster}>
-                        <form className={s.loginForm} onSubmit={onLoginSubmit}>
-                            <input
-                                className={s.input}
-                                disabled={loginLoading}
-                                onChange={event => onLoginChange("username", event.target.value)}
-                                placeholder="Username"
-                                type="text"
-                                value={loginState.username}
-                            />
-                            <input
-                                className={s.input}
-                                disabled={loginLoading}
-                                onChange={event => onLoginChange("password", event.target.value)}
-                                placeholder="Password"
-                                type="password"
-                                value={loginState.password}
-                            />
-                            <input
-                                className={s.input}
-                                disabled={loginLoading}
-                                onChange={event => onLoginChange("twoFactorCode", event.target.value)}
-                                placeholder="2FA Code (Optional)"
-                                type="text"
-                                value={loginState.twoFactorCode}
-                            />
-                            <button className={s.loginButton} disabled={loginLoading} type="submit">
-                                {loginLoading ? "Logging In..." : "Log In"}
+
+            <section className={s.authShell}>
+                <div className={s.authCard}>
+                    <nav aria-label="Account" className={s.authToggle}>
+                        <div className={`${s.authToggleThumb} ${isLoginPage ? s.authToggleThumbRight : ""}`} />
+                        <a
+                            aria-current={!isLoginPage ? "page" : undefined}
+                            className={`${s.authToggleLink} ${!isLoginPage ? s.authToggleActive : ""}`}
+                            href="/"
+                        >
+                            Sign up
+                        </a>
+                        <a
+                            aria-current={isLoginPage ? "page" : undefined}
+                            className={`${s.authToggleLink} ${isLoginPage ? s.authToggleActive : ""}`}
+                            href="/login"
+                        >
+                            Log in
+                        </a>
+                    </nav>
+
+                    {isLoginPage ? (
+                        <>
+                            <h1 className={s.authHeading}>Welcome back</h1>
+                            <form onSubmit={onLoginSubmit}>
+                                <div className={s.authField}>
+                                    <input
+                                        autoComplete="username"
+                                        className={s.authInput}
+                                        disabled={loginLoading}
+                                        onChange={event => onLoginChange("username", event.target.value)}
+                                        placeholder="Username"
+                                        type="text"
+                                        value={loginState.username}
+                                    />
+                                </div>
+                                <div className={s.authField}>
+                                    <input
+                                        autoComplete="current-password"
+                                        className={s.authInput}
+                                        disabled={loginLoading}
+                                        onChange={event => onLoginChange("password", event.target.value)}
+                                        placeholder="Password"
+                                        type="password"
+                                        value={loginState.password}
+                                    />
+                                </div>
+                                <div className={s.authField}>
+                                    <input
+                                        autoComplete="one-time-code"
+                                        className={s.authInput}
+                                        disabled={loginLoading}
+                                        inputMode="numeric"
+                                        maxLength={6}
+                                        onChange={event => onLoginChange("twoFactorCode", event.target.value)}
+                                        pattern="[0-9]*"
+                                        placeholder="2FA code (leave blank if not set)"
+                                        type="text"
+                                        value={loginState.twoFactorCode}
+                                    />
+                                </div>
+                                <button className={s.authSubmit} disabled={loginLoading} type="submit">
+                                    {loginLoading ? "Logging in..." : "Log in"}
+                                </button>
+                            </form>
+                            <div aria-live="polite" className={s.authFeedback}>{loginFeedback}</div>
+                            <div className={s.authDivider}><span />or<span /></div>
+                            <a className={s.authDiscordButton} href="/api/discord/login">
+                                <svg aria-hidden="true" className={s.authDiscordIcon} viewBox="0 0 24 24">
+                                    <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.249a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.036A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.056c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028ZM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418Z" />
+                                </svg>
+                                Log in with Discord
+                            </a>
+                            <div className={s.authFoot}>
+                                <a href={getBaseUrl2("/auth/password-reset")}>Forgot password?</a>
+                                <span title="Use the /reset-password command in the Discord server">
+                                    Need help? Ask in Discord
+                                </span>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h1 className={s.authHeading}>Create your account</h1>
+                            <button
+                                className={s.authDiscordButton}
+                                disabled={isDiscordVerified || signupMetadataLoading}
+                                onClick={() => {
+                                    if (!isDiscordVerified && !signupMetadataLoading) {
+                                        window.location.href = "/api/discord/signup";
+                                    }
+                                }}
+                                type="button"
+                            >
+                                <svg aria-hidden="true" className={s.authDiscordIcon} viewBox="0 0 24 24">
+                                    <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.249a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.036A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.056c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028ZM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418Z" />
+                                </svg>
+                                {signupMetadataLoading
+                                    ? "Checking Discord..."
+                                    : isDiscordVerified
+                                        ? "Discord verified"
+                                        : "Verify with Discord (required)"}
                             </button>
-                        </form>
-                        <div className={s.loginLinks}>
-                            <a href={getBaseUrl2("/auth/password-reset")}>Forgot Password?</a>
-                            <a href="/api/discord/login">Login with Discord</a>
-                        </div>
-                        {loginFeedback ? <div className={s.loginFeedback}>{loginFeedback}</div> : null}
-                    </div>
+                            <div className={s.authDivider}><span />then<span /></div>
+                            <div aria-live="polite" className={s.authStatus}>
+                                {signupMetadata.hasExistingAccount ? (
+                                    <>
+                                        This Discord account is already linked to {signupMetadata.existingUsername || "an existing account"}.{" "}
+                                        <a href="/api/discord/login">Log in with Discord</a>
+                                    </>
+                                ) : signupMetadataStatus}
+                                {signupMetadataError ? (
+                                    <>
+                                        {" "}
+                                        <button
+                                            className={s.authInlineButton}
+                                            onClick={() => refreshSignupMetadata(true)}
+                                            type="button"
+                                        >
+                                            Retry check
+                                        </button>
+                                    </>
+                                ) : null}
+                            </div>
+                            <form onSubmit={onSignupSubmit}>
+                                <div className={s.authField}>
+                                    <input
+                                        autoComplete="username"
+                                        className={s.authInput}
+                                        disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                                        maxLength={20}
+                                        onChange={event => onSignupChange("username", event.target.value)}
+                                        placeholder="Username"
+                                        type="text"
+                                        value={signupState.username}
+                                    />
+                                </div>
+                                <div className={s.authField}>
+                                    <input
+                                        autoComplete="new-password"
+                                        className={s.authInput}
+                                        disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                                        onChange={event => onSignupChange("password", event.target.value)}
+                                        placeholder="Password"
+                                        type="password"
+                                        value={signupState.password}
+                                    />
+                                </div>
+                                <div className={s.authField}>
+                                    <input
+                                        autoComplete="new-password"
+                                        className={s.authInput}
+                                        disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                                        onChange={event => onSignupChange("confirmPassword", event.target.value)}
+                                        placeholder="Confirm password"
+                                        type="password"
+                                        value={signupState.confirmPassword}
+                                    />
+                                </div>
+                                <button
+                                    className={s.authSubmit}
+                                    disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                                    type="submit"
+                                >
+                                    {signupLoading ? "Creating account..." : "Create account"}
+                                </button>
+                            </form>
+                            <div aria-live="polite" className={s.authFeedback}>{signupFeedback}</div>
+                            <div className={s.authFoot}>
+                                <span>Already have an account? <a href="/login">Log in</a></span>
+                            </div>
+                        </>
+                    )}
                 </div>
+            </section>
+
+            <div className={s.authMark}>
+                <img alt="Kornet" src={kornetLogo.src} />
             </div>
-            <div className={s.hero}>
-                <div className={s.heroPanel}>
-                    <div className={s.brandBlock}>
-                        <img alt="Zekoro" className={s.brandImage} src="/img/landing/zekorologo222.png" />
-                    </div>
-                </div>
-                <div className={s.signupCard}>
-                    <h2 className={s.signupHeading}>Sign Up Now!</h2>
-                    <button
-                        className={s.discordButton}
-                        disabled={isDiscordVerified || signupMetadataLoading}
-                        onClick={() => {
-                            if (isDiscordVerified || signupMetadataLoading) return;
-                            window.location.href = "/api/discord/signup";
-                        }}
-                        type="button"
-                    >
-                        <svg aria-hidden="true" className={s.discordIcon} viewBox="0 0 127.14 96.36">
-                            <path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0 105.89 105.89 0 0 0 19.39 8.09C2.79 32.65-1.71 56.6.54 80.21h.01a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.27 68.42 68.42 0 0 1-10.84-5.18c.91-.66 1.8-1.34 2.66-2.04 20.87 9.54 43.56 9.54 64.18 0 .87.71 1.76 1.39 2.66 2.04a68.68 68.68 0 0 1-10.85 5.19 77 77 0 0 0 6.89 11.26A105.25 105.25 0 0 0 126.6 80.22c2.64-27.36-4.5-51.09-18.9-72.15ZM42.45 65.69c-6.27 0-11.41-5.73-11.41-12.78s5.04-12.78 11.41-12.78c6.37 0 11.52 5.78 11.41 12.78 0 7.05-5.04 12.78-11.41 12.78Zm42.24 0c-6.27 0-11.41-5.73-11.41-12.78s5.04-12.78 11.41-12.78c6.37 0 11.52 5.78 11.41 12.78 0 7.05-5.03 12.78-11.41 12.78Z"/>
-                        </svg>
-                        {signupMetadataLoading
-                            ? "Checking Discord..."
-                            : isDiscordVerified
-                                ? "Discord Verified"
-                                : "Verify with Discord"}
-                    </button>
-                    <div className={`${s.signupStatus} ${isDiscordVerified ? s.signupStatusOk : s.signupStatusWarn}`}>
-                        {signupMetadata.hasExistingAccount ? (
-                            <>
-                                This Discord account is already linked to {signupMetadata.existingUsername || "an existing account"}.
-                                <a className={s.signupStatusLink} href="/api/discord/login">Log in with Discord</a>
-                            </>
-                        ) : signupMetadataStatus}
-                    </div>
-                    {signupMetadataError ? (
-                        <button
-                            className={s.captchaSecondary}
-                            onClick={() => refreshSignupMetadata(true)}
-                            type="button"
-                        >
-                            Retry verification check
-                        </button>
-                    ) : null}
-                    <form onSubmit={onSignupSubmit}>
-                        <input
-                            className={s.signupInput}
-                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
-                            onChange={event => onSignupChange("username", event.target.value)}
-                            placeholder="Username"
-                            type="text"
-                            value={signupState.username}
-                        />
-                        <input
-                            className={s.signupInput}
-                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
-                            onChange={event => onSignupChange("password", event.target.value)}
-                            placeholder="Password"
-                            type="password"
-                            value={signupState.password}
-                        />
-                        <input
-                            className={s.signupInput}
-                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
-                            onChange={event => onSignupChange("confirmPassword", event.target.value)}
-                            placeholder="Confirm Password"
-                            type="password"
-                            value={signupState.confirmPassword}
-                        />
-                        <button
-                            className={s.signupButton}
-                            disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
-                            type="submit"
-                        >
-                            {signupLoading ? "Creating Account..." : "Sign Up"}
-                        </button>
-                    </form>
-                    <div className={s.signupFeedback}>{signupFeedback}</div>
-                </div>
-            </div>
-            <div className={s.footer}>(c) 2026 Zekoro. Not affiliated with Roblox Corporation.</div>
-        </div>
+            <div className={s.authLegal}>(c) 2026 Kornet. Not affiliated with Roblox Corporation.</div>
+        </main>
     );
 };
 

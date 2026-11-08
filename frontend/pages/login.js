@@ -1,14 +1,14 @@
 import PublicLanding from "../components/publicLanding";
 
 const LoginPage = () => {
-    return <PublicLanding />;
+    return <PublicLanding mode="login" />;
 }
 
 export const getServerSideProps = async () => {
     return {
         props: {
             disableWebsiteTheming: true,
-            title: "Zekoro",
+            title: "Log in - Kornet",
         },
     };
 };
