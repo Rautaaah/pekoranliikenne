@@ -47,4 +47,5 @@ Then check:
 - GitHub repo **Actions** tab
 - job **Deploy** is green
 - site listeners on ports `3000` and `5000` are healthy
+- Discord signup returns the registered `sansy.shop` callback
 - site shows latest changes

@@ -99,3 +99,31 @@ jobs:
               throw "Site did not start listening on port $port."
             }
           }
+
+      - name: Verify Discord signup redirect
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command "& '{0}'"
+        run: |
+          $headers = & curl.exe --silent --show-error --max-time 15 --dump-header - --output NUL http://127.0.0.1:5000/auth/discord-signup
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not request the Discord signup endpoint."
+          }
+
+          $locationLine = $headers | Where-Object { $_ -match '(?i)^location:\s*' } | Select-Object -Last 1
+          if (-not $locationLine) {
+            throw "Discord signup endpoint did not return an OAuth redirect."
+          }
+
+          $authorizationUri = [Uri](($locationLine -replace '(?i)^location:\s*', '').Trim())
+          if ($authorizationUri.Host -ne 'discord.com' -or $authorizationUri.AbsolutePath -ne '/oauth2/authorize') {
+            throw "Discord signup endpoint did not redirect to Discord's authorization endpoint."
+          }
+
+          $redirectUriMatch = [regex]::Match($authorizationUri.Query, '(?:\?|&)redirect_uri=([^&]+)')
+          if (-not $redirectUriMatch.Success) {
+            throw "Discord authorization URL did not include a redirect_uri."
+          }
+
+          $redirectUri = [Uri]::UnescapeDataString($redirectUriMatch.Groups[1].Value)
+          if ($redirectUri -ne 'https://sansy.shop/api/applicationcallback') {
+            throw "Discord signup callback URI is incorrect."
+          }
