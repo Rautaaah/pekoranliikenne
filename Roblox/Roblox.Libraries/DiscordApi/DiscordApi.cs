@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using DSharpPlus.Entities;
 using Newtonsoft.Json;
@@ -22,8 +23,9 @@ public class DiscordApi
 
         public void SetToken(string token)
         {
-            DefaultRequestHeaders.Remove("Authorization");
-            DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(token)
+                ? null
+                : new AuthenticationHeaderValue("Bearer", token);
         }
     }
 
@@ -38,12 +40,11 @@ public class DiscordApi
     {
 		Writer.Info(LogGroup.DiscordApi, "CreateFromOAuthCode with redirectUri: {0}", redirectUri);
 		
-        var api = new DiscordApi(Configuration.DiscordOAuthToken, redirectUri);
+        var api = new DiscordApi(string.Empty, redirectUri);
         var tokenResponse = await api.RequestAccessToken(code, useRefreshToken: false);
         if (tokenResponse == null)
         {
-			Writer.Info(LogGroup.DiscordApi, "Failed to get access token from code: {0}", code);
-            Writer.Info(LogGroup.DiscordApi, "RedirectUri at failure: {0}", redirectUri);
+			Writer.Info(LogGroup.DiscordApi, "RedirectUri at failure: {0}", redirectUri);
             return null;
         }
 

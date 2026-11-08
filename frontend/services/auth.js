@@ -10,11 +10,11 @@ export const login = ({ username, password }) => {
 }
 
 export const getSignupMetadata = () => {
-  return request('GET', getFullUrl('auth', '/v2/signup-metadata')).then(result => result.data);
+  return request('GET', '/api/discord/signup-metadata').then(result => result.data);
 }
 
 export const signup = ({ username, password, captchaToken }) => {
-  return request('POST', getFullUrl('auth', '/v2/signup'), {
+  return request('POST', '/api/discord/create-account', {
     username,
     password,
     captchaToken,

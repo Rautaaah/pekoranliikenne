@@ -32,6 +32,8 @@ export const getBaseUrl2 = (str) => {
  * @returns {string}
  */
 export const getUrlWithProxy = (url) => {
+    if (url.startsWith('/'))
+        return url;
     if (config.publicRuntimeConfig.backend.proxyEnabled)
         return '/api/proxy?url=' + encodeURIComponent(url);
     return url;

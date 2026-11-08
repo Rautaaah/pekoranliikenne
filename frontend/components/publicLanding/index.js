@@ -430,6 +430,12 @@ const useStyles = createUseStyles({
     signupStatusWarn: {
         color: "#9a5a00",
     },
+    signupStatusLink: {
+        display: "block",
+        marginTop: 4,
+        color: "#1769aa",
+        textDecoration: "underline",
+    },
     footer: {
         background: "transparent",
         color: "#f2f7ff",
@@ -537,11 +543,11 @@ const PublicLanding = () => {
     });
     const [signupMetadata, setSignupMetadata] = useState(defaultSignupMetadata);
     const [signupMetadataLoading, setSignupMetadataLoading] = useState(true);
+    const [signupMetadataError, setSignupMetadataError] = useState("");
     const [loginLoading, setLoginLoading] = useState(false);
     const [signupLoading, setSignupLoading] = useState(false);
     const [loginFeedback, setLoginFeedback] = useState("");
     const [signupFeedback, setSignupFeedback] = useState("");
-    const [verifyButtonLocked, setVerifyButtonLocked] = useState(false);
     const [captchaModalOpen, setCaptchaModalOpen] = useState(false);
     const [captchaError, setCaptchaError] = useState("");
     const [captchaToken, setCaptchaToken] = useState("");
@@ -554,34 +560,38 @@ const PublicLanding = () => {
         }
     }, [auth.isAuthenticated, auth.isPending]);
 
-    const refreshSignupMetadata = async () => {
+    const refreshSignupMetadata = async (afterVerification = false) => {
         setSignupMetadataLoading(true);
+        setSignupMetadataError("");
         try {
             const result = await getSignupMetadata();
-            setSignupMetadata({
+            const metadata = {
                 ...defaultSignupMetadata,
                 ...result,
-            });
+            };
+            setSignupMetadata(metadata);
+            if (afterVerification && !metadata.isDiscordVerified) {
+                setSignupMetadataError("Discord verification could not be confirmed. Please verify again.");
+            }
         } catch (error) {
             setSignupMetadata(defaultSignupMetadata);
+            setSignupMetadataError("We couldn't check Discord verification. Please try again.");
         } finally {
             setSignupMetadataLoading(false);
         }
     };
 
     useEffect(() => {
-        refreshSignupMetadata();
-    }, []);
-
-    useEffect(() => {
-        if (typeof window === "undefined") return;
-        const url = new URL(window.location.href);
-        if (url.searchParams.get("discordVerified") === "1") {
-            setVerifyButtonLocked(true);
-            url.searchParams.delete("discordVerified");
-            window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
-            refreshSignupMetadata();
+        let afterVerification = false;
+        if (typeof window !== "undefined") {
+            const url = new URL(window.location.href);
+            afterVerification = url.searchParams.get("discordVerified") === "1";
+            if (afterVerification) {
+                url.searchParams.delete("discordVerified");
+                window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+            }
         }
+        refreshSignupMetadata(afterVerification);
     }, []);
 
     useEffect(() => {
@@ -826,9 +836,9 @@ const PublicLanding = () => {
                     <h2 className={s.signupHeading}>Sign Up Now!</h2>
                     <button
                         className={s.discordButton}
-                        disabled={verifyButtonLocked || signupMetadataLoading}
+                        disabled={signupMetadata.isDiscordVerified || signupMetadataLoading}
                         onClick={() => {
-                            if (verifyButtonLocked || signupMetadataLoading) return;
+                            if (signupMetadata.isDiscordVerified || signupMetadataLoading) return;
                             window.location.href = "/api/discord/signup";
                         }}
                         type="button"
@@ -836,13 +846,33 @@ const PublicLanding = () => {
                         <svg aria-hidden="true" className={s.discordIcon} viewBox="0 0 127.14 96.36">
                             <path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0 105.89 105.89 0 0 0 19.39 8.09C2.79 32.65-1.71 56.6.54 80.21h.01a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.27 68.42 68.42 0 0 1-10.84-5.18c.91-.66 1.8-1.34 2.66-2.04 20.87 9.54 43.56 9.54 64.18 0 .87.71 1.76 1.39 2.66 2.04a68.68 68.68 0 0 1-10.85 5.19 77 77 0 0 0 6.89 11.26A105.25 105.25 0 0 0 126.6 80.22c2.64-27.36-4.5-51.09-18.9-72.15ZM42.45 65.69c-6.27 0-11.41-5.73-11.41-12.78s5.04-12.78 11.41-12.78c6.37 0 11.52 5.78 11.41 12.78 0 7.05-5.04 12.78-11.41 12.78Zm42.24 0c-6.27 0-11.41-5.73-11.41-12.78s5.04-12.78 11.41-12.78c6.37 0 11.52 5.78 11.41 12.78 0 7.05-5.03 12.78-11.41 12.78Z"/>
                         </svg>
-                        {signupMetadataLoading ? "Checking Discord..." : "Verify with Discord"}
+                        {signupMetadataLoading
+                            ? "Checking Discord..."
+                            : signupMetadata.isDiscordVerified
+                                ? "Discord Verified"
+                                : "Verify with Discord"}
                     </button>
                     <div className={`${s.signupStatus} ${signupMetadata.isDiscordVerified ? s.signupStatusOk : s.signupStatusWarn}`}>
-                        {signupMetadata.isDiscordVerified
-                            ? `Verified as ${signupMetadata.discordDisplay || signupMetadata.discordUsername || "Discord user"}`
-                            : "Discord verification is required before you can sign up."}
+                        {signupMetadataError || (signupMetadata.isDiscordVerified
+                            ? signupMetadata.hasExistingAccount
+                                ? (
+                                    <>
+                                        This Discord account is already linked to {signupMetadata.existingUsername || "an existing account"}.
+                                        <a className={s.signupStatusLink} href="/api/discord/login">Log in with Discord</a>
+                                    </>
+                                )
+                                : `Verified as ${signupMetadata.discordDisplay || signupMetadata.discordUsername || "Discord user"}`
+                            : "Discord verification is required before you can sign up.")}
                     </div>
+                    {signupMetadataError ? (
+                        <button
+                            className={s.captchaSecondary}
+                            onClick={() => refreshSignupMetadata(true)}
+                            type="button"
+                        >
+                            Retry verification check
+                        </button>
+                    ) : null}
                     <form onSubmit={onSignupSubmit}>
                         <input
                             className={s.signupInput}
