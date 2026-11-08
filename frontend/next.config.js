@@ -22,6 +22,22 @@ module.exports = {
       },
     ]
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/applicationcallback',
+        destination: 'http://127.0.0.1:5000/api/applicationcallback',
+      },
+      {
+        source: '/api/logincallback',
+        destination: 'http://127.0.0.1:5000/api/logincallback',
+      },
+      {
+        source: '/bot/verify',
+        destination: 'http://127.0.0.1:5000/bot/verify',
+      },
+    ]
+  },
   webpack(config) {
     config.plugins = config.plugins.filter(plugin => {
       return plugin.constructor.name !== 'ReactFreshWebpackPlugin';

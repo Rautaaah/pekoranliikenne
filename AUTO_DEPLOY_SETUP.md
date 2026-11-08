@@ -27,6 +27,11 @@ so the GitHub Actions job cleanup does not terminate the site. It does not stop
 the GitHub Actions runner or restart the game server. Startup output is written
 to `C:\Sansy\logs\site-startup.log`.
 
+Discord login and signup enter through the frontend's `/api/discord/login` and
+`/api/discord/signup` routes, which forward to the local website backend and
+allow only Discord's official OAuth authorization redirect. The signup, login,
+and account-link callback paths are also forwarded to that backend.
+
 ## 3) Deploy path
 
 The workflow deploys to:
