@@ -22,10 +22,10 @@ In GitHub:
 ## 2) Site process lifecycle
 
 The workflow stops only the site processes listening on ports `3000` and `5000`,
-builds the frontend, and starts `start.bat site` in a detached Windows process
-so the GitHub Actions job cleanup does not terminate the site. It does not stop
-the GitHub Actions runner or restart the game server. Startup output is written
-to `C:\Sansy\logs\site-startup.log`.
+builds the frontend and website, and starts each site component in a detached
+Windows process so GitHub Actions cleanup does not terminate them. It does not
+stop the runner or restart the game server. Component logs are written under
+`C:\Sansy\logs`.
 
 Discord login and signup enter through the frontend's `/api/discord/login` and
 `/api/discord/signup` routes, which forward to the local website backend and

@@ -30,11 +30,18 @@ describe('Discord OAuth API route', () => {
     });
     const res = createResponse();
 
-    await discordOAuth({ method: 'GET', query: { action: 'signup' } }, res);
+    await discordOAuth({
+      method: 'GET',
+      query: { action: 'signup' },
+      headers: { cookie: 'session=test', 'user-agent': 'Mozilla/5.0 Test Browser' },
+    }, res);
 
     expect(axios.get).toHaveBeenCalledWith(
       'http://127.0.0.1:5000/auth/discord-signup',
-      expect.objectContaining({ maxRedirects: 0 }),
+      expect.objectContaining({
+        maxRedirects: 0,
+        headers: { cookie: 'session=test', 'user-agent': 'Mozilla/5.0 Test Browser' },
+      }),
     );
     expect(res.redirect).toHaveBeenCalledWith(302, 'https://discord.com/oauth2/authorize?client_id=test');
   });

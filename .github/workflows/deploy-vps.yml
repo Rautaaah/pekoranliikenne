@@ -75,26 +75,89 @@ jobs:
           cd /d "%DEPLOY_DIR%\frontend"
           call npm run build
 
+      - name: Build website
+        shell: cmd
+        run: |
+          cd /d "%DEPLOY_DIR%\Roblox\Roblox.Website"
+          dotnet build --configuration Release
+
       - name: Start site
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command "& '{0}'"
         run: |
+          $deployRoot = [System.IO.Path]::GetFullPath($env:DEPLOY_DIR).TrimEnd('\')
           $logDirectory = Join-Path $env:DEPLOY_DIR 'logs'
           New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null
-          $startupLog = Join-Path $logDirectory 'site-startup.log'
-          $commandLine = 'cmd.exe /c ""{0}\start.bat" site > "{1}" 2>&1"' -f $env:DEPLOY_DIR, $startupLog
-          $result = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
-            CommandLine = $commandLine
-            CurrentDirectory = $env:DEPLOY_DIR
+
+          function Test-PortListening([int]$port) {
+            return [bool](Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
+              Select-Object -First 1)
           }
-          if ($result.ReturnValue -ne 0) {
-            throw "Could not launch site startup process (Win32_Process.Create returned $($result.ReturnValue))."
+
+          function Start-DetachedCommand([string]$name, [string]$commandLine, [string]$workingDirectory) {
+            $result = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
+              CommandLine = $commandLine
+              CurrentDirectory = $workingDirectory
+            }
+            if ($result.ReturnValue -ne 0) {
+              throw "Could not launch $name (Win32_Process.Create returned $($result.ReturnValue))."
+            }
+          }
+
+          function Start-DetachedBatch([string]$name, [string]$directory, [string]$script) {
+            $scriptPath = Join-Path $directory $script
+            if (-not (Test-Path $scriptPath)) {
+              throw "Required startup script is missing: $scriptPath"
+            }
+
+            $logPath = Join-Path $logDirectory "$name.log"
+            $commandLine = 'cmd.exe /c ""{0}" > "{1}" 2>&1"' -f $scriptPath, $logPath
+            Start-DetachedCommand $name $commandLine $directory
+          }
+
+          $postgres = Get-Service -Name 'postgresql-x64-17' -ErrorAction Stop
+          if ($postgres.Status -ne 'Running') {
+            Start-Service -Name $postgres.Name -ErrorAction Stop
+            (Get-Service -Name $postgres.Name).WaitForStatus(
+              [System.ServiceProcess.ServiceControllerStatus]::Running,
+              [TimeSpan]::FromSeconds(60))
+          }
+
+          if (-not (Test-PortListening 6379)) {
+            $redisServer = Join-Path $deployRoot 'redis-server.exe'
+            $redisConfig = Join-Path $deployRoot 'redis.conf'
+            if (-not (Test-Path $redisServer) -or -not (Test-Path $redisConfig)) {
+              throw 'Redis is not listening and its executable or configuration is missing.'
+            }
+            $redisLog = Join-Path $logDirectory 'redis.log'
+            $commandLine = 'cmd.exe /c ""{0}" "{1}" > "{2}" 2>&1"' -f $redisServer, $redisConfig, $redisLog
+            Start-DetachedCommand 'redis' $commandLine $deployRoot
+          }
+
+          if (-not (Test-PortListening 4300)) {
+            Start-DetachedBatch 'asset-validation' (Join-Path $deployRoot 'AssetValidationServiceV2') 'run.bat'
+          }
+
+          if (-not (Test-PortListening 3000)) {
+            Start-DetachedBatch 'frontend' (Join-Path $deployRoot 'frontend') 'start.bat'
+          }
+
+          if (-not (Test-PortListening 5000)) {
+            $websiteDirectory = Join-Path $deployRoot 'Roblox\Roblox.Website'
+            $websiteDll = Join-Path $websiteDirectory 'bin\Release\net8.0\Roblox.Website.dll'
+            if (-not (Test-Path $websiteDll)) {
+              throw "Website build output is missing: $websiteDll"
+            }
+            $dotnet = (Get-Command dotnet.exe -ErrorAction Stop).Source
+            $websiteLog = Join-Path $logDirectory 'website.log'
+            $commandLine = 'cmd.exe /c ""{0}" "{1}" > "{2}" 2>&1"' -f $dotnet, $websiteDll, $websiteLog
+            Start-DetachedCommand 'website' $commandLine $websiteDirectory
           }
 
       - name: Verify site listeners
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command "& '{0}'"
         run: |
           foreach ($port in @(3000, 5000)) {
-            $deadline = (Get-Date).AddSeconds(300)
+            $deadline = (Get-Date).AddSeconds(180)
             do {
               $listener = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
                 Select-Object -First 1
@@ -106,13 +169,8 @@ jobs:
             } while ((Get-Date) -lt $deadline)
 
             if (-not $listener) {
-              $startupLog = Join-Path $env:DEPLOY_DIR 'logs\site-startup.log'
-              $startupOutput = if (Test-Path $startupLog) {
-                (Get-Content $startupLog -Tail 60) -join "`n"
-              } else {
-                'Startup log was not created.'
-              }
-              throw "Site did not start listening on port $port.`n$startupOutput"
+              $serviceName = if ($port -eq 3000) { 'frontend' } else { 'website' }
+              throw "Site did not start listening on port $port. Check $env:DEPLOY_DIR\logs\$serviceName.log."
             }
           }
 

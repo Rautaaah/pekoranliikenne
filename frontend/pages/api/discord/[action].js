@@ -25,6 +25,10 @@ export default async function discordOAuth(req, res) {
     const response = await axios.get(`http://127.0.0.1:5000${backendEndpoint}`, {
       maxRedirects: 0,
       validateStatus: () => true,
+      headers: {
+        cookie: req.headers.cookie || '',
+        'user-agent': req.headers['user-agent'] || 'SansyWebFrontend/1.0',
+      },
     });
     const location = response.headers.location;
     if (response.status < 300 || response.status >= 400 || typeof location !== 'string') {
