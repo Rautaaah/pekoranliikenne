@@ -1,7 +1,7 @@
 import axios from 'axios';
 import getConfig from 'next/config';
 import { fromUrl, parseDomain, ParseResultType } from 'parse-domain';
-import { getBaseUrl } from '../../lib/request';
+import { getBaseUrl, getFullUrl } from '../../lib/request';
 const UrlUtilities = (() => {
   const getDomainFromUrl = (url) => {
     const baseDomainParsed = parseDomain(fromUrl(url));
@@ -18,12 +18,15 @@ const UrlUtilities = (() => {
       throw new Error('Unsupported domain type: ' + baseDomainParsed.type);
     }
   }
-  const baseWithDomainAndTld = getDomainFromUrl(getBaseUrl()).toLowerCase();
+  const allowedDomains = new Set([
+    getDomainFromUrl(getBaseUrl()).toLowerCase(),
+    getDomainFromUrl(getFullUrl('users', '')).toLowerCase(),
+  ]);
 
   return {
     isSafe: (rawUrl) => {
       const parsedWithDomainAndTld = getDomainFromUrl(rawUrl).toLowerCase();
-      return parsedWithDomainAndTld === baseWithDomainAndTld;
+      return allowedDomains.has(parsedWithDomainAndTld);
     },
   }
 })();
