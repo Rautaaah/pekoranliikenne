@@ -5,6 +5,8 @@ import { getBaseUrl2 } from "../../lib/request";
 import { getSignupChallenge, getSignupMetadata, login, signup } from "../../services/auth";
 import sansyLogo from "./img/sansy-logo-full.png";
 
+const siteBuildId = process.env.NEXT_PUBLIC_BUILD_ID || "local";
+
 const useStyles = createUseStyles({
     "@keyframes authCardIn": {
         "0%": { opacity: 0, transform: "translateY(14px)" },
@@ -270,6 +272,34 @@ const useStyles = createUseStyles({
         color: "rgba(245, 225, 205, .45)",
         fontSize: 10.5,
         textAlign: "center",
+    },
+    siteUpdateBadge: {
+        position: "fixed",
+        left: 12,
+        bottom: 12,
+        zIndex: 5,
+        display: "flex",
+        alignItems: "center",
+        gap: 7,
+        padding: "7px 10px",
+        border: "1px solid rgba(245, 236, 214, .18)",
+        borderRadius: 999,
+        background: "rgba(36, 17, 13, .92)",
+        color: "#e8d8c8",
+        fontSize: 11,
+        boxShadow: "0 4px 14px rgba(0, 0, 0, .28)",
+        "& code": {
+            color: "#f0c9a8",
+            fontFamily: "monospace",
+            fontSize: 10,
+        },
+    },
+    siteUpdateDot: {
+        width: 7,
+        height: 7,
+        borderRadius: "50%",
+        background: "#80c98b",
+        boxShadow: "0 0 8px rgba(128, 201, 139, .6)",
     },
     authCaptchaChallenge: {
         marginBottom: 12,
@@ -1570,6 +1600,17 @@ const PublicLanding = ({ mode = "signup" }) => {
                 <img alt="Sansy" src={sansyLogo.src} />
             </div>
             <div className={s.authLegal}>(c) 2026 Sansy. Not affiliated with Roblox Corporation.</div>
+            {!isLoginPage ? (
+                <div
+                    aria-label={`Site updated. Build ${siteBuildId}`}
+                    className={s.siteUpdateBadge}
+                    title={`Deployed build ${siteBuildId}`}
+                >
+                    <span aria-hidden="true" className={s.siteUpdateDot} />
+                    <span>Site updated</span>
+                    <code>{siteBuildId === "local" ? "local" : siteBuildId.slice(0, 7)}</code>
+                </div>
+            ) : null}
         </main>
     );
 };

@@ -9,6 +9,9 @@ const websiteBackendUrl = process.env.WEBSITE_BACKEND_URL || 'http://127.0.0.1:5
 
 module.exports = {
   reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_BUILD_ID: process.env.NEXT_PUBLIC_BUILD_ID || 'local',
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
