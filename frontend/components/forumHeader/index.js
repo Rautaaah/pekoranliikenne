@@ -35,7 +35,7 @@ export default ForumHeader;
 export const ForumHeaderSubCategory = ({ cat, sub }) => {
   return <ForumHeader>
     <p className='fw-bold'>
-      <Link href='/Forum/Default.aspx'><a>Zekoro Forum</a></Link>{" \u00BB "}
+      <Link href='/Forum/Default.aspx'><a>Sansy Forum</a></Link>{" \u00BB "}
       <Link href={'/Forum/ForumGroup.aspx?ForumID=' + cat.id}><a>{cat.name}</a></Link>{" \u00BB "}
       <Link href={'/Forum/ShowForum.aspx?ForumID=' + sub.id}><a>{sub.name}</a></Link>
     </p>

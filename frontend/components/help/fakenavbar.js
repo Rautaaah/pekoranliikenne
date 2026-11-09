@@ -45,14 +45,14 @@ const useStyles = createUseStyles({
 
 const InstallHelpPage = (e) => {
     const s = useStyles();
-    const [logoSrc, setLogoSrc] = useState('/img/zekororeal.png');
+    const [logoSrc, setLogoSrc] = useState('/img/sansy-logo-full.png');
 
     return <nav className={`navbar fixed-top ${s.fakeNav}`}>
         <div className={s.navContainer}>
             <div className={s.logoContainer}>
                 <Link href="/home">
                     <a className={`${s.logoNav} col-lg-3`} href="/home">
-                        <img className={s.logoImage} src={logoSrc} alt="Zekoro" onError={() => setLogoSrc('/img/logo.png')} />
+                        <img className={s.logoImage} src={logoSrc} alt="Sansy" onError={() => setLogoSrc('/img/sansy-logo-full.png')} />
                     </a>
                 </Link>
             </div>

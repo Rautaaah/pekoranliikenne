@@ -177,13 +177,13 @@ const PromoCodesPage = () => {
 
   return (
     <div className={s.page}>
-      <h1 className={s.title}>Redeem Zekoro Promotions</h1>
+      <h1 className={s.title}>Redeem Sansy Promotions</h1>
 
       <div className={s.content}>
         <div className={s.leftColumn}>
           <div className={s.sectionHeading}>How to Use</div>
           <p className={s.paragraph}>
-            Have you received a Zekoro promotional code from one of our many events or give-aways?
+            Have you received a Sansy promotional code from one of our events or giveaways?
           </p>
           <p className={s.paragraph}>
             This is the place to claim your goods. Enter the promotional code in the section to the right.

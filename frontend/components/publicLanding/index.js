@@ -2,10 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 import AuthenticationStore from "../../stores/authentication";
 import { getBaseUrl2 } from "../../lib/request";
-import { getSignupMetadata, login, signup } from "../../services/auth";
-import kornetLogo from "./img/kornet_logo_full.png";
-
-const turnstileSiteKey = "0x4AAAAAAC2dQD0M8-hT9n_I";
+import { getSignupChallenge, getSignupMetadata, login, signup } from "../../services/auth";
+import sansyLogo from "./img/sansy-logo-full.png";
 
 const useStyles = createUseStyles({
     "@keyframes authCardIn": {
@@ -120,6 +118,17 @@ const useStyles = createUseStyles({
         "&::placeholder": { color: "#9a7a68" },
         "&:focus": { borderColor: "#d07a52" },
         "&:disabled": { opacity: 0.55 },
+    },
+    authInputInvalid: {
+        borderColor: "#ff6b6b",
+        "&:focus": { borderColor: "#ff6b6b" },
+    },
+    authFieldError: {
+        display: "block",
+        marginTop: 5,
+        color: "#ff7777",
+        fontSize: 12,
+        lineHeight: 1.4,
     },
     authDiscordButton: {
         width: "100%",
@@ -262,13 +271,88 @@ const useStyles = createUseStyles({
         fontSize: 10.5,
         textAlign: "center",
     },
-    authCaptchaWidget: {
-        minHeight: 70,
-        marginBottom: 14,
+    authCaptchaChallenge: {
+        marginBottom: 12,
+        padding: "14px 12px",
+        borderRadius: 8,
+        background: "#f0ece8",
+        color: "#2b211d",
+        fontFamily: "monospace",
+        fontSize: 26,
+        fontWeight: 800,
+        letterSpacing: 8,
+        textAlign: "center",
+        userSelect: "none",
+    },
+    authCaptchaInput: {
+        width: "100%",
+        height: 42,
+        marginBottom: 12,
+        padding: "0 12px",
+        boxSizing: "border-box",
+        border: "1px solid #8e7568",
+        borderRadius: 8,
+        background: "#fff",
+        color: "#2b211d",
+        font: "inherit",
+        textAlign: "center",
+        letterSpacing: 3,
+        "&:focus": { outline: "2px solid #d28b62", outlineOffset: 1 },
+        "&:disabled": { opacity: 0.6 },
+    },
+    authGenderOptions: {
+        minHeight: 48,
+        padding: "5px 12px",
+        boxSizing: "border-box",
         display: "flex",
         alignItems: "center",
+        justifyContent: "space-around",
+        gap: 14,
+        marginBottom: 11,
+        border: "2px dashed #6e3a2b",
+        borderRadius: 10,
+        background: "#2a1510",
+    },
+    authGenderLabel: {
+        marginBottom: 6,
+        color: "#fbf3e3",
+        fontSize: 14,
+        fontWeight: 500,
+    },
+    authGenderOption: {
+        width: 36,
+        height: 36,
+        padding: 0,
+        display: "inline-flex",
+        alignItems: "center",
         justifyContent: "center",
-        "& iframe": { maxWidth: "100%" },
+        border: "1px solid transparent",
+        borderRadius: "50%",
+        background: "transparent",
+        color: "#89817e",
+        fontFamily: "inherit",
+        fontSize: 25,
+        lineHeight: 1,
+        cursor: "pointer",
+        transition: "color 0.14s, background 0.14s, border-color 0.14s",
+        "&:hover": { color: "#c9c0bc" },
+        "&:focus-visible": { outline: "2px solid #d07a52", outlineOffset: 2 },
+        "&:disabled": { opacity: 0.55, cursor: "default" },
+    },
+    authGenderFemaleActive: {
+        borderColor: "#e76c9a",
+        background: "rgba(231, 108, 154, .16)",
+        color: "#e76c9a",
+    },
+    authGenderMaleActive: {
+        borderColor: "#4c91e8",
+        background: "rgba(76, 145, 232, .16)",
+        color: "#4c91e8",
+    },
+    authGenderNonBinaryActive: {
+        borderColor: "#9870d6",
+        background: "rgba(152, 112, 214, .16)",
+        color: "#9870d6",
     },
     authCaptchaOverlay: {
         position: "fixed",
@@ -832,10 +916,32 @@ const defaultSignupMetadata = {
 const defaultPendingSignup = {
     username: "",
     password: "",
+    gender: null,
 };
 
 const getErrorMessage = (error, fallbackMessage) => {
     return error?.response?.data?.errors?.[0]?.message || error?.message || fallbackMessage;
+};
+
+const getSignupUsernameError = username => {
+    if (!username) return "Choose a username.";
+    if (username.length < 3 || username.length > 20) return "Username must be 3-20 characters.";
+    if (!/^[A-Za-z0-9_]+$/.test(username) ||
+        username.startsWith("_") ||
+        username.endsWith("_") ||
+        (username.match(/_/g) || []).length > 1) {
+        return "Use letters and numbers, with at most one underscore.";
+    }
+    if (username.toUpperCase() === "ROBLOX") return "ROBLOX is a reserved username.";
+    if (username.toLowerCase().includes("fuck")) return "That username contains an inappropriate word.";
+    return "";
+};
+
+const getSignupPasswordError = (password, username) => {
+    if (!password) return "Choose a password.";
+    if (password.length < 3) return "Password must be at least 3 characters.";
+    if (password.toLowerCase() === username.toLowerCase()) return "Password cannot be the same as your username.";
+    return "";
 };
 
 const PublicLanding = ({ mode = "signup" }) => {
@@ -852,20 +958,26 @@ const PublicLanding = ({ mode = "signup" }) => {
         username: "",
         password: "",
         confirmPassword: "",
+        gender: null,
     });
     const [signupMetadata, setSignupMetadata] = useState(defaultSignupMetadata);
     const [signupMetadataLoading, setSignupMetadataLoading] = useState(true);
     const [signupMetadataError, setSignupMetadataError] = useState("");
-    const [discordCallbackCompleted, setDiscordCallbackCompleted] = useState(false);
+    const [discordCallbackError, setDiscordCallbackError] = useState("");
     const [loginLoading, setLoginLoading] = useState(false);
     const [signupLoading, setSignupLoading] = useState(false);
     const [loginFeedback, setLoginFeedback] = useState("");
     const [signupFeedback, setSignupFeedback] = useState("");
+    const [signupAttempted, setSignupAttempted] = useState(false);
+    const [signupServerFieldErrors, setSignupServerFieldErrors] = useState({});
     const [captchaModalOpen, setCaptchaModalOpen] = useState(false);
     const [captchaError, setCaptchaError] = useState("");
     const [captchaToken, setCaptchaToken] = useState("");
+    const [captchaText, setCaptchaText] = useState("");
+    const [captchaAnswer, setCaptchaAnswer] = useState("");
+    const [captchaRefreshId, setCaptchaRefreshId] = useState(0);
     const [pendingSignup, setPendingSignup] = useState(defaultPendingSignup);
-    const [captchaWidgetRendered, setCaptchaWidgetRendered] = useState(false);
+    const [captchaLoading, setCaptchaLoading] = useState(false);
     const [captchaSubmitting, setCaptchaSubmitting] = useState(false);
     useEffect(() => {
         if (!auth.isPending && auth.isAuthenticated) {
@@ -961,12 +1073,13 @@ const PublicLanding = ({ mode = "signup" }) => {
                 ...result,
             };
             setSignupMetadata(metadata);
+            if (metadata.isDiscordVerified) setDiscordCallbackError("");
             if (afterVerification && !metadata.isDiscordVerified) {
                 setSignupMetadataError("Discord verification could not be confirmed. Please verify again.");
             }
         } catch (error) {
             setSignupMetadata(defaultSignupMetadata);
-            setSignupMetadataError("We couldn't check Discord verification. Please try again.");
+            setSignupMetadataError("Discord verification could not be confirmed. Please retry verification.");
         } finally {
             setSignupMetadataLoading(false);
         }
@@ -978,59 +1091,42 @@ const PublicLanding = ({ mode = "signup" }) => {
         if (typeof window !== "undefined") {
             const url = new URL(window.location.href);
             afterVerification = url.searchParams.get("discordVerified") === "1";
-            if (afterVerification) {
-                setDiscordCallbackCompleted(true);
+            const callbackFailed = url.searchParams.get("discordError") === "verification_failed";
+            if (afterVerification || callbackFailed) {
                 url.searchParams.delete("discordVerified");
+                url.searchParams.delete("discordError");
                 window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
             }
+            if (callbackFailed) setDiscordCallbackError("Discord verification did not complete. Please try again.");
         }
         refreshSignupMetadata(afterVerification);
     }, [isLoginPage]);
 
     useEffect(() => {
-        if (typeof window === "undefined") return undefined;
         if (!captchaModalOpen) return undefined;
 
         let cancelled = false;
-        let waitHandle = null;
-
-        const mountTurnstile = () => {
-            if (cancelled || captchaWidgetRendered) return;
-            const container = document.getElementById("signup-turnstile");
-            if (!container) return;
-            if (!window.turnstile || typeof window.turnstile.render !== "function") {
-                waitHandle = window.setTimeout(mountTurnstile, 200);
-                return;
-            }
-
-            container.innerHTML = "";
-            window.turnstile.render(container, {
-                sitekey: turnstileSiteKey,
-                callback: token => {
-                    setCaptchaToken(token);
-                    setCaptchaError("");
-                },
-                "expired-callback": () => {
-                    setCaptchaToken("");
-                    setCaptchaError("Verification expired. Please verify again.");
-                },
-                "error-callback": () => {
-                    setCaptchaToken("");
-                    setCaptchaError("Captcha failed to load. Please try again.");
-                },
+        setCaptchaLoading(true);
+        getSignupChallenge()
+            .then(challenge => {
+                if (cancelled) return;
+                setCaptchaText(challenge.text);
+                setCaptchaToken(challenge.captchaToken);
+                setCaptchaAnswer("");
+            })
+            .catch(error => {
+                if (!cancelled) {
+                    setCaptchaError(getErrorMessage(error, "Text challenge failed to load. Please try again."));
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setCaptchaLoading(false);
             });
-            setCaptchaWidgetRendered(true);
-        };
-
-        mountTurnstile();
 
         return () => {
             cancelled = true;
-            if (waitHandle) {
-                window.clearTimeout(waitHandle);
-            }
         };
-    }, [captchaModalOpen, captchaWidgetRendered]);
+    }, [captchaModalOpen, captchaRefreshId]);
 
     const onLoginChange = (key, value) => {
         setLoginState(previous => ({
@@ -1044,38 +1140,52 @@ const PublicLanding = ({ mode = "signup" }) => {
             ...previous,
             [key]: value,
         }));
+        setSignupServerFieldErrors(previous => ({
+            ...previous,
+            [key]: "",
+        }));
     };
 
     const closeCaptchaModal = () => {
         setCaptchaModalOpen(false);
         setCaptchaError("");
         setCaptchaToken("");
-        setCaptchaWidgetRendered(false);
+        setCaptchaText("");
+        setCaptchaAnswer("");
         setCaptchaSubmitting(false);
         setPendingSignup(defaultPendingSignup);
     };
 
-    const submitSignupWithCaptcha = async token => {
+    const submitSignupWithCaptcha = async () => {
         setSignupLoading(true);
         setCaptchaSubmitting(true);
         try {
             await signup({
                 username: pendingSignup.username,
                 password: pendingSignup.password,
-                captchaToken: token,
+                gender: pendingSignup.gender,
+                captchaToken,
+                captchaAnswer,
             });
-            window.location.href = getBaseUrl2("/home");
+            window.location.assign("https://discord.gg/KcnemeAUpK");
         } catch (error) {
             const message = getErrorMessage(error, "Signup failed. Please try again.");
-            setSignupFeedback(message);
+            const normalizedMessage = message.toLowerCase();
+            if (normalizedMessage.includes("username") || normalizedMessage.includes("reserved")) {
+                setSignupServerFieldErrors(previous => ({ ...previous, username: message }));
+            } else if (normalizedMessage.includes("password")) {
+                setSignupServerFieldErrors(previous => ({ ...previous, password: message }));
+            } else {
+                setSignupFeedback(message);
+            }
             setCaptchaError(message);
+            setCaptchaToken("");
+            setCaptchaText("");
+            setCaptchaAnswer("");
+            setCaptchaRefreshId(previous => previous + 1);
         } finally {
             setSignupLoading(false);
             setCaptchaSubmitting(false);
-            setCaptchaModalOpen(false);
-            setCaptchaToken("");
-            setCaptchaWidgetRendered(false);
-            setPendingSignup(defaultPendingSignup);
         }
     };
 
@@ -1112,8 +1222,9 @@ const PublicLanding = ({ mode = "signup" }) => {
     const onSignupSubmit = async event => {
         event.preventDefault();
         setSignupFeedback("");
+        setSignupAttempted(true);
 
-        if (!signupMetadata.isDiscordVerified && !discordCallbackCompleted) {
+        if (!signupMetadata.isDiscordVerified) {
             setSignupFeedback("Discord verification is required before you can sign up.");
             return;
         }
@@ -1123,41 +1234,50 @@ const PublicLanding = ({ mode = "signup" }) => {
             return;
         }
 
-        if (!signupState.username.trim()) {
-            setSignupFeedback("Choose a username to continue.");
-            return;
-        }
+        const username = signupState.username.trim();
+        const usernameError = getSignupUsernameError(username);
+        const passwordError = getSignupPasswordError(signupState.password, username);
+        const confirmPasswordError = signupState.password !== signupState.confirmPassword
+            ? "Your passwords do not match."
+            : "";
+        if (usernameError || passwordError || confirmPasswordError) return;
 
-        if (!signupState.password) {
-            setSignupFeedback("Choose a password to continue.");
-            return;
-        }
-
-        if (signupState.password !== signupState.confirmPassword) {
-            setSignupFeedback("Your passwords do not match.");
+        if (!signupState.gender) {
+            setSignupFeedback("Choose a gender to continue.");
             return;
         }
 
         setPendingSignup({
-            username: signupState.username.trim(),
+            username,
             password: signupState.password,
+            gender: signupState.gender,
         });
         setCaptchaError("");
         setCaptchaToken("");
-        setCaptchaWidgetRendered(false);
+        setCaptchaText("");
+        setCaptchaAnswer("");
+        setCaptchaLoading(false);
         setCaptchaModalOpen(true);
     };
 
-    const isDiscordVerified = signupMetadata.isDiscordVerified || discordCallbackCompleted;
-    const signupMetadataStatus = signupMetadataError && discordCallbackCompleted
-        ? "Discord callback completed, but we couldn't refresh account status. You can enter your details; the server will verify Discord again when you sign up."
-        : signupMetadataError || (signupMetadata.isDiscordVerified
+    const isDiscordVerified = signupMetadata.isDiscordVerified;
+    const signupMetadataStatus = discordCallbackError || signupMetadataError || (signupMetadata.isDiscordVerified
             ? signupMetadata.hasExistingAccount
                 ? `This Discord account is already linked to ${signupMetadata.existingUsername || "an existing account"}.`
                 : `Verified as ${signupMetadata.discordDisplay || signupMetadata.discordUsername || "Discord user"}`
-            : discordCallbackCompleted
-                ? "Discord callback completed. You can enter your details; your verification will be checked again when you sign up."
-                : "Discord verification is required before you can sign up.");
+            : "Discord verification is required before you can sign up.");
+    const usernameFieldError = signupServerFieldErrors.username ||
+        ((signupAttempted || signupState.username)
+            ? getSignupUsernameError(signupState.username.trim())
+            : "");
+    const passwordFieldError = signupServerFieldErrors.password ||
+        ((signupAttempted || signupState.password)
+            ? getSignupPasswordError(signupState.password, signupState.username.trim())
+            : "");
+    const confirmPasswordFieldError = (signupAttempted || signupState.confirmPassword) &&
+        signupState.password !== signupState.confirmPassword
+        ? "Your passwords do not match."
+        : "";
 
     return (
         <main className={s.authPage}>
@@ -1165,11 +1285,37 @@ const PublicLanding = ({ mode = "signup" }) => {
             {captchaModalOpen ? (
                 <div className={s.authCaptchaOverlay}>
                     <div aria-labelledby="signup-captcha-title" aria-modal="true" className={s.authCaptchaModal} role="dialog">
-                        <h3 className={s.authCaptchaTitle} id="signup-captcha-title">Please verify you are not a robot</h3>
-                        <p className={s.authCaptchaText}>Complete the captcha to finish creating your account.</p>
-                        <div className={s.authCaptchaWidget} id="signup-turnstile" />
+                        <h3 className={s.authCaptchaTitle} id="signup-captcha-title">Type the text exactly as shown</h3>
+                        <p className={s.authCaptchaText}>Use the same capital letters and numbers. This code expires in five minutes.</p>
+                        <div aria-label={`Challenge text: ${captchaText}`} className={s.authCaptchaChallenge} role="img">
+                            {captchaLoading ? "Loading..." : captchaText || "Text challenge unavailable"}
+                        </div>
+                        <input
+                            autoComplete="off"
+                            aria-label="Enter the text shown above"
+                            className={s.authCaptchaInput}
+                            disabled={!captchaToken || captchaSubmitting}
+                            maxLength={6}
+                            onChange={event => setCaptchaAnswer(event.target.value)}
+                            spellCheck={false}
+                            type="text"
+                            value={captchaAnswer}
+                        />
                         <div aria-live="polite" className={s.authCaptchaError}>{captchaError}</div>
                         <div className={s.authCaptchaActions}>
+                            <button
+                                className={s.authCaptchaSecondary}
+                                disabled={captchaSubmitting || captchaLoading}
+                                onClick={() => {
+                                    setCaptchaError("");
+                                    setCaptchaText("");
+                                    setCaptchaToken("");
+                                    setCaptchaRefreshId(previous => previous + 1);
+                                }}
+                                type="button"
+                            >
+                                New text
+                            </button>
                             <button
                                 className={s.authCaptchaSecondary}
                                 disabled={captchaSubmitting}
@@ -1180,8 +1326,8 @@ const PublicLanding = ({ mode = "signup" }) => {
                             </button>
                             <button
                                 className={s.authCaptchaPrimary}
-                                disabled={!captchaToken || captchaSubmitting}
-                                onClick={() => submitSignupWithCaptcha(captchaToken)}
+                                disabled={!captchaToken || !captchaAnswer || captchaSubmitting || captchaLoading}
+                                onClick={submitSignupWithCaptcha}
                                 type="button"
                             >
                                 {captchaSubmitting ? "Creating account..." : "Continue"}
@@ -1278,6 +1424,7 @@ const PublicLanding = ({ mode = "signup" }) => {
                                 disabled={isDiscordVerified || signupMetadataLoading}
                                 onClick={() => {
                                     if (!isDiscordVerified && !signupMetadataLoading) {
+                                        setDiscordCallbackError("");
                                         window.location.href = "/api/discord/signup";
                                     }
                                 }}
@@ -1316,37 +1463,91 @@ const PublicLanding = ({ mode = "signup" }) => {
                             <form onSubmit={onSignupSubmit}>
                                 <div className={s.authField}>
                                     <input
+                                        aria-describedby={usernameFieldError ? "signup-username-error" : undefined}
+                                        aria-invalid={Boolean(usernameFieldError)}
                                         autoComplete="username"
-                                        className={s.authInput}
+                                        className={`${s.authInput} ${usernameFieldError ? s.authInputInvalid : ""}`}
                                         disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
                                         maxLength={20}
                                         onChange={event => onSignupChange("username", event.target.value)}
-                                        placeholder="Username"
+                                        placeholder="Username (3-20 characters)"
                                         type="text"
                                         value={signupState.username}
                                     />
+                                    {usernameFieldError ? (
+                                        <span className={s.authFieldError} id="signup-username-error" role="alert">
+                                            {usernameFieldError}
+                                        </span>
+                                    ) : null}
                                 </div>
                                 <div className={s.authField}>
                                     <input
+                                        aria-describedby={passwordFieldError ? "signup-password-error" : undefined}
+                                        aria-invalid={Boolean(passwordFieldError)}
                                         autoComplete="new-password"
-                                        className={s.authInput}
+                                        className={`${s.authInput} ${passwordFieldError ? s.authInputInvalid : ""}`}
                                         disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
                                         onChange={event => onSignupChange("password", event.target.value)}
                                         placeholder="Password"
                                         type="password"
                                         value={signupState.password}
                                     />
+                                    {passwordFieldError ? (
+                                        <span className={s.authFieldError} id="signup-password-error" role="alert">
+                                            {passwordFieldError}
+                                        </span>
+                                    ) : null}
                                 </div>
                                 <div className={s.authField}>
                                     <input
+                                        aria-describedby={confirmPasswordFieldError ? "signup-confirm-password-error" : undefined}
+                                        aria-invalid={Boolean(confirmPasswordFieldError)}
                                         autoComplete="new-password"
-                                        className={s.authInput}
+                                        className={`${s.authInput} ${confirmPasswordFieldError ? s.authInputInvalid : ""}`}
                                         disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
                                         onChange={event => onSignupChange("confirmPassword", event.target.value)}
                                         placeholder="Confirm password"
                                         type="password"
                                         value={signupState.confirmPassword}
                                     />
+                                    {confirmPasswordFieldError ? (
+                                        <span className={s.authFieldError} id="signup-confirm-password-error" role="alert">
+                                            {confirmPasswordFieldError}
+                                        </span>
+                                    ) : null}
+                                </div>
+                                <div className={s.authGenderLabel}>Gender</div>
+                                <div aria-label="Gender" className={s.authGenderOptions} role="radiogroup">
+                                    <button
+                                        aria-label="Female"
+                                        aria-pressed={signupState.gender === 3}
+                                        className={`${s.authGenderOption} ${signupState.gender === 3 ? s.authGenderFemaleActive : ""}`}
+                                        disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                                        onClick={() => onSignupChange("gender", 3)}
+                                        type="button"
+                                    >
+                                        ♀
+                                    </button>
+                                    <button
+                                        aria-label="Male"
+                                        aria-pressed={signupState.gender === 2}
+                                        className={`${s.authGenderOption} ${signupState.gender === 2 ? s.authGenderMaleActive : ""}`}
+                                        disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                                        onClick={() => onSignupChange("gender", 2)}
+                                        type="button"
+                                    >
+                                        ♂
+                                    </button>
+                                    <button
+                                        aria-label="Non-binary"
+                                        aria-pressed={signupState.gender === 4}
+                                        className={`${s.authGenderOption} ${signupState.gender === 4 ? s.authGenderNonBinaryActive : ""}`}
+                                        disabled={!isDiscordVerified || signupMetadata.hasExistingAccount || signupLoading}
+                                        onClick={() => onSignupChange("gender", 4)}
+                                        type="button"
+                                    >
+                                        ⚧
+                                    </button>
                                 </div>
                                 <button
                                     className={s.authSubmit}
@@ -1366,9 +1567,9 @@ const PublicLanding = ({ mode = "signup" }) => {
             </section>
 
             <div className={s.authMark}>
-                <img alt="Kornet" src={kornetLogo.src} />
+                <img alt="Sansy" src={sansyLogo.src} />
             </div>
-            <div className={s.authLegal}>(c) 2026 Kornet. Not affiliated with Roblox Corporation.</div>
+            <div className={s.authLegal}>(c) 2026 Sansy. Not affiliated with Roblox Corporation.</div>
         </main>
     );
 };

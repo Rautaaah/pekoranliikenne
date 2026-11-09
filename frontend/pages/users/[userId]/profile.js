@@ -11,16 +11,16 @@ const getProfileHeadshotUrl = (userId, imageVersion) => {
 }
 
 const UserProfilePage = ({ username, userId, description, imageVersion, ...props }) => {
-    const ogTitle = username ? `${username}'s Profile` : "Zekoro";
-    const ogUrl = userId ? `https://zekoro.org/users/${userId}/profile` : '';
-    const ogDesc = description || 'Join Zekoro and explore together!';
+    const ogTitle = username ? `${username}'s Profile` : "Sansy";
+    const ogUrl = userId ? `https://sansy.shop/users/${userId}/profile` : '';
+    const ogDesc = description || 'Join Sansy and explore together!';
     const headshotUrl = getProfileHeadshotUrl(userId, imageVersion);
     
     return (
         <>
             {username && (
                 <Head>
-                    <title>{ogTitle} - Zekoro</title>
+                    <title>{ogTitle} - Sansy</title>
                     <meta property="og:title" content={ogTitle}/>
                     <meta property="og:url" content={ogUrl}/>
                     <meta property="og:type" content="profile"/>
@@ -34,7 +34,7 @@ const UserProfilePage = ({ username, userId, description, imageVersion, ...props
                     <meta name="twitter:title" content={ogTitle}/>
                     <meta name="twitter:description" content={ogDesc}/>
                     <meta name="twitter:image" content={headshotUrl}/>
-                    <meta property="og:site_name" content="Zekoro"/>
+                    <meta property="og:site_name" content="Sansy"/>
                     <meta name="theme-color" content="#1188ff"/>
                     <script src="/js/3d/three-r137/three.js"/>
                     <script src="/js/3d/three-r137/MTLLoaderr.js"/>
@@ -61,7 +61,7 @@ export async function getServerSideProps(context) {
     // we will get the username, desc
     try {
         const info = await getUserInfo({ userId });
-        const username = info.name || "Zekoro";
+        const username = info.name || "Sansy";
         const description = info.description || "No description available";
         return {
             props: {
@@ -75,8 +75,8 @@ export async function getServerSideProps(context) {
         console.error("Error fetching user info in profile.js" + error);
         return {
             props: {
-                username: "Zekoro",
-                description: "Join Zekoro and explore together!",
+                username: "Sansy",
+                description: "Join Sansy and explore together!",
                 userId,
                 imageVersion,
             }

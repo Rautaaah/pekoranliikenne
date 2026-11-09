@@ -25,6 +25,7 @@ namespace Roblox.Models.Users
         Unknown = 1,
         Male = 2,
         Female = 3,
+        NonBinary = 4,
     }
 
     public enum GeneralPrivacy
@@ -92,4 +93,3 @@ namespace Roblox.Models.Users
         public string? roblox { get; set; }
     }
 }
-

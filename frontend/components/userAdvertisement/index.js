@@ -90,7 +90,7 @@ const UserAdvertisement = props => {
 			<span className={s.adIdentification}>
                 <span className={s.adIdentificationText}>Advertisement</span>
             </span>
-			<a className={s.BadAdButton} target='_top' href='https://zekoro.org/abusereport/Asset' title='click to report an offensive ad'>Report</a>
+			<a className={s.BadAdButton} target='_top' href='/abusereport/Asset' title='click to report an offensive ad'>Report</a>
 		</div>
     </div>
 }

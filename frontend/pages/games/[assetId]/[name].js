@@ -9,11 +9,11 @@ const GamePage = ({ name, description, assetId, ...props }) => {
     <>
       {name && (
         <Head>
-          <title>{name} - Zekoro</title>
+          <title>{name} - Sansy</title>
           <meta property="og:title" content={name} />
-          <meta property="og:url" content={`https://zekoro.org/games/${assetId}/--`} />
+          <meta property="og:url" content={`https://sansy.shop/games/${assetId}/--`} />
           <meta property="og:type" content="website" />
-          <meta property="og:description" content={description || `${name} on Zekoro`} />
+          <meta property="og:description" content={description || `${name} on Sansy`} />
           <meta property="og:image" content={`https://zekoro.org/Thumbs/GameIcon.ashx?assetId=${assetId}`} />
           <meta property="og:image:secure_url" content={`https://zekoro.org/Thumbs/GameIcon.ashx?assetId=${assetId}`} />
           <meta property="og:image:type" content="image/png" />
@@ -21,9 +21,9 @@ const GamePage = ({ name, description, assetId, ...props }) => {
           <meta property="og:image:height" content="420" />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={name} />
-          <meta name="twitter:description" content={description || `${name} on Zekoro`} />
+          <meta name="twitter:description" content={description || `${name} on Sansy`} />
           <meta name="twitter:image" content={`https://zekoro.org/Thumbs/GameIcon.ashx?assetId=${assetId}`} />
-          <meta name="og:site_name" content="Zekoro" />
+          <meta name="og:site_name" content="Sansy" />
           <meta name="theme-color" content="#007ed2" />
         </Head>
       )}

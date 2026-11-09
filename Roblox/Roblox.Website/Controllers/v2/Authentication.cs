@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using DSharpPlus.Entities;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Roblox.AbuseDetection.Report;
 using Roblox.Exceptions;
-using Roblox.Libraries.Captcha;
 using Roblox.Libraries.DiscordApi;
 using Roblox.Logging;
 using Roblox.Models.Sessions;
@@ -29,6 +31,14 @@ namespace Roblox.Website.Controllers;
 public class AuthenticationControllerV2 : ControllerBase
 {
     private static readonly HttpClient SignupWebhookClient = new();
+    private const string SignupChallengeCharacters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private const string SignupChallengeProtectorName = "Sansy.SignupTextChallenge.v1";
+
+    private sealed record SignupTextChallenge(string answer, DateTimeOffset expiresAt);
+
+    private IDataProtector SignupChallengeProtector =>
+        HttpContext.RequestServices.GetRequiredService<IDataProtectionProvider>()
+            .CreateProtector(SignupChallengeProtectorName);
 
     [HttpPost("login")]
     public async Task<dynamic> Login([Required, FromBody] LoginRequest request)
@@ -280,6 +290,24 @@ public class AuthenticationControllerV2 : ControllerBase
         };
     }
 
+    [HttpGet("signup-challenge")]
+    public dynamic GetSignupChallenge()
+    {
+        FeatureFlags.FeatureCheck(FeatureFlag.SignupEnabled);
+
+        var challenge = string.Concat(Enumerable.Range(0, 6)
+            .Select(_ => SignupChallengeCharacters[RandomNumberGenerator.GetInt32(SignupChallengeCharacters.Length)]));
+        var expiresAt = DateTimeOffset.UtcNow.AddMinutes(5);
+        var token = SignupChallengeProtector.Protect(JsonSerializer.Serialize(
+            new SignupTextChallenge(challenge, expiresAt)));
+
+        return new
+        {
+            text = challenge,
+            captchaToken = token,
+        };
+    }
+
     [HttpPost("signup")]
     public async Task<dynamic> Signup([Required, FromBody] DiscordSignupRequest request)
     {
@@ -288,9 +316,8 @@ public class AuthenticationControllerV2 : ControllerBase
         if (userSession != null)
             throw new BadRequestException(0, "You are already logged in.");
 
-        if (!string.IsNullOrWhiteSpace(request.captchaToken) &&
-            !await HCaptcha.IsValid(GetRequesterIpRaw(HttpContext), request.captchaToken))
-            throw new ForbiddenException(11, "Please verify you are not a robot.");
+        if (!IsSignupChallengeValid(request))
+            throw new ForbiddenException(11, "Please verify the text exactly as shown.");
 
         var discordUser = await GetVerifiedSignupDiscordUser();
         if (discordUser == null)
@@ -299,8 +326,11 @@ public class AuthenticationControllerV2 : ControllerBase
         if (!await services.cooldown.TryCooldownCheck($"signup:step1:{GetIP()}", TimeSpan.FromSeconds(5)))
             throw new RobloxException(429, 0, "Too many attempts. Try again in about 5 seconds.");
 
+        if (string.Equals(request.username, "ROBLOX", StringComparison.OrdinalIgnoreCase))
+            throw new BadRequestException(5, "ROBLOX is a reserved username.");
+
         if (!await services.users.IsUsernameValid(request.username))
-            throw new BadRequestException(5, "Invalid Username");
+            throw new BadRequestException(5, "Username must be 3-20 characters, use letters and numbers with at most one underscore, and not contain inappropriate words.");
 
         if (!await services.users.IsNameAvailableForSignup(request.username))
             throw new ForbiddenException(6, "Username is already taken");
@@ -308,26 +338,41 @@ public class AuthenticationControllerV2 : ControllerBase
         if (!services.users.IsPasswordValid(request.password))
             throw new ForbiddenException(9, "Password is too simple");
 
+        if (string.Equals(request.password, request.username, StringComparison.OrdinalIgnoreCase))
+            throw new ForbiddenException(9, "Password cannot be the same as your username.");
+
+        if (request.gender is not (Gender.Female or Gender.Male or Gender.NonBinary))
+            throw new BadRequestException(7, "Please select a gender.");
+
         if (discordUser != null && await services.users.IsDiscordIdLinkedToUser(discordUser.Id.ToString()))
             throw new ForbiddenException(10, "This Discord account is already linked to an existing user.");
 
         if (!await UsersAbuse.ShouldAllowCreation(new(GetIP())))
             throw new BadRequestException(0, "Registration is not available at this time. Try again in a few hours, or contact a staff member.");
 
+        var challengeReplayKey = "signup:challenge:" +
+                                 Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(request.captchaToken)));
+        if (!await services.cooldown.TryCooldownCheck(challengeReplayKey, TimeSpan.FromMinutes(5)))
+            throw new ForbiddenException(11, "Please request a new text challenge.");
+
         var signupFinalKey = "signup:step2:" + GetIP();
         if (!await services.cooldown.TryCooldownCheck(signupFinalKey, TimeSpan.FromMinutes(5)))
+        {
+            await services.cooldown.ResetCooldown(challengeReplayKey);
             throw new RobloxException(429, 0, "Too many attempts. Try again in about 5 minutes.");
+        }
 
         UserId createdUser;
         try
         {
-            createdUser = await services.users.CreateUser(request.username, request.password, Gender.Unknown);
+            createdUser = await services.users.CreateUser(request.username, request.password, request.gender);
             if (discordUser != null)
                 await services.users.LinkDiscordAccount(discordUser.Id.ToString(), createdUser.userId);
         }
         catch
         {
             await services.cooldown.ResetCooldown(signupFinalKey);
+            await services.cooldown.ResetCooldown(challengeReplayKey);
             throw;
         }
 
@@ -363,6 +408,29 @@ public class AuthenticationControllerV2 : ControllerBase
             userId = createdUser.userId,
             username = request.username,
         };
+    }
+
+    private bool IsSignupChallengeValid(DiscordSignupRequest request)
+    {
+        if (string.IsNullOrEmpty(request.captchaToken) || string.IsNullOrEmpty(request.captchaAnswer))
+            return false;
+
+        try
+        {
+            var challenge = JsonSerializer.Deserialize<SignupTextChallenge>(
+                SignupChallengeProtector.Unprotect(request.captchaToken));
+            return challenge != null &&
+                   challenge.expiresAt > DateTimeOffset.UtcNow &&
+                   string.Equals(challenge.answer, request.captchaAnswer, StringComparison.Ordinal);
+        }
+        catch (CryptographicException)
+        {
+            return false;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
     }
 
     private async Task CreateSessionAndSetCookie(long userId)

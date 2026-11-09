@@ -472,7 +472,7 @@ public class UsersService : ServiceBase, IService
         ".",
     };
 
-    private static readonly Regex UsernameValidationRegex = new Regex(@"^[a-zA-Z0-9_. ]+$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private static readonly Regex UsernameValidationRegex = new Regex(@"^[a-zA-Z0-9_]+$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
 
     /// <summary>
@@ -484,6 +484,7 @@ public class UsersService : ServiceBase, IService
     {
         // check for null/empty/whitespace
         if (string.IsNullOrEmpty(nameToCheck) || string.IsNullOrWhiteSpace(nameToCheck)) return false;
+        if (string.Equals(nameToCheck, "ROBLOX", StringComparison.OrdinalIgnoreCase)) return false;
         // check length
         var isInvalidValidLength = nameToCheck.Length >= 21 || nameToCheck.Length < 3;
         if (isInvalidValidLength) return false;
@@ -507,7 +508,7 @@ public class UsersService : ServiceBase, IService
         if (nameToCheck.Count(c => c == '_') > 1) return false;
 
         // world filter, removing spaces and other words
-        var lowerName = string.Join("", nameToCheck.ToLower().Split(" "));
+        var lowerName = string.Join("", nameToCheck.ToLowerInvariant().Split(" "));
         if (lowerName.Contains("nigg") || lowerName.Contains("n1gg") || lowerName.Contains("niigg") || lowerName.Contains("n11gg") || lowerName.Contains("gga") || lowerName.Contains("gger"))
             return false;
         if (lowerName.Contains("porn") || lowerName.Contains("p0rn"))

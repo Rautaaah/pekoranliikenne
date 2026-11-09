@@ -145,7 +145,7 @@ const downloadProjexModal = props => {
                 <p className={s.loadingText}>You're moments away from getting into the game!</p>
             </div>
             <div className={s.buttons}>
-                <ActionButton onClick={onClick} buttonStyle={buttonStyles.newBuyButton} label="Download and Install Zekoro" className={s.button2} />
+                <ActionButton onClick={onClick} buttonStyle={buttonStyles.newBuyButton} label="Download and Install Sansy" className={s.button2} />
             </div>
         </NewModal>}
     </>

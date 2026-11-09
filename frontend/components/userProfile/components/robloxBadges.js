@@ -45,7 +45,7 @@ const RobloxBadges = props => {
 
   return <div className='flex d-none d-lg-flex marginStuff'>
     <div className='col-10'>
-      <Subtitle>Zekoro Badges ({badges?.length || 0})</Subtitle>
+      <Subtitle>Sansy Badges ({badges?.length || 0})</Subtitle>
     </div>
     <div className='col-6 col-lg-2'>
       {badges && badges.length > 6 &&

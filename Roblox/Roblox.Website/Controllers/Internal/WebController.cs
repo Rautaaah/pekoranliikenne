@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -74,7 +75,11 @@ public class WebController : ControllerBase
     [HttpGetBypass("auth/discord-signup")]
     public IActionResult DiscordSignup()
     {
-        return Redirect($"https://discord.com/oauth2/authorize?client_id={Configuration.DiscordClientId}&response_type=code&redirect_uri={HttpUtility.UrlEncode(Configuration.DiscordApplicationCallback)}&scope=identify+guilds.members.read+guilds.join");
+        const string stateCookie = "MARINE-DISCORD-OAUTH-STATE";
+        var state = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        Response.Cookies.Append(stateCookie, state, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.AddMinutes(10)));
+
+        return Redirect($"https://discord.com/oauth2/authorize?client_id={Configuration.DiscordClientId}&response_type=code&redirect_uri={HttpUtility.UrlEncode(Configuration.DiscordApplicationCallback)}&scope=identify+guilds.members.read+guilds.join&state={state}");
     }
 
     [HttpGetBypass("api/logincallback")]
@@ -120,42 +125,70 @@ public class WebController : ControllerBase
     }
 
     [HttpGetBypass("api/applicationcallback")]
-    public async Task<IActionResult> DiscordOAuthCallback(string code)
+    public async Task<IActionResult> DiscordOAuthCallback(
+        [FromQuery] string? code,
+        [FromQuery] string? state,
+        [FromQuery] string? error)
     {
         const string key = "MARINE-DISCORD";
-        // Delete any old sessions
-        if (discordAccessToken != null)
+        const string stateCookie = "MARINE-DISCORD-OAUTH-STATE";
+        var expectedState = Request.Cookies[stateCookie];
+        Response.Cookies.Delete(key, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
+        Response.Cookies.Delete(stateCookie, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
+
+        if (!string.IsNullOrEmpty(error) ||
+            string.IsNullOrEmpty(code) ||
+            string.IsNullOrEmpty(state) ||
+            string.IsNullOrEmpty(expectedState) ||
+            !CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(state),
+                Encoding.UTF8.GetBytes(expectedState)))
         {
-            HttpContext.Response.Cookies.Delete(key);
+            return Redirect("/?discordError=verification_failed");
         }
 
-        var discordApi = await DiscordApi.CreateFromOAuthCode(code, Configuration.DiscordApplicationCallback);
-        if (discordApi == null)
+        try
         {
-            return Content("Login via discord has failed, please try logging in normally");
-        }
+            var discordApi = await DiscordApi.CreateFromOAuthCode(code, Configuration.DiscordApplicationCallback);
+            if (discordApi == null)
+                return Redirect("/?discordError=verification_failed");
 
-        var userInfo = await discordApi.GetUserInfo();
-        if (userInfo == null)
+            var userInfo = await discordApi.GetUserInfo();
+            if (userInfo == null)
+                return Redirect("/?discordError=verification_failed");
+
+            var base64AccessToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(discordApi.AccessToken));
+            var tokenLifetime = TimeSpan.FromSeconds(Math.Clamp(discordApi.ExpiresIn, 60, 604800));
+            Response.Cookies.Append(key, base64AccessToken, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.Add(tokenLifetime)));
+
+            return Redirect("/?discordVerified=1");
+        }
+        catch (HttpRequestException ex)
         {
-            return Content("Please try again later");
+            Writer.Info(LogGroup.DiscordApi, "Discord signup callback request failed: {0}", ex.GetType().Name);
+            return Redirect("/?discordError=verification_failed");
         }
+        catch (JsonException ex)
+        {
+            Writer.Info(LogGroup.DiscordApi, "Discord signup callback response was invalid: {0}", ex.GetType().Name);
+            return Redirect("/?discordError=verification_failed");
+        }
+    }
 
-        // We store the access token as base64 in a cookie so we can use it later to get the user info
-        // This shouldnt be a problem :D
-        string base64AccessToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(discordApi.AccessToken));
-        
-        HttpContext.Response.Cookies.Append(key, base64AccessToken, new CookieOptions
+    private CookieOptions CreateDiscordOAuthCookieOptions(DateTimeOffset expires)
+    {
+        var secure = Request.IsHttps ||
+                     (Uri.TryCreate(Configuration.BaseUrl, UriKind.Absolute, out var baseUri) &&
+                      baseUri.Scheme == Uri.UriSchemeHttps);
+        return new CookieOptions
         {
             IsEssential = true,
             Path = "/",
             HttpOnly = true,
-            Secure = Request.IsHttps,
-            Expires = DateTimeOffset.Now.Add(TimeSpan.FromSeconds(604800)),
+            Secure = secure,
+            Expires = expires,
             SameSite = SameSiteMode.Lax,
-        });
-        
-        return Redirect("/?discordVerified=1");
+        };
     }
     
     // [HttpGetBypass("api/userinfo")]

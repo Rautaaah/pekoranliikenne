@@ -1,4 +1,4 @@
-When installing Marine, some users might not have a prerequisite redistributable to run the Marine launcher. As a result, when launching Marine, you may get one of the following errors:
+When installing Sansy, some users might not have a prerequisite redistributable to run the Sansy launcher. As a result, when launching Sansy, you may get one of the following errors:
 
 ![](/img/instructions/mpc-hc64_ILSeBrhVM8.png)
 
@@ -13,4 +13,4 @@ Download the version of Visual C++ Redistributable that works for you:
 | Windows 7 and above     | Latest  | https://aka.ms/vs/17/release/vc_redist.x86.exe                                                   |
 | Windows Vista and below | 14.27   | https://www.filehorse.com/download-microsoft-visual-c-redistributable-package-32/56166/download/ |
 
-Then, run the installer. After it is installed, you should be able to run the Marine Player without getting that bug anymore.
+Then, run the installer. After it is installed, you should be able to run the Sansy Player without getting that bug anymore.

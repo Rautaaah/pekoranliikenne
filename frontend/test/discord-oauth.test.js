@@ -28,7 +28,10 @@ describe('Discord OAuth API route', () => {
   it('proxies signup to the website backend and redirects to Discord', async () => {
     axios.request.mockResolvedValue({
       status: 302,
-      headers: { location: 'https://discord.com/oauth2/authorize?client_id=test' },
+      headers: {
+        location: 'https://discord.com/oauth2/authorize?client_id=test',
+        'set-cookie': ['MARINE-DISCORD-OAUTH-STATE=abc; HttpOnly; Path=/; Secure'],
+      },
     });
     const res = createResponse();
 
@@ -44,6 +47,10 @@ describe('Discord OAuth API route', () => {
         maxRedirects: 0,
         headers: { cookie: 'session=test', 'user-agent': 'Mozilla/5.0 Test Browser' },
     }));
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'set-cookie',
+      ['MARINE-DISCORD-OAUTH-STATE=abc; HttpOnly; Path=/; Secure'],
+    );
     expect(res.redirect).toHaveBeenCalledWith(302, 'https://discord.com/oauth2/authorize?client_id=test');
   });
 
@@ -98,8 +105,37 @@ describe('Discord OAuth API route', () => {
     expect(res.send).toHaveBeenCalledWith({ isDiscordVerified: true, discordUsername: 'tester' });
   });
 
+  it('proxies signup text challenge', async () => {
+    const challenge = { text: 'A2BC34', captchaToken: 'signed-challenge' };
+    axios.request.mockResolvedValue({
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+      data: challenge,
+    });
+    const res = createResponse();
+
+    await discordOAuth({
+      method: 'GET',
+      query: { action: 'signup-challenge' },
+      headers: { cookie: 'MARINE-DISCORD=test' },
+    }, res);
+
+    expect(axios.request).toHaveBeenCalledWith(expect.objectContaining({
+      method: 'GET',
+      url: 'http://127.0.0.1:5000/apisite/auth/v2/signup-challenge',
+    }));
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.send).toHaveBeenCalledWith(challenge);
+  });
+
   it('proxies account creation body and CSRF headers and returns backend cookies', async () => {
-    const signupBody = { username: 'tester', password: 'strong-password', captchaToken: 'captcha' };
+    const signupBody = {
+      username: 'tester',
+      password: 'strong-password',
+      gender: 4,
+      captchaToken: 'signed-challenge',
+      captchaAnswer: 'A2BC34',
+    };
     axios.request.mockResolvedValue({
       status: 201,
       headers: {

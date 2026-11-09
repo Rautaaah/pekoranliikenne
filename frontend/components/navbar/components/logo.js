@@ -4,10 +4,10 @@ import NavigationStore from "../../../stores/navigation";
 import { useState } from "react";
 
 const faviconImages = {
-    [logoStyle.Default]: 'url(/img/zekorooooo.png)',
-    [logoStyle.MarineModern]: 'url(/img/zekorooooo.png)',
-    [logoStyle.Zekoro]: 'url(/img/Zekoro_favicon.png)',
-    [logoStyle.ZekoroBlue]: 'url(/img/Zekoro_blue_favicon.png)',
+    [logoStyle.Default]: 'url(/img/sansy-icon-square.png)',
+    [logoStyle.MarineModern]: 'url(/img/sansy-icon-square.png)',
+    [logoStyle.Zekoro]: 'url(/img/sansy-icon-square.png)',
+    [logoStyle.ZekoroBlue]: 'url(/img/sansy-icon-square.png)',
     [logoStyle.ProjectX]: 'url(/img/projectx_favicon.png)',
     [logoStyle.Silverium]: 'url(/img/silverium_favicon.png)',
     [logoStyle.Roblox2009]: 'url(/img/roblox2009_favicon.svg)',
@@ -18,10 +18,10 @@ const faviconImages = {
 };
 
 const logoImages = {
-    [logoStyle.Default]: '/img/zekororeal.png',
-    [logoStyle.MarineModern]: '/img/zekororeal.png',
-    [logoStyle.Zekoro]: '/img/Zekoro.png',
-    [logoStyle.ZekoroBlue]: '/img/Zekoro_blue.png',
+    [logoStyle.Default]: '/img/sansy-logo-full.png',
+    [logoStyle.MarineModern]: '/img/sansy-logo-full.png',
+    [logoStyle.Zekoro]: '/img/sansy-logo-full.png',
+    [logoStyle.ZekoroBlue]: '/img/sansy-logo-full.png',
     [logoStyle.ProjectX]: '/img/projectx.png',
     [logoStyle.Silverium]: '/img/silverium.png',
     [logoStyle.Roblox2009]: '/img/roblox2009.png',
@@ -105,7 +105,7 @@ const Logo = () => {
       navStore.setIsSidebarOpen(!navStore.isSidebarOpen);
     }}></div>
     <a className={s.imgDesktop} href='/home'>
-      <img className={s.imgDesktopImage} src={desktopLogoSrc} alt='Zekoro' onError={() => setDesktopLogoSrc('/img/zekoronewlogo.png')} />
+      <img className={s.imgDesktopImage} src={desktopLogoSrc} alt='Sansy' onError={() => setDesktopLogoSrc('/img/sansy-logo-full.png')} />
     </a>
     <a className={s.imgMobile} href='/home'></a>
     {/*<div className={s.imgMobileWrapper}>

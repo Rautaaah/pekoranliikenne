@@ -8,7 +8,7 @@ const PromoCodes = () => {
 export const getStaticProps = () => {
   return {
     props: {
-      title: "Redeem Zekoro Promotions - Zekoro",
+      title: "Redeem Sansy Promotions - Sansy",
     },
   };
 };

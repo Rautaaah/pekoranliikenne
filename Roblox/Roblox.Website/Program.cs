@@ -363,6 +363,13 @@ app.UseStaticFiles(new StaticFileOptions
     OnPrepareResponse = prepareResponseForCache,
 });
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "wwwroot", "img")),
+    RequestPath = "/img",
+    OnPrepareResponse = prepareResponseForCache,
+});
+
 #if FALSE
 app.UseStaticFiles(new StaticFileOptions
 {

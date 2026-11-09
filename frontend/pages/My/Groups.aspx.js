@@ -14,15 +14,15 @@ const getGroupIconUrl = (groupId, imageVersion) => {
 const MyGroupsPage = ({ groupId: initialGroupId, groupName, description, imageVersion }) => {
   const router = useRouter();
   const activeGroupId = router.query['gid'] || initialGroupId;
-  const ogTitle = groupName || "Zekoro Group";
-  const ogDescription = description || "Join the Zekoro community.";
+  const ogTitle = groupName || "Sansy Group";
+  const ogDescription = description || "Join the Sansy community.";
   const ogImage = getGroupIconUrl(activeGroupId, imageVersion);
   return <MyGroupsStore.Provider>
     <GroupPageStore.Provider>
       <Head>
-        <title>{ogTitle} - Zekoro</title>
+        <title>{ogTitle} - Sansy</title>
         <meta property="og:title" content={ogTitle} />
-        <meta property="og:url" content={activeGroupId ? `https://zekoro.org/My/Groups.aspx?gid=${activeGroupId}` : "https://zekoro.org/My/Groups.aspx"} />
+        <meta property="og:url" content={activeGroupId ? `https://sansy.shop/My/Groups.aspx?gid=${activeGroupId}` : "https://sansy.shop/My/Groups.aspx"} />
         <meta property="og:type" content="website" />
         <meta property="og:description" content={ogDescription} />
         <meta property="og:image" content={ogImage} />
@@ -30,7 +30,7 @@ const MyGroupsPage = ({ groupId: initialGroupId, groupName, description, imageVe
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="420" />
         <meta property="og:image:height" content="420" />
-        <meta property="og:site_name" content="Zekoro" />
+        <meta property="og:site_name" content="Sansy" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={ogTitle} />
         <meta name="twitter:description" content={ogDescription} />
@@ -53,8 +53,8 @@ export async function getServerSideProps(context) {
     return {
       props: {
         groupId: null,
-        groupName: "Zekoro Group",
-        description: "Join the Zekoro community.",
+        groupName: "Sansy Group",
+        description: "Join the Sansy community.",
         imageVersion,
       }
     };
@@ -65,8 +65,8 @@ export async function getServerSideProps(context) {
     return {
       props: {
         groupId,
-        groupName: info?.name || "Zekoro Group",
-        description: info?.description || "Join the Zekoro community.",
+        groupName: info?.name || "Sansy Group",
+        description: info?.description || "Join the Sansy community.",
         imageVersion,
       }
     };
@@ -75,8 +75,8 @@ export async function getServerSideProps(context) {
     return {
       props: {
         groupId,
-        groupName: "Zekoro Group",
-        description: "Join the Zekoro community.",
+        groupName: "Sansy Group",
+        description: "Join the Sansy community.",
         imageVersion,
       }
     };

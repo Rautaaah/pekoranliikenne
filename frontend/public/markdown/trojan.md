@@ -1,17 +1,17 @@
-## Why is Marine detected as malicious?
+## Why is Sansy detected as malicious?
 
-The Marine launcher is detected as malicious due to the executable being unsigned. Signed applications are (mostly) exempt from anti-virus detections. 
+The Sansy launcher is detected as malicious due to the executable being unsigned. Signed applications are (mostly) exempt from anti-virus detections.
 
 However, signed applications also cost a (frankly absurd) amount of money, **roughly $400+/year!**
 
-Since Marine does not make any revenue in any way, we cannot afford to sign our launcher. Therefore, anti-viruses tend to be more sensitive towards our launcher.
+Since Sansy does not make any revenue in any way, we cannot afford to sign our launcher. Therefore, anti-viruses tend to be more sensitive towards our launcher.
 
-### Pictures of Marine getting detected as malicious
+### Pictures of Sansy getting detected as malicious
 
 #### Browsers
-![Chrome detecting Marine launcher as dangerous](/img/instructions/mpc-hc64_7rruXWAmDd.png)
-![Chrome detecting Marine launcher as dangerous](/img/instructions/3DlQ7incjh.png)
-![Firefox detecting Marine launcher as dangerous](/img/instructions/firefox_VHDyU4CeYf.png)
+![Chrome detecting Sansy launcher as dangerous](/img/instructions/mpc-hc64_7rruXWAmDd.png)
+![Chrome detecting Sansy launcher as dangerous](/img/instructions/3DlQ7incjh.png)
+![Firefox detecting Sansy launcher as dangerous](/img/instructions/firefox_VHDyU4CeYf.png)
 
 #### All anti-viruses
 
@@ -25,9 +25,9 @@ Since Marine does not make any revenue in any way, we cannot afford to sign our 
 
 ### Chrome
 
-1. Go to any game on Marine and download the Marine launcher by clicking **"Play"** then **"Download and Install Marine"**
+1. Go to any game on Sansy and download the Sansy launcher by clicking **"Play"** then **"Download and Install Sansy"**
 2. Chrome will tell you that ProjectXPlayerLauncher.exe is a dangerous download, and will block it. This is due to our launcher not being signed
-   * ![Chrome detecting Marine launcher as dangerous](/img/instructions/mpc-hc64_7rruXWAmDd.png)
+   * ![Chrome detecting Sansy launcher as dangerous](/img/instructions/mpc-hc64_7rruXWAmDd.png)
 3. Go to your Chrome download tab by opening a new page and typing **chrome://download** and hitting enter
    * ![](/img/instructions/vmware_4TFVkEtdIs.png)
 4. You should see the ProjectXPlayerLauncher.exe, and you should see that Chrome has blocked it due to the file being "dangerous"
@@ -36,22 +36,22 @@ Since Marine does not make any revenue in any way, we cannot afford to sign our 
    * ![](/img/instructions/466JWvddy2.png)
 6. A pop-up will appear saying "This file could harm your device." Click **"Download dangerous file"**
    * ![](/img/instructions/mpc-hc64_yfTUvicVYF.png)
-7. The file should now download, and you can open it to install Marine.
+7. The file should now download, and you can open it to install Sansy.
 
 ### Firefox
 
-1. Go to any game on Marine and download the Marine launcher by clicking **"Play"** then **"Download and Install Marine"**
+1. Go to any game on Sansy and download the Sansy launcher by clicking **"Play"** then **"Download and Install Sansy"**
 2. Firefox will say the file contains virus or malware. This is, again, due to our launcher not being signed.
    * ![](/img/instructions/floorp_L7p2HadJgi.png)
 3. Click "Show all downloads" The download window should appear. Right-click on ProjectXPlayerLauncher.exe, and click "Allow Download"
    * ![](/img/instructions/moJvVv3SHn.png)
 4. A pop-up will appear, telling you the file contains a virus. Click "Allow Download" again
    * ![](/img/instructions/mpc-hc64_Oef8pMP4it.png)
-5. The file should now download, and you can open it to install Marine.
+5. The file should now download, and you can open it to install Sansy.
 
 ### Windows
 
-On Windows, the best solution is to disable your anti-virus while installing Marine, then set an exclusion path for the **%localappdata%/ProjectX** folder. You can then re-enable your anti-virus.
+On Windows, the best solution is to disable your anti-virus while installing Sansy, then set an exclusion path for the **%localappdata%/ProjectX** folder. You can then re-enable your anti-virus.
 
 #### Microsoft Defender SmartScreen (Windows protected your PC)
 
@@ -76,7 +76,7 @@ No matter the anti-virus, due to the launcher not being signed, SmartScreen will
    * ![](/img/instructions/biykjU90CK.png)
 5. Windows Security should now show the message "Real-time protection is off, leaving your device vulnerable."
    * ![](/img/instructions/mpc-hc64_s21Qbn8nfw.png)
-6. Minimize Windows Security and go to any game page and download the Marine launcher by clicking **"Play"** then **"Download and Install Marine"**
+6. Minimize Windows Security and go to any game page and download the Sansy launcher by clicking **"Play"** then **"Download and Install Sansy"**
 7. Go back to Windows Security and scroll down until you find "Exclusions". Under "Exclusions", click **"Add or remove exclusions"**
    * ![](/img/instructions/pNIucxXFPR.png)
    * User Account Control will ask you if you want to allow the app to make changes. Click **"Yes"**
@@ -85,7 +85,7 @@ No matter the anti-virus, due to the launcher not being signed, SmartScreen will
    * ![](/img/instructions/rj7LI67mUO.png)
 9.  An explorer window will now open. In the address bar, type in **"%localappdata%/ProjectX"**, and press Enter
    * ![](/img/instructions/mpc-hc64_v9z03kuNrt.png)
-10.  The Marine folder in Local AppData should now appear with a "Downloads" and "Versions" folder. If not, you need to install Marine. Then, click **"Select Folder"**
+10.  The Sansy folder in Local AppData should now appear with a "Downloads" and "Versions" folder. If not, you need to install Sansy. Then, click **"Select Folder"**
     * ![](/img/instructions/mpc-hc64_U4ADLQTCI0.png)
 11.  A new folder exclusion entry should now appear with the directory "C:\Users\yourusername\AppData\Local\ProjectX"
     * ![](/img/instructions/mpc-hc64_GUsyxdat10.png)
@@ -95,4 +95,4 @@ No matter the anti-virus, due to the launcher not being signed, SmartScreen will
     * ![](/img/instructions/Photos_kNhSohEwtn.png)
     *  User Account Control will ask you if you want to allow the app to make changes. Click **"Yes"**
     * ![](/img/instructions/biykjU90CK.png)
-14. You can now play any game on Marine by clicking **"Play"** on a game page.
+14. You can now play any game on Sansy by clicking **"Play"** on a game page.

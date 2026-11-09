@@ -182,7 +182,7 @@ const CollectiblesPage = ({ userId, username, totalRap, inventory, errorMessage 
   return (
     <Theme2016>
       <Head>
-        <title>{username ? `${username}'s Collectibles - Zekoro` : "Collectibles - Zekoro"}</title>
+        <title>{username ? `${username}'s Collectibles - Sansy` : "Collectibles - Sansy"}</title>
       </Head>
       <MainWrapper>
         <div className={`container ${s.page}`}>

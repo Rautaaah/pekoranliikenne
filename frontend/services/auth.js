@@ -13,11 +13,17 @@ export const getSignupMetadata = () => {
   return request('GET', '/api/discord/signup-metadata').then(result => result.data);
 }
 
-export const signup = ({ username, password, captchaToken }) => {
+export const getSignupChallenge = () => {
+  return request('GET', '/api/discord/signup-challenge').then(result => result.data);
+}
+
+export const signup = ({ username, password, gender, captchaToken, captchaAnswer }) => {
   return request('POST', '/api/discord/create-account', {
     username,
     password,
+    gender,
     captchaToken,
+    captchaAnswer,
   });
 }
 

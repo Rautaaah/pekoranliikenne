@@ -52,13 +52,13 @@ export const getPostsByUser = ({userId, offset, limit}) => {
 const ForumsCategories = [
   {
     id: 1,
-    name: 'Zekoro',
+    name: 'Sansy',
     subCategories: [
       {
         id: 46,
-        name: 'All Things Zekoro',
+        name: 'All Things Sansy',
         description:
-          'The area for discussions purely about Zekoro - the features, the games, and company news.',
+          'The area for discussions about Sansy - its features, games, and community news.',
       },
       {
         id: 14,
@@ -70,13 +70,13 @@ const ForumsCategories = [
         id: 21,
         name: 'Suggestions & Ideas',
         description:
-          'Do you have a suggestion and ideas for Zekoro? Share your feedback here.',
+          'Do you have a suggestion or idea for Sansy? Share your feedback here.',
       },
       {
         id: 54,
-        name: 'Zekoro events',
+        name: 'Sansy events',
         description:
-          'Check here to see the crazy things Zekoro is doing. Contest information can be found here. Zekoro is going to be at various Maker Faires and conferences around the globe. Discuss those events here!',
+          'Check here for Sansy events and contests. Share event information and discuss community activities here!',
       },
     ],
   },
@@ -86,7 +86,7 @@ const ForumsCategories = [
     subCategories: [
       {
         id: 13,
-        name: 'Zekoro Talk',
+        name: 'Sansy Talk',
         description:
           'A popular hangout where people talk about various topics.',
       },
@@ -106,7 +106,7 @@ const ForumsCategories = [
         id: 35,
         name: `Let's Make a Deal`,
         description:
-          'A fast paced community dedicated to mastering the Limited Trades and Sales market, and divining the subtleties of the Zekoro Currency Exchange.',
+          'A fast-paced community dedicated to trading limited items and discussing the Sansy Currency Exchange.',
       },
     ],
   },

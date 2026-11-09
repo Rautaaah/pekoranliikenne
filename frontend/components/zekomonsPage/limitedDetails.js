@@ -99,7 +99,7 @@ const ZekomonsLimitedDetailsPage = ({ assetId }) => {
             {item && <Image src={`/thumbs/asset.ashx?assetId=${item.id}`} alt={item.name} width={120} height={120} unoptimized />}
             <div>
               <h1 className={s.title}>{item?.name || "Loading..."}</h1>
-              <a className={s.link} href={item ? getItemUrl({ assetId: item.id, name: item.name }) : "#"}>Zekoro Limited</a>
+              <a className={s.link} href={item ? getItemUrl({ assetId: item.id, name: item.name }) : "#"}>Sansy Limited</a>
             </div>
           </div>
           <div className={s.stats}>

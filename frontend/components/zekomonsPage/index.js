@@ -197,7 +197,7 @@ const ZekomonsPage = () => {
           <div className={s.card}>
             <div className={s.profileHead}>
               <h1 className={s.profileName}>{profile?.name || "..."}</h1>
-              <a className={s.link} href={userId ? `/users/${userId}/profile` : "#"}>Zekoro Player Profile</a>
+              <a className={s.link} href={userId ? `/users/${userId}/profile` : "#"}>Sansy Player Profile</a>
             </div>
             <div className={s.avatarWrap}>{userId ? <PlayerHeadshot id={userId} size={420} className={s.avatar} name={profile?.name} /> : <div className={s.avatar} />}</div>
             <div className={s.metrics}>

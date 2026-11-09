@@ -82,7 +82,7 @@ const Footer = () => {
           })
         }
       </ul>
-      <p className={s.footerNote}>{"\u00A9"}2025 Zekoro. Zekoro is not affliated with Roblox Corporation.</p>
+      <p className={s.footerNote}>{"\u00A9"}2025 Sansy. Sansy is not affiliated with Roblox Corporation.</p>
     </div>
   </footer>;
 };

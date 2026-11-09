@@ -168,8 +168,8 @@ function RobloxApp({Component, pageProps}) {
         <Head>
             <link rel="preconnect" href="https://fonts.googleapis.com"/>
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={''}/>
-            <title>{pageProps.title || 'Zekoro'}</title>
-            <link rel='icon' type="image/png" href='/img/zekorooooo.png?v=20260409'/>
+            <title>{pageProps.title || 'Sansy'}</title>
+            <link rel='icon' type="image/png" href='/img/sansy-icon-square.png'/>
             <meta name='viewport' content='width=device-width, initial-scale=1'/>
         </Head>
         <MaintenanceGate>

@@ -66,7 +66,7 @@ const InstallHelpPage = props => {
     const subpages = [
         {
             id: "create",
-            name: "How to Create a Zekoro Account",
+            name: "How to Create a Sansy Account",
             el: () => <MarkdownContent mdUrl="createAccount.md" />,
         },
     ]
@@ -79,12 +79,12 @@ const InstallHelpPage = props => {
                 <ol className={s.breadcrumbs}>
                     <li>
                         <Link href="/help">
-                            <a className="link2018" style={{ fontWeight: 300, fontSize: '13px', lineHeight: 1.5 }} href="/help">Zekoro Support</a>
+                            <a className="link2018" style={{ fontWeight: 300, fontSize: '13px', lineHeight: 1.5 }} href="/help">Sansy Support</a>
                         </Link>
                     </li>
                     <li>
                         <Link href="/help/install">
-                            <a className="link2018" style={{ fontWeight: 300, fontSize: '13px', lineHeight: 1.5 }} href="/help/install">Zekoro Account</a>
+                            <a className="link2018" style={{ fontWeight: 300, fontSize: '13px', lineHeight: 1.5 }} href="/help/install">Sansy Account</a>
                         </Link>
                     </li>
                     <li>

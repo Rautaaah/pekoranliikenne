@@ -8,7 +8,7 @@ export const getServerSideProps = async () => {
   return {
     props: {
       disableWebsiteTheming: true,
-      title: "Sign Up - Kornet",
+      title: "Sign Up - Sansy",
     },
   };
 };

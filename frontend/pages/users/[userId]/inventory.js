@@ -5,15 +5,15 @@ import Head from "next/head";
 
 const UserInventoryPage = ({ username, userId }) => {
   const router = useRouter();
-  const ogTitle = username ? `${username}'s Inventory` : "Zekoro";
-  const ogUrl = userId ? `https://zekoro.org/users/${userId}/inventory` : '';
+  const ogTitle = username ? `${username}'s Inventory` : "Sansy";
+  const ogUrl = userId ? `https://sansy.shop/users/${userId}/inventory` : '';
   const headshotUrl = userId ? `https://zekoro.org/thumbs/avatar-headshot.ashx?userId=${userId}` : '';
 
   return (
     <>
       {username && (
         <Head>
-          <title>{ogTitle} - Zekoro</title>
+          <title>{ogTitle} - Sansy</title>
           <meta property="og:title" content={ogTitle} />
           <meta property="og:url" content={ogUrl} />
           <meta property="og:type" content="profile" />
@@ -27,7 +27,7 @@ const UserInventoryPage = ({ username, userId }) => {
           <meta name="twitter:title" content={ogTitle} />
           <meta name="twitter:description" content={`View ${username}'s inventory`} />
           <meta name="twitter:image" content={headshotUrl} />
-          <meta property="og:site_name" content="Zekoro" />
+          <meta property="og:site_name" content="Sansy" />
           <meta name="theme-color" content="#1188ff" />
         </Head>
       )}

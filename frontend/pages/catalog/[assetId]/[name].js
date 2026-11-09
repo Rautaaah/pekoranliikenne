@@ -10,14 +10,14 @@ const getItemThumbnailUrl = (assetId, imageVersion) => {
 
 const ItemPage = ({ name, description, assetId, creatorName, imageVersion, ...props }) => {
     const title = name || "Catalog Item";
-    const ogDescription = description || "Check out this Zekoro catalog item.";
+    const ogDescription = description || "Check out this Sansy catalog item.";
     const ogImage = getItemThumbnailUrl(assetId, imageVersion);
-    const ogUrl = assetId ? `https://zekoro.org/catalog/${assetId}/--` : "https://zekoro.org/catalog";
+    const ogUrl = assetId ? `https://sansy.shop/catalog/${assetId}/--` : "https://sansy.shop/catalog";
     return (
         <>
             {name && (
                 <Head>
-                    <title>{title} - Zekoro</title>
+                    <title>{title} - Sansy</title>
                     <meta property="og:title" content={title}/>
                     <meta property="og:url" content={ogUrl}/>
                     <meta property="og:type" content="website"/>
@@ -32,7 +32,7 @@ const ItemPage = ({ name, description, assetId, creatorName, imageVersion, ...pr
                     <meta name="twitter:title" content={title}/>
                     <meta name="twitter:description" content={ogDescription}/>
                     <meta name="twitter:image" content={ogImage}/>
-                    <meta property="og:site_name" content="Zekoro"/>
+                    <meta property="og:site_name" content="Sansy"/>
                     <meta name="theme-color" content="#1188ff"/>
                 </Head>
             )}
@@ -52,7 +52,7 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 name: info.Name,
-                description: info.Description || "Check out this Zekoro catalog item.",
+                description: info.Description || "Check out this Sansy catalog item.",
                 creatorName: info.Creator?.Name || null,
                 assetId: assetId,
                 imageVersion,

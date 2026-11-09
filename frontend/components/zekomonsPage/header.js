@@ -190,8 +190,8 @@ const ZekomonsHeader = ({ activeTab }) => {
   return (
     <header className={s.header}>
       <div className={s.left}>
-        <a className={s.backLink} href="https://zekoro.org/home">
-          Back To Zekoro
+        <a className={s.backLink} href="/home">
+          Back To Sansy
         </a>
         <div className={s.brand}>
           Zeko<span className={s.brandAccent}>mons</span>

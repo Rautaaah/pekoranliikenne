@@ -113,18 +113,18 @@ const HelpPage = props => {
 
     const articles = [
         {
-            name: "Playing Zekoro",
-            description: "I'm having trouble playing Zekoro",
+            name: "Playing Sansy",
+            description: "I'm having trouble playing Sansy",
             url: "/help/install",
         },
         {
-            name: "Creating on Zekoro",
-            description: "I'm having trouble creating on Zekoro", // include guides on how to make games, game limits, studios, etc
+            name: "Creating on Sansy",
+            description: "I'm having trouble creating on Sansy", // include guides on how to make games, game limits, studios, etc
             url: "/help/create",
         },
         {
-            name: "Zekoro Account",
-            description: "I need help with my Zekoro account",
+            name: "Sansy Account",
+            description: "I need help with my Sansy account",
             url: "/help/account",
         },
         {
@@ -138,7 +138,7 @@ const HelpPage = props => {
         <FakeNavBar />
         <div className={s.banner} />
         <div className={`container ${s.container}`}>
-            <span style={{ textAlign: 'center', fontSize: '48px', fontWeight: 800, marginBottom: '30px' }}>Zekoro Help Articles</span>
+            <span style={{ textAlign: 'center', fontSize: '48px', fontWeight: 800, marginBottom: '30px' }}>Sansy Help Articles</span>
             <div className={s.articleContainer}>
                 {// eventually put search here? for now, span
                 }

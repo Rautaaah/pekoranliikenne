@@ -124,7 +124,7 @@ const Social = () => {
                             <p className={s.label}>{platform.toLowerCase() !== "discord" ? ConvertSocialToHuman(platform) : "Discord (can be user id)"}</p>
                             <input
                                 type="text"
-                                placeholder="e.g. @ZEKORO"
+                                placeholder="e.g. @sansy"
                                 onChange={e => {
                                     if (isSaving) return;
                                     isDefault = false;

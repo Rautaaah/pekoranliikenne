@@ -4,6 +4,7 @@ const backendEndpoints = {
   login: { method: 'GET', path: '/auth/discord-login', oauth: true },
   signup: { method: 'GET', path: '/auth/discord-signup', oauth: true },
   'signup-metadata': { method: 'GET', path: '/apisite/auth/v2/signup-metadata' },
+  'signup-challenge': { method: 'GET', path: '/apisite/auth/v2/signup-challenge' },
   'create-account': { method: 'POST', path: '/apisite/auth/v2/signup' },
 };
 
@@ -73,6 +74,10 @@ export default async function discordOAuth(req, res) {
       authorizationUrl.pathname !== '/oauth2/authorize') {
       console.error(`Discord OAuth backend returned an unexpected redirect for ${action}.`);
       return unavailable(res);
+    }
+
+    if (response.headers['set-cookie']) {
+      res.setHeader('set-cookie', response.headers['set-cookie']);
     }
 
     return res.redirect(302, authorizationUrl.toString());

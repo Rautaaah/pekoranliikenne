@@ -51,7 +51,7 @@ function ThankYouPage() {
                         lineHeight: "1.3em",
                         fontSize: 48,
                         fontWeight: 300,
-                    }}>Thank you for installing Zekoro.</h1>
+                    }}>Thank you for installing Sansy.</h1>
                     <span style={{
                         width: "500px",
                         margin: "50px auto",
@@ -59,10 +59,10 @@ function ThankYouPage() {
                         fontWeight: 300,
                         textAlign: "center",
                         lineHeight: "1.5em",
-                    }}>It's time to play! You can now browse and play the most popular games on Zekoro.</span>
+                    }}>It's time to play! You can now browse and play the most popular games on Sansy.</span>
                     <Link href="/games">
                         <a href="/games">
-                            <ActionButton label="Browse Zekoro Games" buttonStyle={buttonStyles.newBuyButton}
+                            <ActionButton label="Browse Sansy Games" buttonStyle={buttonStyles.newBuyButton}
                                           className={s.gamesBtn}/>
                         </a>
                     </Link>

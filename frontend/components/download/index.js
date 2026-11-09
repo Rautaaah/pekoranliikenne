@@ -103,8 +103,8 @@ const Download = () => {
     return <div className='container'>
         <div className='row'>
             <div className='col-12 mb-4'>
-                <h1 className={s.title}>Zekoro Download</h1>
-                <p className={s.subTitle}>Get the client you need to play, build, and edit on Zekoro.</p>
+                <h1 className={s.title}>Sansy Download</h1>
+                <p className={s.subTitle}>Get the client you need to play, build, and create on Sansy.</p>
             </div>
         </div>
         <div className='row'>
@@ -112,11 +112,11 @@ const Download = () => {
                 <a href={installerUrl} className='text-decoration-none'>
                     <div className={'card ' + s.card}>
                         <div className={s.iconWrap}>
-                            <img src='/img/zekoro-z.png' alt='Zekoro Z logo' className={s.iconImage} />
+                            <img src='/img/sansy-icon-square.png' alt='Sansy logo' className={s.iconImage} />
                         </div>
-                        <h4 className={s.label}>Zekoro</h4>
+                        <h4 className={s.label}>Sansy</h4>
                         <div className={s.sub}>Windows installer</div>
-                        <span className={s.cardButton}>Zekoro Download</span>
+                        <span className={s.cardButton}>Sansy Download</span>
                     </div>
                 </a>
             </div>
@@ -124,10 +124,10 @@ const Download = () => {
                 <a href={studioUrl} className='text-decoration-none'>
                     <div className={'card ' + s.card}>
                         <div className={s.iconWrap}>
-                            <img src='/img/zekoro-z.png' alt='Zekoro Z logo' className={s.iconImage} />
+                            <img src='/img/sansy-icon-square.png' alt='Sansy logo' className={s.iconImage} />
                         </div>
                         <h4 className={s.label}>Studio</h4>
-                        <div className={s.sub}>Downloads as ZekoroStudio.exe</div>
+                        <div className={s.sub}>Download the Sansy Studio installer</div>
                         <span className={s.cardButton + ' ' + s.cardButtonStudio}>Studio Download</span>
                     </div>
                 </a>

@@ -29,8 +29,6 @@ export default class JssDocument extends Document {
                     <link
                         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap"
                         rel="stylesheet"/>
-                    <link href="https://zekoro.org/fonts/gotham1.css" rel="stylesheet"/>
-                    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
                     <style id="server-side-styles">{registry.toString()}</style>
                 </>
             ),

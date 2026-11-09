@@ -152,7 +152,7 @@ const instructionsModal = props => {
     const instructions = [
         {
             textElement: () => {
-                return <p>Click the <b>ZekoroPlayerLauncher.exe</b> to run the Zekoro installer, which just downloaded via your web browser.</p>
+                return <p>Run the player installer that just finished downloading in your browser.</p>
             },
             element: () => {
                 return <img src='/img/instructions/one.png' style={{ verticalAlign: 'middle', border: 0, marginTop: '60px' }}></img>
@@ -168,7 +168,7 @@ const instructionsModal = props => {
         },
         {
             textElement: () => {
-                return <p>Click <b>Ok</b> once you've successfully installed Zekoro.</p>
+                return <p>Click <b>Ok</b> once you've successfully installed Sansy.</p>
             },
             element: () => {
                 return <img src='/img/instructions/three.png' style={{ verticalAlign: 'middle', border: 0 }}></img>
@@ -176,7 +176,7 @@ const instructionsModal = props => {
         },
         /*{
             textElement: () => {
-                return <p>Your antivirus may detect Marine as a false-positive virus, because it is unsigned. To fix this, you must <b>add the Marine installer and "%localappdata%/ProjectX"</b> to your <b>antivirus' exclusion list</b> and relaunch the installer.</p>
+                return <p>Your antivirus may detect Sansy as a false-positive virus, because it is unsigned. To fix this, you must <b>add the Sansy installer and "%localappdata%/ProjectX"</b> to your <b>antivirus' exclusion list</b> and relaunch the installer.</p>
             },
             element: () => {
                 return <img src='/img/instructions/three.png' style={{ verticalAlign: 'middle', border: 0 }}></img>
@@ -195,8 +195,8 @@ const instructionsModal = props => {
     ]
 
     return <>
-        {!props.closeModals && <NewModal containerWidth={1000} footerClass={s.footer} exitFunction={props.exitFunction} title="Thanks for playing Zekoro" footerElements={<>
-            <span style={{ color: 'var(--text-color-secondary)', fontSize: '10px', fontWeight: 600 }}>The Zekoro installer should download shortly. If it doesn't, start the <Link href="/download">
+        {!props.closeModals && <NewModal containerWidth={1000} footerClass={s.footer} exitFunction={props.exitFunction} title="Thanks for playing Sansy" footerElements={<>
+            <span style={{ color: 'var(--text-color-secondary)', fontSize: '10px', fontWeight: 600 }}>The Sansy installer should download shortly. If it doesn't, start the <Link href="/download">
                 <a className="link2018" href="/download">download now.</a>
             </Link></span>
             <span style={{ float: "right", color: 'var(--text-color-secondary)', fontSize: '10px', fontWeight: 600 }}>Having trouble installing? Click <Link href="/help/install">
