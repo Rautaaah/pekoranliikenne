@@ -12,6 +12,8 @@ const unavailable = (res) => res.status(502).json({
   error: 'Discord authorization is temporarily unavailable.',
 });
 
+const backendUrl = process.env.WEBSITE_BACKEND_URL || 'http://127.0.0.1:5000';
+
 export default async function discordOAuth(req, res) {
   const action = req.query.action;
   const endpoint = typeof action === 'string' ? backendEndpoints[action] : null;
@@ -38,7 +40,7 @@ export default async function discordOAuth(req, res) {
 
     const response = await axios.request({
       method: req.method,
-      url: `http://127.0.0.1:5000${endpoint.path}`,
+      url: `${backendUrl}${endpoint.path}`,
       data: req.body,
       maxRedirects: 0,
       validateStatus: () => true,

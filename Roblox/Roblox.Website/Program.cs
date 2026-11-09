@@ -72,7 +72,9 @@ Roblox.Configuration.DiscordClientSecret = configuration.GetSection("Discord:Cli
 Roblox.Configuration.DiscordGuildId = configuration.GetSection("Discord:GuildId").Value!;
 Roblox.Configuration.DiscordBotToken = configuration.GetSection("Discord:BotToken").Value!;
 Roblox.Configuration.DiscordLogChannelId = configuration.GetSection("Discord:LogChannelId").Value!;
-Roblox.Configuration.DiscordApplicationCallback = ResolveDiscordCallbackUrl(Roblox.Configuration.BaseUrl, "/api/applicationcallback");
+Roblox.Configuration.DiscordApplicationCallback = ResolveDiscordCallbackUrl(
+    configuration["Discord:ApplicationCallback"] ?? Roblox.Configuration.BaseUrl,
+    "/api/applicationcallback");
 Roblox.Configuration.DiscordLoginCallback = ResolveDiscordCallbackUrl(Roblox.Configuration.BaseUrl, "/api/logincallback");
 Roblox.Configuration.DiscordLinkCallback = ResolveDiscordCallbackUrl(Roblox.Configuration.BaseUrl, "/bot/verify");
 Roblox.Configuration.DiscordInviteUrl = configuration.GetSection("Discord:InviteUrl").Value ?? "https://discord.gg/7yUx9C3hCc";
