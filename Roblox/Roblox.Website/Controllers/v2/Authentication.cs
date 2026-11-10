@@ -268,24 +268,12 @@ public class AuthenticationControllerV2 : ControllerBase
             };
         }
 
-        string? existingUsername = null;
-        try
-        {
-            existingUsername = (await services.users.GetUserByDiscordId(discordIdentity.id)).username;
-        }
-        catch (RecordNotFoundException)
-        {
-            existingUsername = null;
-        }
-
         return new
         {
             isDiscordVerified = true,
             discordId = discordIdentity.id,
             discordUsername = discordIdentity.username,
             discordDisplay = discordIdentity.username,
-            hasExistingAccount = existingUsername != null,
-            existingUsername,
         };
     }
 
