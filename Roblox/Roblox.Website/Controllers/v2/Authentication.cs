@@ -3,13 +3,11 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using DSharpPlus.Entities;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Roblox.AbuseDetection.Report;
 using Roblox.Exceptions;
-using Roblox.Libraries.DiscordApi;
 using Roblox.Logging;
 using Roblox.Models.Sessions;
 using Roblox.Dto.Authentication;
@@ -21,6 +19,7 @@ using Roblox.Services.App.FeatureFlags;
 using Roblox.Services.Exceptions;
 using Roblox.Website.WebsiteModels;
 using Roblox.Website.WebsiteModels.Authentication;
+using Roblox.Website.WebsiteServices;
 using BadRequestException = Roblox.Exceptions.BadRequestException;
 using ServiceProvider = Microsoft.Extensions.DependencyInjection.ServiceProvider;
 
@@ -256,11 +255,11 @@ public class AuthenticationControllerV2 : ControllerBase
     [HttpGet("signup-metadata")]
     public async Task<dynamic> GetSignupMetadata()
     {
-        var hasDiscordCookie = Request.Cookies.ContainsKey("MARINE-DISCORD");
-        Writer.Info(LogGroup.DiscordApi, "Signup metadata requested. Has Discord cookie: {0}", hasDiscordCookie);
+        var hasVerifiedCookie = Request.Cookies.ContainsKey(DiscordSignupVerification.CookieName);
+        Writer.Info(LogGroup.DiscordApi, "Signup metadata requested. Has verified Discord cookie: {0}", hasVerifiedCookie);
 
-        var discordUser = await GetVerifiedSignupDiscordUser();
-        if (discordUser == null)
+        var discordIdentity = DiscordSignupVerification.Read(HttpContext);
+        if (discordIdentity == null)
         {
             Writer.Info(LogGroup.DiscordApi, "Signup metadata returning unverified.");
             return new
@@ -272,7 +271,7 @@ public class AuthenticationControllerV2 : ControllerBase
         string? existingUsername = null;
         try
         {
-            existingUsername = (await services.users.GetUserByDiscordId(discordUser.Id.ToString())).username;
+            existingUsername = (await services.users.GetUserByDiscordId(discordIdentity.id)).username;
         }
         catch (RecordNotFoundException)
         {
@@ -282,9 +281,9 @@ public class AuthenticationControllerV2 : ControllerBase
         return new
         {
             isDiscordVerified = true,
-            discordId = discordUser.Id.ToString(),
-            discordUsername = discordUser.Username,
-            discordDisplay = discordUser.Username,
+            discordId = discordIdentity.id,
+            discordUsername = discordIdentity.username,
+            discordDisplay = discordIdentity.username,
             hasExistingAccount = existingUsername != null,
             existingUsername,
         };
@@ -319,8 +318,8 @@ public class AuthenticationControllerV2 : ControllerBase
         if (!IsSignupChallengeValid(request))
             throw new ForbiddenException(11, "Please verify the text exactly as shown.");
 
-        var discordUser = await GetVerifiedSignupDiscordUser();
-        if (discordUser == null)
+        var discordIdentity = DiscordSignupVerification.Read(HttpContext);
+        if (discordIdentity == null)
             throw new ForbiddenException(12, "Discord verification is required before signup.");
 
         if (!await services.cooldown.TryCooldownCheck($"signup:step1:{GetIP()}", TimeSpan.FromSeconds(5)))
@@ -344,7 +343,7 @@ public class AuthenticationControllerV2 : ControllerBase
         if (request.gender is not (Gender.Female or Gender.Male or Gender.NonBinary))
             throw new BadRequestException(7, "Please select a gender.");
 
-        if (discordUser != null && await services.users.IsDiscordIdLinkedToUser(discordUser.Id.ToString()))
+        if (await services.users.IsDiscordIdLinkedToUser(discordIdentity.id))
             throw new ForbiddenException(10, "This Discord account is already linked to an existing user.");
 
         if (!await UsersAbuse.ShouldAllowCreation(new(GetIP())))
@@ -366,8 +365,7 @@ public class AuthenticationControllerV2 : ControllerBase
         try
         {
             createdUser = await services.users.CreateUser(request.username, request.password, request.gender);
-            if (discordUser != null)
-                await services.users.LinkDiscordAccount(discordUser.Id.ToString(), createdUser.userId);
+            await services.users.LinkDiscordAccount(discordIdentity.id, createdUser.userId);
         }
         catch
         {
@@ -395,7 +393,7 @@ public class AuthenticationControllerV2 : ControllerBase
         {
             try
             {
-                await SendSignupWebhookAsync(createdUser.userId, request.username, discordUser);
+                await SendSignupWebhookAsync(createdUser.userId, request.username, discordIdentity);
             }
             catch
             {
@@ -444,34 +442,10 @@ public class AuthenticationControllerV2 : ControllerBase
         Middleware.SessionMiddleware.AppendSessionCookies(HttpContext.Response.Cookies, sessionCookie, secure: true);
     }
 
-    private async Task<DiscordUser?> GetVerifiedSignupDiscordUser()
-    {
-        string? accessToken;
-        try
-        {
-            accessToken = discordAccessToken;
-        }
-        catch (Exception ex)
-        {
-            Writer.Info(LogGroup.DiscordApi, "Discord signup cookie could not be decoded: {0}", ex.Message);
-            return null;
-        }
-
-        if (string.IsNullOrWhiteSpace(accessToken))
-            return null;
-
-        var discordApi = new DiscordApi(accessToken, Configuration.DiscordApplicationCallback);
-        var userInfo = await discordApi.GetUserInfo();
-        if (userInfo == null)
-        {
-            Writer.Info(LogGroup.DiscordApi, "Discord signup token did not return user info.");
-            return null;
-        }
-
-        return userInfo;
-    }
-
-    private static async Task SendSignupWebhookAsync(long userId, string username, DiscordUser? discordUser)
+    private static async Task SendSignupWebhookAsync(
+        long userId,
+        string username,
+        DiscordSignupIdentity? discordIdentity)
     {
         if (string.IsNullOrWhiteSpace(Configuration.DiscordSignupWebhookUrl))
             return;
@@ -492,7 +466,9 @@ public class AuthenticationControllerV2 : ControllerBase
                         new
                         {
                             name = "Discord",
-                            value = discordUser == null ? "Not linked" : $"{discordUser.Username} ({discordUser.Id})",
+                            value = discordIdentity == null
+                                ? "Not linked"
+                                : $"{discordIdentity.username} ({discordIdentity.id})",
                             inline = false
                         },
                     },

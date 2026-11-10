@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
@@ -21,6 +22,7 @@ using Roblox.Models.Db;
 using DSharpPlus;
 using Roblox.Logging;
 using DSharpPlus.Entities;
+using Roblox.Website.WebsiteServices;
 
 namespace Roblox.Website.Controllers;
 
@@ -76,6 +78,7 @@ public class WebController : ControllerBase
     public IActionResult DiscordSignup()
     {
         const string stateCookie = "MARINE-DISCORD-OAUTH-STATE";
+        DeleteDiscordOAuthCookie(stateCookie, DateTimeOffset.UtcNow.AddDays(-1));
         var state = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
         Response.Cookies.Append(stateCookie, state, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.AddMinutes(10)));
 
@@ -133,8 +136,10 @@ public class WebController : ControllerBase
         const string key = "MARINE-DISCORD";
         const string stateCookie = "MARINE-DISCORD-OAUTH-STATE";
         var expectedState = Request.Cookies[stateCookie];
-        Response.Cookies.Delete(key, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
-        Response.Cookies.Delete(stateCookie, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
+        var expired = DateTimeOffset.UtcNow.AddDays(-1);
+        DeleteDiscordOAuthCookie(key, expired);
+        DeleteDiscordOAuthCookie(stateCookie, expired);
+        DeleteDiscordOAuthCookie(DiscordSignupVerification.CookieName, expired);
 
         if (!string.IsNullOrEmpty(error) ||
             string.IsNullOrEmpty(code) ||
@@ -159,7 +164,13 @@ public class WebController : ControllerBase
 
             var base64AccessToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(discordApi.AccessToken));
             var tokenLifetime = TimeSpan.FromSeconds(Math.Clamp(discordApi.ExpiresIn, 60, 604800));
-            Response.Cookies.Append(key, base64AccessToken, CreateDiscordOAuthCookieOptions(DateTimeOffset.UtcNow.Add(tokenLifetime)));
+            var cookieExpires = DateTimeOffset.UtcNow.Add(tokenLifetime);
+            var cookieOptions = CreateDiscordOAuthCookieOptions(cookieExpires);
+            Response.Cookies.Append(key, base64AccessToken, cookieOptions);
+            Response.Cookies.Append(
+                DiscordSignupVerification.CookieName,
+                DiscordSignupVerification.Protect(HttpContext, userInfo, cookieExpires),
+                cookieOptions);
 
             return Redirect("/?discordVerified=1");
         }
@@ -180,7 +191,7 @@ public class WebController : ControllerBase
         var secure = Request.IsHttps ||
                      (Uri.TryCreate(Configuration.BaseUrl, UriKind.Absolute, out var baseUri) &&
                       baseUri.Scheme == Uri.UriSchemeHttps);
-        return new CookieOptions
+        var options = new CookieOptions
         {
             IsEssential = true,
             Path = "/",
@@ -189,6 +200,25 @@ public class WebController : ControllerBase
             Expires = expires,
             SameSite = SameSiteMode.Lax,
         };
+
+        if (Uri.TryCreate(Configuration.DiscordApplicationCallback, UriKind.Absolute, out var callbackUri) &&
+            !IPAddress.TryParse(callbackUri.Host, out _) &&
+            !callbackUri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
+        {
+            options.Domain = callbackUri.Host.StartsWith("www.", StringComparison.OrdinalIgnoreCase)
+                ? callbackUri.Host[4..]
+                : callbackUri.Host;
+        }
+
+        return options;
+    }
+
+    private void DeleteDiscordOAuthCookie(string name, DateTimeOffset expires)
+    {
+        var options = CreateDiscordOAuthCookieOptions(expires);
+        Response.Cookies.Delete(name, options);
+        options.Domain = null;
+        Response.Cookies.Delete(name, options);
     }
     
     // [HttpGetBypass("api/userinfo")]
