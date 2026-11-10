@@ -418,8 +418,31 @@ public class UsersService : ServiceBase, IService
         return result.userId;
     }
 
+    private static bool _badUsernameTableEnsured;
+    private static readonly SemaphoreSlim _badUsernameTableEnsureLock = new(1, 1);
+
+    private async Task EnsureBadUsernameTable()
+    {
+        if (_badUsernameTableEnsured) return;
+        await _badUsernameTableEnsureLock.WaitAsync();
+        try
+        {
+            if (_badUsernameTableEnsured) return;
+            await db.ExecuteAsync(
+                "CREATE TABLE IF NOT EXISTS moderation_bad_username (username TEXT NOT NULL)"
+            );
+            _badUsernameTableEnsured = true;
+        }
+        finally
+        {
+            _badUsernameTableEnsureLock.Release();
+        }
+    }
+
     public async Task<bool> IsBadUsername(string usernameToCheck)
     {
+        await EnsureBadUsernameTable();
+
         var escaped = usernameToCheck
             .Replace("\\", "\\\\")
             .Replace("%", "\\%")
