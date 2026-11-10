@@ -6,6 +6,7 @@ import { getSignupChallenge, getSignupMetadata, login, signup } from "../../serv
 import sansyLogo from "./img/sansy-logo-full.png";
 
 const siteBuildId = process.env.NEXT_PUBLIC_BUILD_ID || "local";
+const signupDiscordInviteUrl = "https://discord.gg/KcnemeAUpK";
 
 const useStyles = createUseStyles({
     "@keyframes authCardIn": {
@@ -1187,6 +1188,7 @@ const PublicLanding = ({ mode = "signup" }) => {
     };
 
     const submitSignupWithCaptcha = async () => {
+        const inviteWindow = window.open("about:blank", "_blank");
         setSignupLoading(true);
         setCaptchaSubmitting(true);
         try {
@@ -1197,8 +1199,14 @@ const PublicLanding = ({ mode = "signup" }) => {
                 captchaToken,
                 captchaAnswer,
             });
-            window.location.assign("https://discord.gg/KcnemeAUpK");
+            if (inviteWindow && !inviteWindow.closed) {
+                inviteWindow.opener = null;
+                inviteWindow.location.href = signupDiscordInviteUrl;
+            } else {
+                window.location.assign(signupDiscordInviteUrl);
+            }
         } catch (error) {
+            if (inviteWindow && !inviteWindow.closed) inviteWindow.close();
             const message = getErrorMessage(error, "Signup failed. Please try again.");
             const normalizedMessage = message.toLowerCase();
             if (normalizedMessage.includes("username") || normalizedMessage.includes("reserved")) {
